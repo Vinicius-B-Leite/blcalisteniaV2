@@ -1,6 +1,12 @@
 import { useRouter } from "expo-router"
 import { StyleSheet, Text, View } from "react-native"
 
+if (__DEV__) {
+	import("../../ReactotronConfig").then(() => {
+		console.tron("Reactotron Configured")
+	})
+}
+
 export default function Page() {
 	const router = useRouter()
 	return (
