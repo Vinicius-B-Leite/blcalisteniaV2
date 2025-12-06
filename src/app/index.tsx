@@ -1,5 +1,12 @@
-import { useRouter } from "expo-router"
-import { StyleSheet, Text, View } from "react-native"
+import { ImageBackground, View } from "react-native"
+import { Text } from "../ui/components/core/Text/Text"
+import { Button } from "../ui/components/core/Button"
+import { spacings } from "../ui/theme/tokens/spacings"
+import BackgroundImage from "../assets/imgs/onboarding-background.png"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useAppTheme } from "../ui/theme/hooks/useAppTheme"
+import { StatusBar } from "expo-status-bar"
+import { LinearGradient } from "expo-linear-gradient"
 
 if (__DEV__) {
 	import("../../ReactotronConfig").then(() => {
@@ -8,39 +15,48 @@ if (__DEV__) {
 }
 
 export default function Page() {
-	const router = useRouter()
+	const insets = useSafeAreaInsets()
+	const { theme } = useAppTheme()
+
 	return (
-		<View style={styles.container}>
-			<View style={styles.main}>
-				<Text style={styles.title} onPress={() => router.navigate("/profile")}>
-					Hello World
-				</Text>
-				<Text style={styles.subtitle}>This is the first page of your app.</Text>
+		<ImageBackground
+			source={BackgroundImage}
+			style={{
+				flex: 1,
+				justifyContent: "flex-end",
+			}}>
+			<StatusBar style={"light"} />
+
+			<LinearGradient
+				colors={[theme.surface.background, "transparent"]}
+				start={{ x: 0, y: 1 }}
+				end={{ x: 0, y: 0 }}
+				style={{
+					height: 300,
+				}}
+			/>
+
+			<View
+				style={{
+					gap: spacings.gap[32],
+					paddingHorizontal: spacings.padding[20],
+					backgroundColor: theme.surface.background,
+					paddingBottom:
+						Math.max(insets.bottom, spacings.padding[20]) +
+						spacings.padding[20],
+					paddingTop: spacings.padding[16],
+				}}>
+				<View>
+					<Text variant="heading">Treine com o peso do seu corpo</Text>
+					<Text variant="body-large-regular">
+						Transforme qualquer lugar em uma academia e evolua com treinos de
+						calistenia personalizados.
+					</Text>
+				</View>
+				<Button.Root variant="primary">
+					<Button.Content>Entrar como Visitante</Button.Content>
+				</Button.Root>
 			</View>
-		</View>
+		</ImageBackground>
 	)
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: "center",
-		padding: 24,
-		backgroundColor: "#000",
-	},
-	main: {
-		flex: 1,
-		justifyContent: "center",
-		maxWidth: 960,
-		marginHorizontal: "auto",
-	},
-	title: {
-		fontSize: 64,
-		fontWeight: "bold",
-		color: "#fff",
-	},
-	subtitle: {
-		fontSize: 36,
-		color: "#38434D",
-	},
-})

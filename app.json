@@ -1,58 +1,58 @@
 {
-  "expo": {
-    "name": "blcalistenia",
-    "slug": "blcalistenia",
-    "version": "1.0.0",
-    "scheme": "com.blcalistenia",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "experiments": {
-      "typedRoutes": true
-    },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.viniciusbl21.blcalistenia"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "com.viniciusbl21.blcalistenia"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png",
-      "bundler": "metro"
-    },
-    "plugins": [
-      [
-        "expo-router",
-        {
-          "root": "./src/app"
-        }
-      ]
-    ],
-    "extra": {
-      "router": {
-        "root": "./src/app"
-      },
-      "eas": {
-        "projectId": "79c44fa8-3255-4a98-b3ce-12287e2e1ec5"
-      }
-    },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/79c44fa8-3255-4a98-b3ce-12287e2e1ec5"
-    }
-  }
+	"expo": {
+		"name": "blcalistenia",
+		"slug": "blcalistenia",
+		"version": "1.0.0",
+		"scheme": "com.blcalistenia",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "light",
+		"newArchEnabled": true,
+		"splash": {
+			"image": "./assets/splash-icon.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#ffffff"
+		},
+		"experiments": {
+			"typedRoutes": true
+		},
+		"ios": {
+			"supportsTablet": true,
+			"bundleIdentifier": "com.viniciusbl21.blcalistenia"
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/adaptive-icon.png",
+				"backgroundColor": "#ffffff"
+			},
+			"edgeToEdgeEnabled": true,
+			"package": "com.viniciusbl21.blcalistenia"
+		},
+		"web": {
+			"favicon": "./assets/favicon.png",
+			"bundler": "metro"
+		},
+		"plugins": [
+			[
+				"expo-router",
+				{
+					"root": "./src/app"
+				}
+			]
+		],
+		"extra": {
+			"router": {
+				"root": "./src/app"
+			},
+			"eas": {
+				"projectId": "79c44fa8-3255-4a98-b3ce-12287e2e1ec5"
+			}
+		},
+		"runtimeVersion": {
+			"policy": "appVersion"
+		},
+		"updates": {
+			"url": "https://u.expo.dev/79c44fa8-3255-4a98-b3ce-12287e2e1ec5"
+		}
+	}
 }
