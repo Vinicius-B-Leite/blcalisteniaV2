@@ -1,0 +1,16 @@
+import { Redirect, Stack } from "expo-router"
+import { useAuth } from "../../domain/auth/AuthContext"
+
+export default function ProtectedLayout() {
+	const { auth } = useAuth()
+
+	if (!auth?.id) {
+		return <Redirect href="/" />
+	}
+
+	return (
+		<Stack screenOptions={{ headerShown: false, fullScreenGestureEnabled: true }}>
+			<Stack.Screen name="(tabs)" />
+		</Stack>
+	)
+}

@@ -1,6 +1,7 @@
 import { Stack } from "expo-router"
 import { ThemeProvider } from "../ui/theme/provider/themeProvider"
 import { SafeAreaProvider } from "react-native-safe-area-context"
+import { AuthProvider, useAuth } from "../domain/auth/AuthContext"
 
 if (__DEV__) {
 	import("../../ReactotronConfig").then(() => {
@@ -8,18 +9,26 @@ if (__DEV__) {
 	})
 }
 
+const Routes = () => {
+	const { auth } = useAuth()
+
+	return (
+		<Stack>
+			<Stack.Screen name="index" options={{ headerShown: false }} />
+			<Stack.Protected guard={!!auth?.id}>
+				<Stack.Screen name="(application)" />
+			</Stack.Protected>
+		</Stack>
+	)
+}
+
 const RootLayout = () => {
 	return (
 		<ThemeProvider>
 			<SafeAreaProvider>
-				<Stack>
-					<Stack.Screen
-						name="index"
-						options={{
-							headerShown: false,
-						}}
-					/>
-				</Stack>
+				<AuthProvider>
+					<Routes />
+				</AuthProvider>
 			</SafeAreaProvider>
 		</ThemeProvider>
 	)
