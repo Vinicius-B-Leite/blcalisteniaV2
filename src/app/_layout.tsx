@@ -16,7 +16,7 @@ const Routes = () => {
 		<Stack>
 			<Stack.Screen name="index" options={{ headerShown: false }} />
 			<Stack.Protected guard={!!auth?.id}>
-				<Stack.Screen name="(application)" />
+				<Stack.Screen options={{ headerShown: false }} name="(application)" />
 			</Stack.Protected>
 		</Stack>
 	)

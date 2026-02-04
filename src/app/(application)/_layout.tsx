@@ -10,7 +10,7 @@ export default function ProtectedLayout() {
 
 	return (
 		<Stack screenOptions={{ headerShown: false, fullScreenGestureEnabled: true }}>
-			<Stack.Screen name="(tabs)" />
+			<Stack.Screen options={{ headerShown: false }} name="(tabs)" />
 		</Stack>
 	)
 }

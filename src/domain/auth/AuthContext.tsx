@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react"
 
 type Auth = {
 	id: string
+	name: string
 }
 
 type AuthContextType = {
@@ -16,6 +17,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const loginAsGuest = () => {
 		const guestUser: Auth = {
 			id: "guest",
+			name: "Matheus",
 		}
 		setAuth(guestUser)
 	}

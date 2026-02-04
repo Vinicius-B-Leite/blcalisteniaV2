@@ -3,6 +3,7 @@ import { TextStyle } from "react-native"
 const fontSize = {
 	24: 24,
 	14: 14,
+	18: 18,
 	16: 16,
 }
 
@@ -19,6 +20,7 @@ const fontWeight: Record<string, TextStyle["fontWeight"]> = {
 
 const letterSpacing = {
 	0: 0,
+	"-0.90": -0.9,
 	"-0.12": -0.12,
 }
 

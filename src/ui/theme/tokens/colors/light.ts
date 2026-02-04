@@ -9,8 +9,12 @@ export const light: ThemeType = {
 	},
 	content: {
 		["text-default"]: primitives.gray,
+		"icon-default": primitives.gray,
 	},
 	action: {
 		"brand-primary": primitives.orange,
+	},
+	border: {
+		default: primitives.gray,
 	},
 }

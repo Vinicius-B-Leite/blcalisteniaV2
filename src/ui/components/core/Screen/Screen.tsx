@@ -15,7 +15,7 @@ export const Screen = ({ children }: PropsWithChildren) => {
 				backgroundColor: theme.surface.background,
 				flex: 1,
 				paddingHorizontal: spacings.padding[20],
-				paddingTop: Math.max(top, spacings.padding[20]),
+				paddingTop: Math.max(top, spacings.padding[20]) + spacings.padding[12],
 				paddingBottom: Math.max(bottom, spacings.padding[20]),
 			}}>
 			<StatusBar style={theme.mode === "dark" ? "light" : "dark"} translucent />

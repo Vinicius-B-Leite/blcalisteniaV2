@@ -8,8 +8,12 @@ export const dark: ThemeType = {
 	},
 	content: {
 		["text-default"]: primitives.white,
+		"icon-default": primitives.white,
 	},
 	action: {
 		"brand-primary": primitives.orange,
+	},
+	border: {
+		default: primitives.gray200,
 	},
 }

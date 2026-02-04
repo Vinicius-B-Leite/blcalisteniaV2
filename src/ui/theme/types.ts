@@ -4,9 +4,13 @@ export type ThemeType = {
 	}
 	content: {
 		["text-default"]: string
+		["icon-default"]: string
 	}
 	action: {
 		["brand-primary"]: string
+	}
+	border: {
+		default: string
 	}
 	mode: ThemeMode
 }
