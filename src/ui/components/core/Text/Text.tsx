@@ -1,7 +1,8 @@
 import React from "react"
-import { Text as RNText, TextProps as RNTextProps, TextStyle } from "react-native"
+import { Text as RNText, TextStyle as RNTextStyle } from "react-native"
 import { useAppTheme } from "../../../theme/hooks/useAppTheme"
 import { font } from "../../../theme/tokens/font"
+import { Text as TextTypes } from "./TextTypes"
 
 const variantsKeys = {
 	heading: "heading",
@@ -9,13 +10,10 @@ const variantsKeys = {
 	["title-small-bold"]: "title-small-bold",
 }
 
-export type TextProps = RNTextProps & {
-	variant: keyof typeof variantsKeys
-}
-export const Text = ({ children, variant, style, ...rest }: TextProps) => {
+export const Text = ({ children, variant, style, ...rest }: TextTypes.Props) => {
 	const { theme } = useAppTheme()
 
-	const variants: Record<keyof typeof variantsKeys, TextStyle> = {
+	const variants: Record<keyof typeof variantsKeys, RNTextStyle> = {
 		heading: {
 			fontWeight: font.weight[700],
 			fontSize: font.size[24],

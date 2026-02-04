@@ -1,33 +1,18 @@
-import {
-	StyleProp,
-	TouchableOpacity,
-	TouchableOpacityProps,
-	ViewStyle,
-} from "react-native"
-import { TextProps } from "../Text/Text"
+import { TouchableOpacity } from "react-native"
 import { spacings } from "../../../theme/tokens/spacings"
 import { radius } from "../../../theme/tokens/sizes"
 import { ButtonProvider } from "./ButtonContext"
 import { useAppTheme } from "../../../theme/hooks/useAppTheme"
+import { Button } from "./ButtonTypes"
 
 const variantsKeys = {
 	primary: "primary",
 }
 
-export type ButtonVariantsKeys = keyof typeof variantsKeys
-export type ButtonVariant = {
-	root: StyleProp<ViewStyle>
-	content: TextProps
-}
-
-type ButtonRootProps = TouchableOpacityProps & {
-	variant: ButtonVariantsKeys
-}
-
-export const ButtonRoot = ({ children, variant, ...props }: ButtonRootProps) => {
+export const ButtonRoot = ({ children, variant, ...props }: Button.RootProps) => {
 	const { theme } = useAppTheme()
 
-	const variants: Record<keyof typeof variantsKeys, ButtonVariant> = {
+	const variants: Record<keyof typeof variantsKeys, Button.Variant> = {
 		primary: {
 			root: {
 				gap: spacings.gap[8],

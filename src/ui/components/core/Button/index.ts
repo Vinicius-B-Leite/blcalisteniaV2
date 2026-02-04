@@ -5,3 +5,5 @@ export const Button = {
 	Root: ButtonRoot,
 	Content: ButtonContent,
 }
+
+export { type Button as ButtonTypes }
