@@ -9,5 +9,6 @@ export const stylesTheme = (theme: ThemeType, insets: EdgeInsets) =>
 			flex: 1,
 			paddingBottom:
 				Math.max(insets.bottom, spacings.padding[20]) + spacings.padding[20],
+			gap: spacings.gap[24],
 		},
 	})

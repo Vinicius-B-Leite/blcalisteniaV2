@@ -9,7 +9,7 @@ type HeaderProps = {
 	onNotificationsPress: () => void
 }
 
-export function Header({ userName, onNotificationsPress }: HeaderProps) {
+export const Header = ({ userName, onNotificationsPress }: HeaderProps) => {
 	const { theme } = useAppTheme()
 	const styles = stylesTheme(theme)
 
@@ -36,8 +36,8 @@ export function Header({ userName, onNotificationsPress }: HeaderProps) {
 			<Icon
 				onPress={onNotificationsPress}
 				pressableStyle={styles.bellButton}
-				name="icon-notification"
-				size={21}
+				name="notification"
+				size={26}
 			/>
 		</View>
 	)

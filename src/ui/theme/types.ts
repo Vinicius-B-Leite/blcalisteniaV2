@@ -1,6 +1,9 @@
 export type ThemeType = {
 	surface: {
 		background: string
+		"brand-opacity-10": string
+		container: string
+		brand: string
 	}
 	content: {
 		["text-default"]: string

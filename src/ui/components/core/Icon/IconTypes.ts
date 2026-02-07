@@ -7,8 +7,9 @@ const variantsKey = {
 
 export namespace Icon {
 	export type VariantKey = keyof typeof variantsKey
+	export type Names = keyof typeof IconMap
 	export type Props = {
-		name: keyof typeof IconMap
+		name: Names
 		size: number
 		variant?: VariantKey
 		onPress?(): void
