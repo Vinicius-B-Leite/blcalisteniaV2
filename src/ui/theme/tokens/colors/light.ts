@@ -6,6 +6,9 @@ export const light: ThemeType = {
 
 	surface: {
 		background: primitives.white,
+		"brand-opacity-10": primitives.white,
+		brand: primitives.white,
+		container: primitives.white,
 	},
 	content: {
 		["text-default"]: primitives.gray,
