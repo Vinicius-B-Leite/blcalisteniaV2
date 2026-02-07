@@ -37,7 +37,7 @@ export function Header({ userName, onNotificationsPress }: HeaderProps) {
 				onPress={onNotificationsPress}
 				pressableStyle={styles.bellButton}
 				name="icon-notification"
-				size={21}
+				size={26}
 			/>
 		</View>
 	)
