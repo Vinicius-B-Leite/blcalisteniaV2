@@ -42,5 +42,3 @@ export const Header = ({ userName, onNotificationsPress }: HeaderProps) => {
 		</View>
 	)
 }
-
-Header
