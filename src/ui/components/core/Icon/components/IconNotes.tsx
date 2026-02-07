@@ -1,4 +1,4 @@
-import Svg, { G, Path, Defs, ClipPath, Rect } from "react-native-svg"
+import Svg, { Path } from "react-native-svg"
 import { Icon } from "../IconTypes"
 
 export const IconNotes = ({ size, color }: Icon.IconMapProp) => {
