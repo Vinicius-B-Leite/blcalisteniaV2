@@ -9,7 +9,8 @@
 		"ios": "expo run:ios",
 		"web": "expo start --web",
 		"prepare": "husky",
-		"push-check": "tsc --noEmit"
+		"push-check": "tsc --noEmit",
+		"git-diff": "git diffsave > diff.txt"
 	},
 	"dependencies": {
 		"expo": "~53.0.11",
