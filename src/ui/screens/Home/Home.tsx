@@ -4,6 +4,7 @@ import { useStyles } from "../../theme/hooks/useStyles"
 import { Header } from "./components/Header"
 import { stylesTheme } from "./styles"
 import { useHome } from "./useHome"
+import { CardCalendar } from "./components/CardCalendar"
 
 export function HomeScreen() {
 	const { actions, states, refs } = useHome()
@@ -16,6 +17,8 @@ export function HomeScreen() {
 					userName={states.userName}
 					onNotificationsPress={actions.handleNotificationsPress}
 				/>
+
+				<CardCalendar />
 			</View>
 		</Screen>
 	)

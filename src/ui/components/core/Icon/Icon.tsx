@@ -2,9 +2,19 @@ import { Pressable } from "react-native"
 import { useAppTheme } from "../../../theme/hooks/useAppTheme"
 import { IconNotification } from "./components/IconNotification"
 import { Icon } from "./IconTypes"
+import { IconDumbbells } from "./components/IconDumbbells"
+import { IconClock } from "./components/IconClock"
+import { IconPlay } from "./components/IconPlay"
+import { IconReturn } from "./components/IconReturn"
+import { IconNotes } from "./components/IconNotes"
 
 export const IconMap = {
-	"icon-notification": IconNotification,
+	notification: IconNotification,
+	clock: IconClock,
+	dumbbells: IconDumbbells,
+	play: IconPlay,
+	return: IconReturn,
+	notes: IconNotes,
 }
 
 export const IconComponent = ({
