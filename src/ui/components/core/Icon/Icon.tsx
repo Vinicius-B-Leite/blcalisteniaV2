@@ -7,6 +7,7 @@ import { IconClock } from "./components/IconClock"
 import { IconPlay } from "./components/IconPlay"
 import { IconReturn } from "./components/IconReturn"
 import { IconNotes } from "./components/IconNotes"
+import { IconArrowRightTop } from "./components/IconArrowRightTop"
 
 export const IconMap = {
 	notification: IconNotification,
@@ -15,6 +16,7 @@ export const IconMap = {
 	play: IconPlay,
 	return: IconReturn,
 	notes: IconNotes,
+	arrowRightTop: IconArrowRightTop,
 }
 
 export const IconComponent = ({
