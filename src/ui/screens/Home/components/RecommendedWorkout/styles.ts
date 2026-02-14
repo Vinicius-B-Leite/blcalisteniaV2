@@ -1,7 +1,10 @@
-import { StyleSheet } from "react-native"
+import { Dimensions, StyleSheet } from "react-native"
 import { ThemeType } from "../../../../theme"
 import { radius } from "../../../../theme/tokens/sizes"
 import { spacings } from "../../../../theme/tokens/spacings"
+
+const SCREEN_WIDTH = Dimensions.get("window").width
+const CARD_WIDTH = SCREEN_WIDTH * 0.75
 
 export const stylesTheme = (theme: ThemeType) =>
 	StyleSheet.create({
@@ -16,8 +19,8 @@ export const stylesTheme = (theme: ThemeType) =>
 			gap: spacings.gap[16],
 		},
 		bannerCardImg: {
-			width: 301,
-			height: 201,
+			width: CARD_WIDTH,
+			aspectRatio: 16 / 9,
 			borderRadius: radius[16],
 			overflow: "hidden",
 		},
