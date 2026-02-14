@@ -1,4 +1,3 @@
-import { View } from "react-native"
 import { Header } from "../../components/core/Header"
 import { Screen } from "../../components/core/Screen/Screen"
 import { EmptyState } from "./components"

@@ -1,7 +1,7 @@
 import { Pressable } from "react-native"
 import { useAppTheme } from "../../../theme/hooks/useAppTheme"
 import { IconNotification } from "./components/IconNotification"
-import { Icon } from "./IconTypes"
+import { Icon as IconType } from "./IconTypes"
 import { IconDumbbells } from "./components/IconDumbbells"
 import { IconClock } from "./components/IconClock"
 import { IconPlay } from "./components/IconPlay"
@@ -31,17 +31,17 @@ export const IconMap = {
 	leftArrow: IconLeftArrow,
 }
 
-export const IconComponent = ({
+export const Icon = ({
 	name,
 	size,
 	variant = "default",
 	onPress,
 	pressableStyle,
-}: Icon.Props) => {
+}: IconType.Props) => {
 	const IconComponent = IconMap[name]
 	const { theme } = useAppTheme()
 
-	const variants: Record<Icon.VariantKey, { color: string }> = {
+	const variants: Record<IconType.VariantKey, { color: string }> = {
 		default: {
 			color: theme.content["icon-default"],
 		},

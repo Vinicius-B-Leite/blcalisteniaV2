@@ -1,7 +1,6 @@
 import { View, TouchableOpacity, Animated } from "react-native"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
-import { IconComponent } from "../../core/Icon/Icon"
-import { Icon } from "../../core/Icon/IconTypes"
+import { Icon, IconType } from "../../core/Icon"
 import { useStyles } from "../../../theme/hooks/useStyles"
 import { createStyles, TAB_BAR_INDICATOR_SIZE, TAB_GAP } from "./styles"
 import { useEffect, useRef } from "react"
@@ -10,7 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 type TabBarIconMap = {
 	[key: string]: {
-		icon: Icon.Names
+		icon: IconType.Names
 		label: string
 	}
 }
@@ -85,7 +84,7 @@ export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) =>
 					}
 
 					const tabConfig = tabBarIcons[route.name] || {
-						icon: "home" as Icon.Names,
+						icon: "home" as IconType.Names,
 						label: route.name,
 					}
 
@@ -105,11 +104,7 @@ export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) =>
 								styles.tabButton,
 								isFocused && styles.tabButtonActive,
 							]}>
-							<IconComponent
-								name={tabConfig.icon}
-								size={27.5}
-								variant="default"
-							/>
+							<Icon name={tabConfig.icon} size={27.5} variant="default" />
 						</TouchableOpacity>
 					)
 				})}

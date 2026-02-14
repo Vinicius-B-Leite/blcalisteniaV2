@@ -18,6 +18,7 @@ ComponentName/
 ```
 
 **Regras de nomenclatura:**
+
 - **Pasta**: `PascalCase` (ex: `CardCalendar`, `RecommendedWorkout`)
 - **Arquivo principal**: Mesmo nome da pasta (ex: `CardCalendar.tsx`)
 - **Hook customizado**: Prefixo `use` + nome do componente (ex: `useCardCalendar.ts`)
@@ -60,16 +61,17 @@ export { ComponentName } from "./ComponentName"
 ```
 
 **❌ Não fazer:**
+
 ```typescript
 // Não exportar types, hooks ou sub-componentes pelo index.ts
 export { ComponentName } from "./ComponentName"
-export * from "./types"  // ❌
-export * from "./useComponentName"  // ❌
+export * from "./types" // ❌
+export * from "./useComponentName" // ❌
 ```
 
 ### 2. Export do Index Principal (components/index.ts)
 
-O `index.ts` da pasta `components` deve usar **export * from** para todos os componentes:
+O `index.ts` da pasta `components` deve usar **export \* from** para todos os componentes:
 
 ```typescript
 // src/ui/screens/Home/components/index.ts
@@ -80,6 +82,7 @@ export * from "./Blog"
 ```
 
 **Benefício:** Permite importação direta como:
+
 ```typescript
 import { Blog, CardCalendar, Header } from "@/ui/screens/Home/components"
 ```
@@ -99,19 +102,20 @@ import { spacings } from "../../../../theme/tokens/spacings"
 import { radius } from "../../../../theme/tokens/sizes"
 
 export const stylesTheme = (theme: ThemeType) => {
-  return StyleSheet.create({
-    container: {
-      gap: spacings.gap[12],
-      padding: spacings.padding[16],
-      borderRadius: radius[16],
-      backgroundColor: theme.surface.container,
-    },
-    // ... outros estilos
-  })
+	return StyleSheet.create({
+		container: {
+			gap: spacings.gap[12],
+			padding: spacings.padding[16],
+			borderRadius: radius[16],
+			backgroundColor: theme.surface.container,
+		},
+		// ... outros estilos
+	})
 }
 ```
 
 **Variações de nome aceitas:**
+
 - `stylesTheme` (preferido)
 - `styleTheme` (alternativa)
 
@@ -164,45 +168,45 @@ As cores **SEMPRE** devem vir do `theme`, nunca hardcoded:
 #### Cores de Superfície (surface)
 
 ```typescript
-theme.surface.background       // Fundo principal da tela
-theme.surface.container        // Cards e containers primários
-theme.surface.container2       // Containers secundários/aninhados
-theme.surface.brand            // Cor da marca principal
+theme.surface.background // Fundo principal da tela
+theme.surface.container // Cards e containers primários
+theme.surface.container2 // Containers secundários/aninhados
+theme.surface.brand // Cor da marca principal
 theme.surface["brand-opacity-10"] // Marca com 10% opacidade
 theme.surface["brand-opacity-20"] // Marca com 20% opacidade
 theme.surface["container-variant"] // Variante de container
-theme.surface["always-white"]  // Sempre branco (independente do tema)
+theme.surface["always-white"] // Sempre branco (independente do tema)
 ```
 
 #### Cores de Conteúdo (content)
 
 ```typescript
-theme.content["text-default"]     // Texto padrão
-theme.content["text-brand"]       // Texto cor da marca
-theme.content["text-variant"]     // Texto secundário/cinza
-theme.content["text-on-brand"]    // Texto sobre fundo da marca
-theme.content["icon-default"]     // Ícones padrão
-theme.content["icon-brand"]       // Ícones cor da marca
-theme.content["icon-variant"]     // Ícones secundários
-theme.content["always-white"]     // Texto sempre branco
+theme.content["text-default"] // Texto padrão
+theme.content["text-brand"] // Texto cor da marca
+theme.content["text-variant"] // Texto secundário/cinza
+theme.content["text-on-brand"] // Texto sobre fundo da marca
+theme.content["icon-default"] // Ícones padrão
+theme.content["icon-brand"] // Ícones cor da marca
+theme.content["icon-variant"] // Ícones secundários
+theme.content["always-white"] // Texto sempre branco
 ```
 
 #### Cores de Borda (border)
 
 ```typescript
-theme.border.default      // Borda padrão
+theme.border.default // Borda padrão
 theme.border["default-dim"] // Borda suave/desbotada
-theme.border.success      // Verde (sucesso)
-theme.border.caution      // Amarelo (atenção)
-theme.border.error        // Vermelho (erro)
+theme.border.success // Verde (sucesso)
+theme.border.caution // Amarelo (atenção)
+theme.border.error // Vermelho (erro)
 ```
 
 #### Cores de Ação (action)
 
 ```typescript
-theme.action["brand-background"]     // Fundo de botões primários
-theme.action["disabled-background"]  // Fundo desabilitado
-theme.action["pressed-background"]   // Estado pressed
+theme.action["brand-background"] // Fundo de botões primários
+theme.action["disabled-background"] // Fundo desabilitado
+theme.action["pressed-background"] // Estado pressed
 ```
 
 ### 4. Exemplo Completo de Estilo
@@ -214,41 +218,41 @@ import { spacings } from "../../../../theme/tokens/spacings"
 import { radius } from "../../../../theme/tokens/sizes"
 
 export const stylesTheme = (theme: ThemeType) => {
-  return StyleSheet.create({
-    container: {
-      gap: spacings.gap[12],
-      padding: spacings.padding[12],
-      borderRadius: radius[16],
-      backgroundColor: theme.surface["brand-opacity-10"],
-    },
-    card: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: spacings.gap[8],
-      padding: spacings.padding[12],
-      paddingHorizontal: spacings.padding[16],
-      backgroundColor: theme.surface.container,
-      borderRadius: radius[16],
-      borderWidth: 1,
-      borderColor: theme.border["default-dim"],
-    },
-    badge: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: spacings.gap[4],
-      paddingVertical: spacings.padding[4],
-      paddingHorizontal: spacings.padding[8],
-      backgroundColor: theme.surface.container2,
-      borderRadius: radius.full,
-      borderWidth: 1,
-      borderColor: theme.border.default,
-    },
-    button: {
-      padding: spacings.padding[12],
-      borderRadius: radius.full,
-      backgroundColor: theme.action["brand-background"],
-    },
-  })
+	return StyleSheet.create({
+		container: {
+			gap: spacings.gap[12],
+			padding: spacings.padding[12],
+			borderRadius: radius[16],
+			backgroundColor: theme.surface["brand-opacity-10"],
+		},
+		card: {
+			flexDirection: "row",
+			alignItems: "center",
+			gap: spacings.gap[8],
+			padding: spacings.padding[12],
+			paddingHorizontal: spacings.padding[16],
+			backgroundColor: theme.surface.container,
+			borderRadius: radius[16],
+			borderWidth: 1,
+			borderColor: theme.border["default-dim"],
+		},
+		badge: {
+			flexDirection: "row",
+			alignItems: "center",
+			gap: spacings.gap[4],
+			paddingVertical: spacings.padding[4],
+			paddingHorizontal: spacings.padding[8],
+			backgroundColor: theme.surface.container2,
+			borderRadius: radius.full,
+			borderWidth: 1,
+			borderColor: theme.border.default,
+		},
+		button: {
+			padding: spacings.padding[12],
+			borderRadius: radius.full,
+			backgroundColor: theme.action["brand-background"],
+		},
+	})
 }
 ```
 
@@ -263,22 +267,22 @@ Use **namespace** quando o componente tem múltiplos tipos relacionados:
 ```typescript
 // types.ts
 export namespace ComponentName {
-  export type Props = {
-    title: string
-    onPress?: () => void
-  }
+	export type Props = {
+		title: string
+		onPress?: () => void
+	}
 
-  export type CardProps = {
-    id: string
-    content: string
-  }
+	export type CardProps = {
+		id: string
+		content: string
+	}
 }
 
 // ComponentName.tsx
 import { ComponentName as Types } from "./types"
 
 export function ComponentName({ title, onPress }: Types.Props) {
-  // ...
+	// ...
 }
 ```
 
@@ -287,31 +291,31 @@ export function ComponentName({ title, onPress }: Types.Props) {
 ```typescript
 // Blog/types.ts
 export namespace Blog {
-  export type Props = {
-    onSeeMorePress?: () => void
-  }
+	export type Props = {
+		onSeeMorePress?: () => void
+	}
 
-  export type CardProps = {
-    title: string
-    subtitle: string
-    likes: number
-    views: number
-    onPress?: () => void
-  }
+	export type CardProps = {
+		title: string
+		subtitle: string
+		likes: number
+		views: number
+		onPress?: () => void
+	}
 }
 
 // Blog.tsx
 import { Blog as BlogTypes } from "./types"
 
 export function Blog({ onSeeMorePress }: BlogTypes.Props) {
-  // ...
+	// ...
 }
 
 // BlogCard.tsx
 import { Blog } from "./types"
 
 export function BlogCard({ title, subtitle, likes, views }: Blog.CardProps) {
-  // ...
+	// ...
 }
 ```
 
@@ -322,12 +326,12 @@ Para componentes simples com poucas props, use tipos inline:
 ```typescript
 // Header.tsx
 type HeaderProps = {
-  userName: string
-  onNotificationsPress: () => void
+	userName: string
+	onNotificationsPress: () => void
 }
 
 export const Header = ({ userName, onNotificationsPress }: HeaderProps) => {
-  // ...
+	// ...
 }
 ```
 
@@ -338,10 +342,10 @@ Use **enums** para estados/status do componente:
 ```typescript
 // types.ts
 export enum EWorkoutStatus {
-  empty = "empty",
-  start = "start",
-  resume = "resume",
-  finished = "finished",
+	empty = "empty",
+	start = "start",
+	resume = "resume",
+	finished = "finished",
 }
 ```
 
@@ -365,8 +369,8 @@ import { Text } from "../../../../components/core/Text"
 <Text variant="title-small-bold">Títulos</Text>
 
 // Propriedades comuns:
-<Text 
-  variant="body-large-bold" 
+<Text
+  variant="body-large-bold"
   numberOfLines={2}
   style={{ color: theme.content["text-variant"] }}
 >
@@ -375,6 +379,7 @@ import { Text } from "../../../../components/core/Text"
 ```
 
 **Variants disponíveis:**
+
 - `title-large-bold`, `title-small-bold`, `title-small-reg`
 - `body-large-bold`, `body-small-bold`, `body-small-reg`
 - `caption-reg`, `caption-bold`
@@ -390,7 +395,7 @@ import { Pressable } from "../../../../components/core/Pressable"
 </Pressable.Root>
 
 // Com estilo:
-<Pressable.Root 
+<Pressable.Root
   onPress={handlePress}
   style={styles.button}
 >
@@ -419,19 +424,12 @@ import { Icon } from "../../../../components/core/Icon"
 ```
 
 **Propriedades:**
+
 - `name`: Nome do ícone (string)
 - `size`: Tamanho em pixels (number)
 - `variant`: "default" | outras variantes
 - `onPress`: Função para torná-lo clicável
 - `pressableStyle`: Estilo do container clicável
-
-#### 4. IconComponent (Alternativa)
-
-```typescript
-import { IconComponent } from "../../../../components/core/Icon/Icon"
-
-<IconComponent name="heart" size={14} variant="default" />
-```
 
 ---
 
@@ -440,6 +438,7 @@ import { IconComponent } from "../../../../components/core/Icon/Icon"
 ### Quando Criar um Hook
 
 Crie um hook customizado quando o componente tiver:
+
 - Lógica de estado complexa
 - Múltiplas funções auxiliares
 - Cálculos ou transformações de dados
@@ -453,27 +452,27 @@ import { useState } from "react"
 import { Icon } from "../../../../components/core/Icon/IconTypes"
 
 export const useComponentName = () => {
-  // Estados
-  const [state, setState] = useState(initialValue)
+	// Estados
+	const [state, setState] = useState(initialValue)
 
-  // Cálculos
-  const computedValue = calculateSomething()
+	// Cálculos
+	const computedValue = calculateSomething()
 
-  // Funções auxiliares
-  const handleAction = () => {
-    // lógica
-  }
+	// Funções auxiliares
+	const handleAction = () => {
+		// lógica
+	}
 
-  // Retorna states e actions organizados
-  return {
-    states: {
-      state,
-      computedValue,
-    },
-    actions: {
-      handleAction,
-    },
-  }
+	// Retorna states e actions organizados
+	return {
+		states: {
+			state,
+			computedValue,
+		},
+		actions: {
+			handleAction,
+		},
+	}
 }
 ```
 
@@ -485,54 +484,54 @@ import { Icon } from "../../../../components/core/Icon/IconTypes"
 import { EWorkoutStatus } from "./types"
 
 export const useCardCalendar = () => {
-  // Cálculo dos dias da semana
-  const currentWeekDaysNumber = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date()
-    date.setDate(date.getDate() - i)
-    return date.getDate().toString()
-  }).reverse()
+	// Cálculo dos dias da semana
+	const currentWeekDaysNumber = Array.from({ length: 7 }, (_, i) => {
+		const date = new Date()
+		date.setDate(date.getDate() - i)
+		return date.getDate().toString()
+	}).reverse()
 
-  const weekDaysNames = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date()
-    date.setDate(date.getDate() - i)
-    return date.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "")
-  }).reverse()
+	const weekDaysNames = Array.from({ length: 7 }, (_, i) => {
+		const date = new Date()
+		date.setDate(date.getDate() - i)
+		return date.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "")
+	}).reverse()
 
-  const currentDayActive = new Date().getDate()
-  let workoutStatus: EWorkoutStatus = EWorkoutStatus.empty
+	const currentDayActive = new Date().getDate()
+	let workoutStatus: EWorkoutStatus = EWorkoutStatus.empty
 
-  // Funções auxiliares
-  const isCurrentDay = (day: string) => {
-    return day === currentDayActive.toString()
-  }
+	// Funções auxiliares
+	const isCurrentDay = (day: string) => {
+		return day === currentDayActive.toString()
+	}
 
-  const handleWorkoutStatus = () => {
-    let title = ""
-    let iconName: Icon.Names = "dumbbells"
-    let onPress: (() => void) | undefined = undefined
+	const handleWorkoutStatus = () => {
+		let title = ""
+		let iconName: Icon.Names = "dumbbells"
+		let onPress: (() => void) | undefined = undefined
 
-    if (workoutStatus === EWorkoutStatus.empty) {
-      title = "Criar treino"
-      iconName = "dumbbells"
-      onPress = () => {
-        // Lógica para criar treino
-      }
-    }
-    // ... outras condições
+		if (workoutStatus === EWorkoutStatus.empty) {
+			title = "Criar treino"
+			iconName = "dumbbells"
+			onPress = () => {
+				// Lógica para criar treino
+			}
+		}
+		// ... outras condições
 
-    return { title, iconName, onPress }
-  }
+		return { title, iconName, onPress }
+	}
 
-  return {
-    states: {
-      currentWeekDaysNumber,
-      weekDaysNames,
-    },
-    actions: {
-      isCurrentDay,
-      handleWorkoutStatus,
-    },
-  }
+	return {
+		states: {
+			currentWeekDaysNumber,
+			weekDaysNames,
+		},
+		actions: {
+			isCurrentDay,
+			handleWorkoutStatus,
+		},
+	}
 }
 ```
 
@@ -548,7 +547,7 @@ export const CardCalendar = () => {
   return (
     <View>
       {states.currentWeekDaysNumber.map((day, index) => (
-        <View 
+        <View
           key={day}
           style={[
             styles.dayItem,
@@ -584,17 +583,17 @@ Blog/
 
 ```typescript
 export namespace Blog {
-  export type Props = {
-    onSeeMorePress?: () => void
-  }
+	export type Props = {
+		onSeeMorePress?: () => void
+	}
 
-  export type CardProps = {
-    title: string
-    subtitle: string
-    likes: number
-    views: number
-    onPress?: () => void
-  }
+	export type CardProps = {
+		title: string
+		subtitle: string
+		likes: number
+		views: number
+		onPress?: () => void
+	}
 }
 ```
 
@@ -607,40 +606,40 @@ import { spacings } from "../../../../theme/tokens/spacings"
 import { radius } from "../../../../theme/tokens/sizes"
 
 export const stylesTheme = (theme: ThemeType) => {
-  return StyleSheet.create({
-    container: {
-      gap: spacings.gap[12],
-    },
-    header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      gap: spacings.gap[16],
-    },
-    scrollContainer: {
-      gap: spacings.gap[8],
-    },
-    card: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: spacings.gap[8],
-      padding: spacings.padding[12],
-      paddingHorizontal: spacings.padding[16],
-      backgroundColor: theme.surface.container,
-      borderRadius: radius[16],
-    },
-    statBadge: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: spacings.gap[4],
-      paddingVertical: spacings.padding[4],
-      paddingHorizontal: spacings.padding[8],
-      backgroundColor: theme.surface.container2,
-      borderRadius: radius.full,
-      borderWidth: 1,
-      borderColor: theme.border["default-dim"],
-    },
-  })
+	return StyleSheet.create({
+		container: {
+			gap: spacings.gap[12],
+		},
+		header: {
+			flexDirection: "row",
+			justifyContent: "space-between",
+			alignItems: "center",
+			gap: spacings.gap[16],
+		},
+		scrollContainer: {
+			gap: spacings.gap[8],
+		},
+		card: {
+			flexDirection: "row",
+			alignItems: "center",
+			gap: spacings.gap[8],
+			padding: spacings.padding[12],
+			paddingHorizontal: spacings.padding[16],
+			backgroundColor: theme.surface.container,
+			borderRadius: radius[16],
+		},
+		statBadge: {
+			flexDirection: "row",
+			alignItems: "center",
+			gap: spacings.gap[4],
+			paddingVertical: spacings.padding[4],
+			paddingHorizontal: spacings.padding[8],
+			backgroundColor: theme.surface.container2,
+			borderRadius: radius.full,
+			borderWidth: 1,
+			borderColor: theme.border["default-dim"],
+		},
+	})
 }
 ```
 
@@ -708,14 +707,14 @@ import { useStyles } from "../../../../theme/hooks/useStyles"
 import { stylesTheme } from "./styles"
 import { Text } from "../../../../components/core/Text"
 import { Pressable } from "../../../../components/core/Pressable"
-import { IconComponent } from "../../../../components/core/Icon/Icon"
+import { Icon } from "../../../../components/core/Icon"
 
-export function BlogCard({ 
-  title, 
-  subtitle, 
-  likes, 
-  views, 
-  onPress 
+export function BlogCard({
+  title,
+  subtitle,
+  likes,
+  views,
+  onPress
 }: Blog.CardProps) {
   const styles = useStyles(stylesTheme)
 
@@ -733,12 +732,12 @@ export function BlogCard({
 
         <View style={styles.statsContainer}>
           <View style={styles.statBadge}>
-            <IconComponent name="heart" size={14} variant="default" />
+            <Icon name="heart" size={14} variant="default" />
             <Text variant="caption-reg">{likes}</Text>
           </View>
 
           <View style={styles.statBadge}>
-            <IconComponent name="eye" size={14} variant="default" />
+            <Icon name="eye" size={14} variant="default" />
             <Text variant="caption-reg">{views}</Text>
           </View>
         </View>
@@ -768,7 +767,7 @@ import { stylesTheme } from "./styles"
 
 export function Component() {
   const styles = useStyles(stylesTheme)
-  
+
   return <View style={styles.container} />
 }
 ```
@@ -782,7 +781,7 @@ import { useAppTheme } from "../../../../theme/hooks/useAppTheme"
 
 export function Component() {
   const { theme } = useAppTheme()
-  
+
   return (
     <Text style={{ color: theme.content["text-variant"] }}>
       Texto
@@ -792,6 +791,7 @@ export function Component() {
 ```
 
 **Quando usar cada um:**
+
 - `useStyles`: Para todos os estilos do componente (preferido)
 - `useAppTheme`: Para estilos dinâmicos ou condicionais inline
 
@@ -802,41 +802,41 @@ export function Component() {
 Ao criar um novo componente comum, verifique:
 
 - [ ] **Estrutura de arquivos**
-  - [ ] Pasta em `PascalCase`
-  - [ ] Arquivos: `index.ts`, `ComponentName.tsx`, `styles.ts`
-  - [ ] `types.ts` se houver múltiplos tipos
-  - [ ] `useComponentName.ts` se houver lógica complexa
+    - [ ] Pasta em `PascalCase`
+    - [ ] Arquivos: `index.ts`, `ComponentName.tsx`, `styles.ts`
+    - [ ] `types.ts` se houver múltiplos tipos
+    - [ ] `useComponentName.ts` se houver lógica complexa
 
 - [ ] **Exports**
-  - [ ] `index.ts` do componente exporta apenas o componente principal
-  - [ ] Adicionado export no `index.ts` da pasta `components` pai
+    - [ ] `index.ts` do componente exporta apenas o componente principal
+    - [ ] Adicionado export no `index.ts` da pasta `components` pai
 
 - [ ] **Estilos**
-  - [ ] Função `stylesTheme` recebendo `theme: ThemeType`
-  - [ ] Usa `StyleSheet.create()`
-  - [ ] Importa `spacings` e `radius` dos tokens
-  - [ ] Cores vêm do `theme.*` (surface, content, border, action)
+    - [ ] Função `stylesTheme` recebendo `theme: ThemeType`
+    - [ ] Usa `StyleSheet.create()`
+    - [ ] Importa `spacings` e `radius` dos tokens
+    - [ ] Cores vêm do `theme.*` (surface, content, border, action)
 
 - [ ] **Tokens**
-  - [ ] Usa `spacings.gap[*]` ao invés de números fixos
-  - [ ] Usa `spacings.padding[*]` e `spacings.margin[*]`
-  - [ ] Usa `radius[16]`, `radius[24]` ou `radius.full`
-  - [ ] Nenhuma cor hardcoded (ex: `#fff`, `rgb(...)`)
+    - [ ] Usa `spacings.gap[*]` ao invés de números fixos
+    - [ ] Usa `spacings.padding[*]` e `spacings.margin[*]`
+    - [ ] Usa `radius[16]`, `radius[24]` ou `radius.full`
+    - [ ] Nenhuma cor hardcoded (ex: `#fff`, `rgb(...)`)
 
 - [ ] **Componentes Core**
-  - [ ] Usa `<Text variant="...">` ao invés de `<RNText>`
-  - [ ] Usa `<Pressable.Root>` ao invés de `<TouchableOpacity>`
-  - [ ] Usa `<Icon name="...">` dos components/core
+    - [ ] Usa `<Text variant="...">` ao invés de `<RNText>`
+    - [ ] Usa `<Pressable.Root>` ao invés de `<TouchableOpacity>`
+    - [ ] Usa `<Icon name="...">` dos components/core
 
 - [ ] **Tipagem**
-  - [ ] Props tipadas (namespace ou inline)
-  - [ ] Enums para estados se necessário
-  - [ ] Importação correta dos types
+    - [ ] Props tipadas (namespace ou inline)
+    - [ ] Enums para estados se necessário
+    - [ ] Importação correta dos types
 
 - [ ] **Hooks**
-  - [ ] Usa `useStyles(stylesTheme)` para estilos
-  - [ ] Usa `useAppTheme()` se precisar acessar theme diretamente
-  - [ ] Hook customizado se lógica for complexa
+    - [ ] Usa `useStyles(stylesTheme)` para estilos
+    - [ ] Usa `useAppTheme()` se precisar acessar theme diretamente
+    - [ ] Hook customizado se lógica for complexa
 
 ---
 
@@ -932,18 +932,18 @@ export { ComponentName } from "./ComponentName"
 ```typescript
 // ❌ ERRADO
 export const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#fff"
-  }
+	container: {
+		backgroundColor: "#fff",
+	},
 })
 
 // ✅ CORRETO
 export const stylesTheme = (theme: ThemeType) => {
-  return StyleSheet.create({
-    container: {
-      backgroundColor: theme.surface.background
-    }
-  })
+	return StyleSheet.create({
+		container: {
+			backgroundColor: theme.surface.background,
+		},
+	})
 }
 ```
 
@@ -1007,14 +1007,14 @@ import { spacings } from "../../../../theme/tokens/spacings"
 import { radius } from "../../../../theme/tokens/sizes"
 
 export const stylesTheme = (theme: ThemeType) => {
-  return StyleSheet.create({
-    container: {
-      gap: spacings.gap[12],
-      padding: spacings.padding[16],
-      borderRadius: radius[16],
-      backgroundColor: theme.surface.container,
-    },
-  })
+	return StyleSheet.create({
+		container: {
+			gap: spacings.gap[12],
+			padding: spacings.padding[16],
+			borderRadius: radius[16],
+			backgroundColor: theme.surface.container,
+		},
+	})
 }
 ```
 

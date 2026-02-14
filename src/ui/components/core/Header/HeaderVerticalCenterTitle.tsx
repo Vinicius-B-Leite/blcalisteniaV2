@@ -9,7 +9,10 @@ export const HeaderVerticalCenterTitle = ({
 	...props
 }: Header.TitleProps) => {
 	return (
-		<Text variant="title-large-bold" style={styles.verticalCenterTitle} {...props}>
+		<Text
+			variant="title-large-bold"
+			style={[styles.verticalCenterTitle, style]}
+			{...props}>
 			{children}
 		</Text>
 	)

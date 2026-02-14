@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router"
-import { IconComponent } from "../Icon/Icon"
+import { Icon } from "../Icon"
 import { Header } from "./HeaderTypes"
 
 export const HeaderGoBack = ({ children }: Header.GoBackProps) => {
@@ -13,12 +13,5 @@ export const HeaderGoBack = ({ children }: Header.GoBackProps) => {
 		return children
 	}
 
-	return (
-		<IconComponent
-			name={"leftArrow"}
-			size={24}
-			variant="default"
-			onPress={handleGoBack}
-		/>
-	)
+	return <Icon name={"leftArrow"} size={24} variant="default" onPress={handleGoBack} />
 }
