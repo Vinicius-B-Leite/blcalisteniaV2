@@ -20,7 +20,7 @@ export const ButtonRoot = ({ children, variant, ...props }: Button.RootProps) =>
 				borderRadius: radius[24],
 				justifyContent: "center",
 				alignItems: "center",
-				backgroundColor: theme.action["brand-primary"],
+				backgroundColor: theme.action["brand-background"],
 			},
 			content: {
 				variant: "title-small-bold",

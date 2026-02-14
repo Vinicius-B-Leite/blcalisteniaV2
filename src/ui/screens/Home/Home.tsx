@@ -5,6 +5,7 @@ import { Header } from "./components/Header"
 import { stylesTheme } from "./styles"
 import { useHome } from "./useHome"
 import { CardCalendar } from "./components/CardCalendar"
+import { RecommendedWorkout } from "./components/RecommendedWorkout/RecommendedWorkout"
 
 export function HomeScreen() {
 	const { actions, states, refs } = useHome()
@@ -19,6 +20,8 @@ export function HomeScreen() {
 				/>
 
 				<CardCalendar />
+
+				<RecommendedWorkout />
 			</View>
 		</Screen>
 	)

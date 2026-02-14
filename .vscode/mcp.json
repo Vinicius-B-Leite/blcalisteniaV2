@@ -1,0 +1,13 @@
+{
+	"servers": {
+		"Framelink MCP for Figma": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"figma-developer-mcp",
+				"--figma-api-key=${env:FIGMA_API_KEY}",
+				"--stdio"
+			]
+		}
+	}
+}

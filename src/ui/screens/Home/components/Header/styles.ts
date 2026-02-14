@@ -24,7 +24,7 @@ export const stylesTheme = (theme: ThemeType) =>
 			height: AVATAR_SIZE,
 			borderRadius: AVATAR_SIZE / 2,
 			overflow: "hidden",
-			backgroundColor: theme.action["brand-primary"],
+			backgroundColor: theme.action["brand-background"],
 		},
 		avatar: {
 			width: AVATAR_SIZE,
