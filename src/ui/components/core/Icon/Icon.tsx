@@ -8,6 +8,11 @@ import { IconPlay } from "./components/IconPlay"
 import { IconReturn } from "./components/IconReturn"
 import { IconNotes } from "./components/IconNotes"
 import { IconArrowRightTop } from "./components/IconArrowRightTop"
+import { IconHeart } from "./components/IconHeart"
+import { IconEye } from "./components/IconEye"
+import { IconHome } from "./components/IconHome"
+import { IconCalendar } from "./components/IconCalendar"
+import { IconUser } from "./components/IconUser"
 
 export const IconMap = {
 	notification: IconNotification,
@@ -17,6 +22,11 @@ export const IconMap = {
 	return: IconReturn,
 	notes: IconNotes,
 	arrowRightTop: IconArrowRightTop,
+	heart: IconHeart,
+	eye: IconEye,
+	home: IconHome,
+	calendar: IconCalendar,
+	user: IconUser,
 }
 
 export const IconComponent = ({
