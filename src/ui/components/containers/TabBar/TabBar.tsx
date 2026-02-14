@@ -3,12 +3,10 @@ import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import { IconComponent } from "../../core/Icon/Icon"
 import { Icon } from "../../core/Icon/IconTypes"
 import { useStyles } from "../../../theme/hooks/useStyles"
-import { createStyles } from "./styles"
+import { createStyles, TAB_BAR_INDICATOR_SIZE, TAB_GAP } from "./styles"
 import { useEffect, useRef } from "react"
 import { spacings } from "../../../theme/tokens/spacings"
-
-export const TAB_BAR_INDICATOR_SIZE = 55
-export const TAB_GAP = spacings.gap[12]
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 type TabBarIconMap = {
 	[key: string]: {
@@ -37,7 +35,8 @@ const tabBarIcons: TabBarIconMap = {
 }
 
 export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
-	const styles = useStyles(createStyles)
+	const insets = useSafeAreaInsets()
+	const styles = useStyles((theme) => createStyles(theme, insets))
 	const translateX = useRef(new Animated.Value(0)).current
 
 	useEffect(() => {
@@ -95,7 +94,11 @@ export const TabBar = ({ state, descriptors, navigation }: BottomTabBarProps) =>
 							key={route.key}
 							accessibilityRole="button"
 							accessibilityState={isFocused ? { selected: true } : {}}
-							accessibilityLabel={options.tabBarAccessibilityLabel}
+							accessibilityLabel={
+								options.tabBarAccessibilityLabel ??
+								tabConfig.label ??
+								route.name
+							}
 							onPress={onPress}
 							onLongPress={onLongPress}
 							style={[

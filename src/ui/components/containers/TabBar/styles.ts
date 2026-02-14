@@ -1,12 +1,15 @@
 import { ThemeType } from "../../../theme/types"
 import { spacings } from "../../../theme/tokens/spacings"
 import { radius } from "../../../theme/tokens/sizes"
-import { TAB_BAR_INDICATOR_SIZE, TAB_GAP } from "./TabBar"
+import { EdgeInsets } from "react-native-safe-area-context"
 
-export const createStyles = (theme: ThemeType) => ({
+export const TAB_BAR_INDICATOR_SIZE = 55
+export const TAB_GAP = spacings.gap[12]
+
+export const createStyles = (theme: ThemeType, insets: EdgeInsets) => ({
 	container: {
 		position: "absolute" as const,
-		bottom: spacings.padding[20] + 4,
+		bottom: Math.max(insets.bottom, spacings.padding[20]),
 		left: 0,
 		right: 0,
 		alignItems: "center" as const,
