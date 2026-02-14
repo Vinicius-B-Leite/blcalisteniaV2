@@ -1,9 +1,6 @@
 import { StyleProp, TouchableOpacityProps, ViewStyle } from "react-native"
 import { Text } from "../Text/TextTypes"
-
-const variantsKeys = {
-	primary: "primary",
-}
+import { variantsKeys } from "./ButtonRoot"
 
 export namespace Button {
 	export type VariantsKeys = keyof typeof variantsKeys

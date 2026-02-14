@@ -5,8 +5,9 @@ import { ButtonProvider } from "./ButtonContext"
 import { useAppTheme } from "../../../theme/hooks/useAppTheme"
 import { Button } from "./ButtonTypes"
 
-const variantsKeys = {
+export const variantsKeys = {
 	primary: "primary",
+	ghost: "ghost",
 }
 
 export const ButtonRoot = ({ children, variant, ...props }: Button.RootProps) => {
@@ -21,6 +22,20 @@ export const ButtonRoot = ({ children, variant, ...props }: Button.RootProps) =>
 				justifyContent: "center",
 				alignItems: "center",
 				backgroundColor: theme.action["brand-background"],
+			},
+			content: {
+				variant: "title-small-bold",
+			},
+		},
+		ghost: {
+			root: {
+				gap: spacings.gap[8],
+				padding: spacings.padding[8],
+				borderRadius: radius[24],
+				justifyContent: "center",
+				alignItems: "center",
+				borderWidth: 0,
+				borderColor: theme.content["text-default"],
 			},
 			content: {
 				variant: "title-small-bold",
