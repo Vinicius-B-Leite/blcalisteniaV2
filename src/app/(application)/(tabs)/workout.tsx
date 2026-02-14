@@ -1,15 +1,7 @@
-import { View } from "react-native"
-import { Screen } from "../../../ui/components/core/Screen/Screen"
-import { Text } from "../../../ui/components/core/Text"
+import { WorkoutList } from "../../../ui/screens/WorkoutList/WorkoutList"
 
 const Workout = () => {
-	return (
-		<Screen>
-			<View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-				<Text variant="body-large-bold">Treino</Text>
-			</View>
-		</Screen>
-	)
+	return <WorkoutList />
 }
 
 export default Workout

@@ -4,7 +4,7 @@ import { useStyles } from "../../../../theme/hooks/useStyles"
 import { stylesTheme } from "./styles"
 import { Text } from "../../../../components/core/Text"
 import { Pressable } from "../../../../components/core/Pressable"
-import { IconComponent } from "../../../../components/core/Icon/Icon"
+import { Icon } from "../../../../components/core/Icon"
 import { useAppTheme } from "../../../../theme/hooks/useAppTheme"
 
 export function BlogCard({ title, subtitle, likes, views, onPress }: Blog.CardProps) {
@@ -25,12 +25,12 @@ export function BlogCard({ title, subtitle, likes, views, onPress }: Blog.CardPr
 
 				<View style={styles.statsContainer}>
 					<View style={styles.statBadge}>
-						<IconComponent name="heart" size={14} variant="default" />
+						<Icon name="heart" size={14} variant="default" />
 						<Text variant="caption-reg">{likes}</Text>
 					</View>
 
 					<View style={styles.statBadge}>
-						<IconComponent name="eye" size={14} variant="default" />
+						<Icon name="eye" size={14} variant="default" />
 						<Text variant="caption-reg">{views}</Text>
 					</View>
 				</View>

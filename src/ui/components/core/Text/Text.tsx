@@ -6,6 +6,7 @@ import { Text as TextTypes } from "./TextTypes"
 
 export const variantsKeys = {
 	heading: "heading",
+	title: "title",
 	"title-small-reg": "title-small-reg",
 	["title-large-bold"]: "title-large-bold",
 	["body-large-regular"]: "body-large-regular",
@@ -25,6 +26,14 @@ export const Text = ({ children, variant, style, ...rest }: TextTypes.Props) => 
 			fontSize: font.size[24],
 			lineHeight: font.lineHeight[32],
 			letterSpacing: font.letterSpacing["-0.12"],
+			fontFamily: font.family.default,
+			color: theme.content["text-default"],
+		},
+		title: {
+			fontWeight: font.weight[700],
+			fontSize: font.size[22],
+			lineHeight: font.lineHeight[28],
+			letterSpacing: font.letterSpacing["-0.11"],
 			fontFamily: font.family.default,
 			color: theme.content["text-default"],
 		},

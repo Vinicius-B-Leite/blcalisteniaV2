@@ -24,7 +24,7 @@ export const Screen = ({
 			flex: 1,
 			height: "100%",
 			paddingHorizontal: spacings.padding[20],
-			paddingTop: Math.max(top, spacings.padding[20]) + spacings.padding[12],
+			paddingTop: Math.max(top, spacings.padding[20]) + spacings.padding[4],
 			paddingBottom: Math.max(bottom, spacings.padding[20]) + height,
 		},
 		...[scrollable ? [] : [style]],
