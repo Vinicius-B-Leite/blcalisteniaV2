@@ -13,6 +13,7 @@ import { IconEye } from "./components/IconEye"
 import { IconHome } from "./components/IconHome"
 import { IconCalendar } from "./components/IconCalendar"
 import { IconUser } from "./components/IconUser"
+import { IconLeftArrow } from "./components/IconLeftArrow"
 
 export const IconMap = {
 	notification: IconNotification,
@@ -27,6 +28,7 @@ export const IconMap = {
 	home: IconHome,
 	calendar: IconCalendar,
 	user: IconUser,
+	leftArrow: IconLeftArrow,
 }
 
 export const IconComponent = ({
