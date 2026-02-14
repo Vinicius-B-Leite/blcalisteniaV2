@@ -1,5 +1,5 @@
 import { primitives } from "./primitives"
-import { ThemeType } from "../../types"
+import { ThemeType } from "@/themes"
 
 export const light: ThemeType = {
 	mode: "light",

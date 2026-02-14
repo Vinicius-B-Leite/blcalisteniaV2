@@ -1,6 +1,4 @@
-import { ThemeType } from "../../../theme/types"
-import { spacings } from "../../../theme/tokens/spacings"
-import { radius } from "../../../theme/tokens/sizes"
+import { ThemeType, spacings, radius } from "@/themes"
 import { EdgeInsets } from "react-native-safe-area-context"
 
 export const TAB_BAR_INDICATOR_SIZE = 55

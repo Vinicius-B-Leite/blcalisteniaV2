@@ -1,6 +1,5 @@
 import { View } from "react-native"
-import { Screen } from "../../../ui/components/core/Screen/Screen"
-import { Text } from "../../../ui/components/core/Text"
+import { Screen, Text } from "@/components/core"
 
 const Profile = () => {
 	return (

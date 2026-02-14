@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native"
-import { ThemeType } from "../../theme"
-import { spacings } from "../../theme/tokens/spacings"
+import { ThemeType, spacings } from "@/themes"
 import { EdgeInsets } from "react-native-safe-area-context"
 
 export const stylesTheme = (theme: ThemeType, insets: EdgeInsets) =>

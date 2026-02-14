@@ -1,4 +1,4 @@
-import { Icon } from "../../../../components/core/Icon/IconTypes"
+import { IconType } from "@/components/core"
 import { EWorkoutStatus } from "./types"
 
 export const useCardCalendar = () => {
@@ -24,7 +24,7 @@ export const useCardCalendar = () => {
 
 	const handleWorkoutStatus = () => {
 		let title = ""
-		let iconName: Icon.Names = "dumbbells"
+		let iconName: IconType.Names = "dumbbells"
 		let onPress: (() => void) | undefined = undefined
 
 		if (workoutStatus === EWorkoutStatus.empty) {

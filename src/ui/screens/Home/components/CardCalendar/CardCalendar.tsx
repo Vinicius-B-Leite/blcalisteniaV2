@@ -1,10 +1,8 @@
 import { ScrollView, View } from "react-native"
-import { useAppTheme } from "../../../../theme/hooks/useAppTheme"
+import { useAppTheme } from "@/themes"
 import { styleTheme } from "./styles"
-import { Text } from "../../../../components/core/Text"
-import { stringUtils } from "../../../../../utils/string"
-import { Icon } from "../../../../components/core/Icon"
-import { Pressable } from "../../../../components/core/Pressable"
+import { Text, Icon, Pressable } from "@/components/core"
+import { stringUtils } from "@/utils/string"
 import { useCardCalendar } from "./useCardCalendar"
 
 export const CardCalendar = () => {

@@ -1,4 +1,4 @@
-import { WorkoutList } from "../../../ui/screens/WorkoutList/WorkoutList"
+import { WorkoutList } from "@/screens"
 
 const Workout = () => {
 	return <WorkoutList />

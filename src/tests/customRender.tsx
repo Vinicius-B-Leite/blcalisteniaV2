@@ -1,6 +1,6 @@
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { ThemeProvider } from "@/themes"
-import { AuthProvider } from "../../domain/auth/AuthContext"
+import { AuthProvider } from "../domain/auth/AuthContext"
 import { ReactElement } from "react"
 import { render, RenderOptions } from "@testing-library/react-native"
 

@@ -1,5 +1,5 @@
 import { Pressable } from "react-native"
-import { useAppTheme } from "../../../theme/hooks/useAppTheme"
+import { useAppTheme } from "@/themes"
 import { IconNotification } from "./components/IconNotification"
 import { Icon as IconType } from "./IconTypes"
 import { IconDumbbells } from "./components/IconDumbbells"

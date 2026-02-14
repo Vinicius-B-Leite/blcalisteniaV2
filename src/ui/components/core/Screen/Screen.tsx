@@ -1,7 +1,6 @@
 import { ScrollView, StyleProp, View, ViewStyle } from "react-native"
-import { useAppTheme } from "../../../theme/hooks/useAppTheme"
+import { useAppTheme, spacings } from "@/themes"
 import { StatusBar } from "expo-status-bar"
-import { spacings } from "../../../theme/tokens/spacings"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Screen as ScreenTypes } from "./ScreenTypes"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"

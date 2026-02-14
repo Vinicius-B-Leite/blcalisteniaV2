@@ -1,8 +1,6 @@
 import { TouchableOpacity } from "react-native"
-import { spacings } from "../../../theme/tokens/spacings"
-import { radius } from "../../../theme/tokens/sizes"
+import { spacings, radius, useAppTheme } from "@/themes"
 import { ButtonProvider } from "./ButtonContext"
-import { useAppTheme } from "../../../theme/hooks/useAppTheme"
 import { Button } from "./ButtonTypes"
 
 export const variantsKeys = {

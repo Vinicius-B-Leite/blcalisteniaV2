@@ -1,6 +1,6 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useAuth } from "../../../domain/auth/AuthContext"
-import { useAppTheme } from "../../theme/hooks/useAppTheme"
+import { useAppTheme } from "@/themes"
 import { useRouter } from "expo-router"
 
 export const useOnboarding = () => {

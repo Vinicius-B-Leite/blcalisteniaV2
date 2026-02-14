@@ -1,10 +1,9 @@
 import { View, TouchableOpacity, Animated } from "react-native"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
-import { Icon, IconType } from "../../core/Icon"
-import { useStyles } from "../../../theme/hooks/useStyles"
+import { Icon, IconType } from "@/components/core"
+import { useStyles } from "@/themes"
 import { createStyles, TAB_BAR_INDICATOR_SIZE, TAB_GAP } from "./styles"
 import { useEffect, useRef } from "react"
-import { spacings } from "../../../theme/tokens/spacings"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 type TabBarIconMap = {

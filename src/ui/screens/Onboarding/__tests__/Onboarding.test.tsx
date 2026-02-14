@@ -1,4 +1,4 @@
-import { render } from "../../../../infra/tests"
+import { render } from "@/tests"
 import { OnboardingScreen } from "../Onboarding"
 
 describe("Onboarding Screen", () => {
