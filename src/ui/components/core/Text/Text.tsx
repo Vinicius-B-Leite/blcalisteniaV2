@@ -12,6 +12,8 @@ export const variantsKeys = {
 	["title-small-bold"]: "title-small-bold",
 	["body-large-bold"]: "body-large-bold",
 	["body-small-reg"]: "body-small-reg",
+	["body-small-bold"]: "body-small-bold",
+	["caption-reg"]: "caption-reg",
 }
 
 export const Text = ({ children, variant, style, ...rest }: TextTypes.Props) => {
@@ -71,6 +73,22 @@ export const Text = ({ children, variant, style, ...rest }: TextTypes.Props) => 
 			fontSize: font.size[12],
 			lineHeight: font.lineHeight[16],
 			letterSpacing: font.letterSpacing["0.06"],
+			fontFamily: font.family.default,
+			color: theme.content["text-default"],
+		},
+		"body-small-bold": {
+			fontWeight: font.weight[700],
+			fontSize: font.size[12],
+			lineHeight: font.lineHeight[16],
+			letterSpacing: font.letterSpacing["0.06"],
+			fontFamily: font.family.default,
+			color: theme.content["text-default"],
+		},
+		"caption-reg": {
+			fontWeight: font.weight[400],
+			fontSize: font.size[10],
+			lineHeight: font.lineHeight[14],
+			letterSpacing: font.letterSpacing["0.05"],
 			fontFamily: font.family.default,
 			color: theme.content["text-default"],
 		},

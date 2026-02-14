@@ -11,8 +11,12 @@ export const useHome = () => {
 		// TODO: navigate to notifications
 	}
 
+	const handleSeeMoreBlog = () => {
+		// TODO: navigate to blog list
+	}
+
 	return {
-		actions: { handleNotificationsPress },
+		actions: { handleNotificationsPress, handleSeeMoreBlog },
 		states: {
 			insets,
 			theme,
