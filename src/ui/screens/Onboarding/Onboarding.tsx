@@ -1,14 +1,13 @@
 import { ImageBackground, View } from "react-native"
-import BackgroundImage from "../../../assets/imgs/onboarding-background.png"
+import BackgroundImage from "@/assets/imgs/onboarding-background.png"
 
 import { StatusBar } from "expo-status-bar"
 import { LinearGradient } from "expo-linear-gradient"
 
-import { Text } from "../../components/core/Text/Text"
-import { Button } from "../../components/core/Button"
+import { Text, Button } from "@/components/core"
 import { stylesTheme } from "./styles"
 
-import { useStyles } from "../../theme/hooks/useStyles"
+import { useStyles } from "@/themes"
 import { useOnboarding } from "./useOnboarding"
 
 export function OnboardingScreen() {

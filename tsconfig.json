@@ -2,7 +2,18 @@
 	"extends": "expo/tsconfig.base",
 	"compilerOptions": {
 		"strict": true,
-		"noImplicitAny": true
+		"noImplicitAny": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/screens/*": ["src/ui/screens/*"],
+			"@/screens": ["src/ui/screens"],
+			"@/components/*": ["src/ui/components/*"],
+			"@/themes/*": ["src/ui/theme/*"],
+			"@/themes": ["src/ui/theme"],
+			"@/utils/*": ["src/utils/*"],
+			"@/assets/*": ["src/assets/*"],
+			"@/tests": ["src/tests"]
+		}
 	},
 	"include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

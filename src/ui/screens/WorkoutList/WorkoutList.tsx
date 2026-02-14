@@ -1,5 +1,4 @@
-import { Header } from "../../components/core/Header"
-import { Screen } from "../../components/core/Screen/Screen"
+import { Header, Screen } from "@/components/core"
 import { EmptyState } from "./components"
 
 export const WorkoutList = () => {

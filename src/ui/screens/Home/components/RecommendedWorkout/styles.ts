@@ -1,7 +1,5 @@
 import { Dimensions, StyleSheet } from "react-native"
-import { ThemeType } from "../../../../theme"
-import { radius } from "../../../../theme/tokens/sizes"
-import { spacings } from "../../../../theme/tokens/spacings"
+import { ThemeType, radius, spacings } from "@/themes"
 
 const SCREEN_WIDTH = Dimensions.get("window").width
 const CARD_WIDTH = SCREEN_WIDTH * 0.75

@@ -1,9 +1,7 @@
 import { ImageBackground, ScrollView, View } from "react-native"
-import { useAppTheme } from "../../../../theme/hooks/useAppTheme"
+import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
-import { Text } from "../../../../components/core/Text"
-import { Pressable } from "../../../../components/core/Pressable"
-import { Icon } from "../../../../components/core/Icon"
+import { Text, Pressable, Icon } from "@/components/core"
 
 export const RecommendedWorkout = () => {
 	const { theme } = useAppTheme()

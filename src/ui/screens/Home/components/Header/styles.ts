@@ -1,7 +1,5 @@
 import { StyleSheet } from "react-native"
-import { ThemeType } from "../../../../theme"
-import { spacings } from "../../../../theme/tokens/spacings"
-import { radius } from "../../../../theme/tokens/sizes"
+import { ThemeType, spacings, radius } from "@/themes"
 
 const AVATAR_SIZE = 48
 

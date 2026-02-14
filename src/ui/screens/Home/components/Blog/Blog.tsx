@@ -1,9 +1,8 @@
-import { View, ScrollView } from "react-native"
+import { View } from "react-native"
 import { Blog as BlogTypes } from "./types"
-import { useStyles } from "../../../../theme/hooks/useStyles"
+import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
-import { Text } from "../../../../components/core/Text"
-import { Pressable } from "../../../../components/core/Pressable"
+import { Text, Pressable } from "@/components/core"
 import { BlogCard } from "./BlogCard"
 
 // Mock data for demonstration

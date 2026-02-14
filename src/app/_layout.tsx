@@ -1,5 +1,5 @@
 import { Stack } from "expo-router"
-import { ThemeProvider } from "../ui/theme/provider/themeProvider"
+import { ThemeProvider } from "@/themes"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { AuthProvider, useAuth } from "../domain/auth/AuthContext"
 

@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router"
-import { TabBar } from "../../../ui/components/containers/TabBar"
+import { TabBar } from "@/components/containers"
 
 const TabLayout = () => {
 	return (

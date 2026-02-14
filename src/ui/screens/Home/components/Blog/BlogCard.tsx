@@ -1,11 +1,8 @@
 import { View } from "react-native"
 import { Blog } from "./types"
-import { useStyles } from "../../../../theme/hooks/useStyles"
+import { useStyles, useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
-import { Text } from "../../../../components/core/Text"
-import { Pressable } from "../../../../components/core/Pressable"
-import { Icon } from "../../../../components/core/Icon"
-import { useAppTheme } from "../../../../theme/hooks/useAppTheme"
+import { Text, Pressable, Icon } from "@/components/core"
 
 export function BlogCard({ title, subtitle, likes, views, onPress }: Blog.CardProps) {
 	const styles = useStyles(stylesTheme)

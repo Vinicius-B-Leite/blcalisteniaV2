@@ -1,7 +1,6 @@
 import React from "react"
 import { Text as RNText, TextStyle as RNTextStyle } from "react-native"
-import { useAppTheme } from "../../../theme/hooks/useAppTheme"
-import { font } from "../../../theme/tokens/font"
+import { useAppTheme, font } from "@/themes"
 import { Text as TextTypes } from "./TextTypes"
 
 export const variantsKeys = {

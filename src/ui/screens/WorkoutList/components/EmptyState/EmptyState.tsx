@@ -1,7 +1,6 @@
 import { View, Image } from "react-native"
-import { Text } from "../../../../components/core/Text"
-import { Button } from "../../../../components/core/Button"
-import { useStyles } from "../../../../theme/hooks/useStyles"
+import { Text, Button } from "@/components/core"
+import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 
 export const EmptyState = () => {

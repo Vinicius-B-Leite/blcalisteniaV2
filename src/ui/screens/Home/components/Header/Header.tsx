@@ -1,8 +1,7 @@
 import { Image, View } from "react-native"
-import { Text } from "../../../../components/core/Text/Text"
-import { useAppTheme } from "../../../../theme/hooks/useAppTheme"
+import { Text, Icon } from "@/components/core"
+import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
-import { Icon } from "../../../../components/core/Icon"
 
 type HeaderProps = {
 	userName: string

@@ -1,6 +1,6 @@
 import { View } from "react-native"
-import { Screen } from "../../components/core/Screen/Screen"
-import { useStyles } from "../../theme/hooks/useStyles"
+import { Screen } from "@/components/core"
+import { useStyles } from "@/themes"
 import { Header, CardCalendar, RecommendedWorkout, Blog } from "./components"
 import { stylesTheme } from "./styles"
 import { useHome } from "./useHome"
