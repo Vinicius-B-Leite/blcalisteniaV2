@@ -11,3 +11,4 @@ export const Input = {
 }
 
 export { type Input as InputTypes } from "./InputTypes"
+export { inputVariants, inputVariantsKeys } from "./InputVariants"

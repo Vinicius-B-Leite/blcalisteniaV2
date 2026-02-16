@@ -1,12 +1,8 @@
 import { TouchableOpacity } from "react-native"
-import { spacings, radius, useAppTheme } from "@/themes"
+import { useAppTheme } from "@/themes"
 import { ButtonProvider } from "./ButtonContext"
 import { Button } from "./ButtonTypes"
-
-export const variantsKeys = {
-	primary: "primary",
-	ghost: "ghost",
-}
+import { buttonVariants } from "./ButtonVariants"
 
 export const ButtonRoot = ({
 	children,
@@ -15,35 +11,7 @@ export const ButtonRoot = ({
 }: Button.RootProps) => {
 	const { theme } = useAppTheme()
 
-	const variants: Record<keyof typeof variantsKeys, Button.Variant> = {
-		primary: {
-			root: {
-				gap: spacings.gap[8],
-				padding: spacings.padding[8],
-				borderRadius: radius[24],
-				justifyContent: "center",
-				alignItems: "center",
-				backgroundColor: theme.action["brand-background"],
-			},
-			content: {
-				variant: "title-small-bold",
-			},
-		},
-		ghost: {
-			root: {
-				gap: spacings.gap[8],
-				padding: spacings.padding[8],
-				borderRadius: radius[24],
-				justifyContent: "center",
-				alignItems: "center",
-				borderWidth: 0,
-				borderColor: theme.content["text-default"],
-			},
-			content: {
-				variant: "title-small-bold",
-			},
-		},
-	}
+	const variants = buttonVariants(theme)
 
 	const currentVariant = variants[variant]
 

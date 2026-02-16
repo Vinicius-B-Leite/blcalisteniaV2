@@ -8,15 +8,10 @@ import {
 	ViewStyle,
 } from "react-native"
 import { Text } from "../Text/TextTypes"
-
-export const variantsKeys = {
-	default: "default",
-	focus: "focus",
-	error: "error",
-}
+import { inputVariantsKeys } from "./InputVariants"
 
 export namespace Input {
-	export type VariantsKeys = keyof typeof variantsKeys
+	export type VariantsKeys = keyof typeof inputVariantsKeys
 
 	export type Variant = {
 		container: StyleProp<ViewStyle>
