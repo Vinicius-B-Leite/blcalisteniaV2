@@ -9,7 +9,7 @@ export namespace Button {
 		content: Text.Props
 	}
 	export type RootProps = TouchableOpacityProps & {
-		variant: VariantsKeys
+		variant?: VariantsKeys
 	}
 	export type ContextType = {
 		variant: Variant

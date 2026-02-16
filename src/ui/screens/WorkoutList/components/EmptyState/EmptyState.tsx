@@ -3,7 +3,11 @@ import { Text, Button } from "@/components/core"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 
-export const EmptyState = () => {
+type EmptyStateProps = {
+	handleOpenModal(): void
+}
+
+export const EmptyState = ({ handleOpenModal }: EmptyStateProps) => {
 	const styles = useStyles(stylesTheme)
 	return (
 		<View style={styles.container}>
@@ -34,7 +38,7 @@ export const EmptyState = () => {
 					Comece agora criando o seu primeiro treino personalizado!
 				</Text>
 				<View style={styles.buttonsContainer}>
-					<Button.Root variant="primary">
+					<Button.Root onPress={handleOpenModal} variant="primary">
 						<Button.Content>Criar treino</Button.Content>
 					</Button.Root>
 					<Button.Root variant="ghost">

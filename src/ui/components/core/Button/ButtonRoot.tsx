@@ -8,7 +8,11 @@ export const variantsKeys = {
 	ghost: "ghost",
 }
 
-export const ButtonRoot = ({ children, variant, ...props }: Button.RootProps) => {
+export const ButtonRoot = ({
+	children,
+	variant = "primary",
+	...props
+}: Button.RootProps) => {
 	const { theme } = useAppTheme()
 
 	const variants: Record<keyof typeof variantsKeys, Button.Variant> = {
