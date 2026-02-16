@@ -13,10 +13,13 @@ export const ButtonRoot = ({
 
 	const variants = buttonVariants(theme)
 
-	const currentVariant = variants[variant]
+	let currentVariant = variants[variant]
+	if (props.disabled || props.isLoading) {
+		currentVariant = variants["disabled"]
+	}
 
 	return (
-		<ButtonProvider value={{ variant: currentVariant }}>
+		<ButtonProvider value={{ variant: currentVariant, isLoading: props.isLoading }}>
 			<TouchableOpacity activeOpacity={0.8} style={currentVariant.root} {...props}>
 				{children}
 			</TouchableOpacity>

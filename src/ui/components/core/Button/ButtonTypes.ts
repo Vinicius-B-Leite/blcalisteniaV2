@@ -10,8 +10,10 @@ export namespace Button {
 	}
 	export type RootProps = TouchableOpacityProps & {
 		variant?: VariantsKeys
+		isLoading?: boolean
 	}
 	export type ContextType = {
 		variant: Variant
+		isLoading?: boolean
 	}
 }

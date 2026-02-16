@@ -5,6 +5,7 @@ import { Button } from "./ButtonTypes"
 export const buttonVariantsKeys = {
 	primary: "primary",
 	ghost: "ghost",
+	disabled: "disabled",
 }
 
 export const buttonVariants = (
@@ -41,6 +42,18 @@ export const buttonVariants = (
 			},
 			content: {
 				...defaultVariant.content,
+			},
+		},
+		disabled: {
+			root: {
+				...defaultVariant.root,
+				backgroundColor: theme.action["disabled-background"],
+			},
+			content: {
+				...defaultVariant.content,
+				style: {
+					color: theme.content["always-white"],
+				},
 			},
 		},
 	}
