@@ -18,7 +18,9 @@ export const SearchExercises = () => {
 				<Header.VerticalCenterTitle>Buscar exercícios</Header.VerticalCenterTitle>
 			</Header.Root>
 
-			<View style={styles.content}>
+			<ScrollView
+				contentContainerStyle={[styles.content]}
+				showsVerticalScrollIndicator={false}>
 				<SearchBar
 					placeholder="Buscar exercícios"
 					value={states.searchText}
@@ -71,7 +73,7 @@ export const SearchExercises = () => {
 						/>
 					</View>
 				)}
-			</View>
+			</ScrollView>
 			<View style={styles.addButtonContainer}>
 				<Button.Root
 					disabled={selectedCount === 0}
