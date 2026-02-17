@@ -1,6 +1,12 @@
 import { View, FlatList } from "react-native"
 import { Header, Screen, Text, Pressable } from "@/components/core"
-import { CreateWorkoutModal, EmptyState, WorkoutCard, SearchBar } from "./components"
+import {
+	CreateWorkoutModal,
+	EmptyState,
+	WorkoutCard,
+	SearchBar,
+	DeleteWorkoutModal,
+} from "./components"
 import { useWorkoutList } from "./useWorkoutList"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
@@ -55,6 +61,13 @@ export const WorkoutList = () => {
 			<CreateWorkoutModal
 				visible={states.modalCreateWorkout}
 				onClose={actions.closeModal}
+			/>
+
+			<DeleteWorkoutModal
+				visible={states.deleteModal !== null}
+				workoutName={states.deleteModal?.title || ""}
+				onClose={actions.onCloseDeleteModal}
+				onConfirm={actions.onConfirmDelete}
 			/>
 		</Screen>
 	)

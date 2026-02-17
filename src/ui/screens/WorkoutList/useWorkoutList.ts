@@ -43,6 +43,7 @@ export const useWorkoutList = () => {
 	const [modalCreateWorkout, setModalCreateWorkout] = useState(false)
 	const [searchText, setSearchText] = useState("")
 	const [workouts, setWorkouts] = useState<Workout[]>(MOCK_WORKOUTS)
+	const [deleteModal, setDeleteModal] = useState<Workout | null>(null)
 
 	const hasWorkouts = workouts.length > 0
 
@@ -64,7 +65,21 @@ export const useWorkoutList = () => {
 	}
 
 	const handleDeleteWorkout = (id: string) => {
-		setWorkouts((prev) => prev.filter((workout) => workout.id !== id))
+		const workout = workouts.find((w) => w.id === id)
+		if (workout) {
+			setDeleteModal(workout)
+		}
+	}
+
+	const handleConfirmDelete = () => {
+		if (deleteModal && deleteModal.id) {
+			setWorkouts((prev) => prev.filter((workout) => workout.id !== deleteModal.id))
+		}
+		handleCloseDeleteModal()
+	}
+
+	const handleCloseDeleteModal = () => {
+		setDeleteModal(null)
 	}
 
 	const filteredWorkouts = workouts.filter((workout) =>
@@ -77,6 +92,7 @@ export const useWorkoutList = () => {
 			searchText,
 			workouts: filteredWorkouts,
 			hasWorkouts,
+			deleteModal,
 		},
 		actions: {
 			openModal: handleOpenModalCreateWorkout,
@@ -84,6 +100,8 @@ export const useWorkoutList = () => {
 			onSearchTextChange: handleSearchTextChange,
 			onEditWorkout: handleEditWorkout,
 			onDeleteWorkout: handleDeleteWorkout,
+			onConfirmDelete: handleConfirmDelete,
+			onCloseDeleteModal: handleCloseDeleteModal,
 		},
 	}
 }
