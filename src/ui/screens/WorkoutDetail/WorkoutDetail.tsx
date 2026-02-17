@@ -1,6 +1,6 @@
 import { FlatList, View } from "react-native"
 import { Screen, Header, Button } from "@/components/core"
-import { WorkoutCard, ExerciseCard } from "./components"
+import { WorkoutCard, ExerciseCard, EmptyState } from "./components"
 import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useWorkoutDetail } from "./useWorkoutDetail"
@@ -39,6 +39,8 @@ export const WorkoutDetail = () => {
 	const styles = stylesTheme(theme)
 	const { actions } = useWorkoutDetail()
 
+	const hasExercises = MOCK_EXERCISES.length > 0
+
 	return (
 		<Screen>
 			<Header.Root>
@@ -74,15 +76,20 @@ export const WorkoutDetail = () => {
 						onDeletePress={() => actions.handleExerciseDeletePress(item.id)}
 					/>
 				)}
+				ListEmptyComponent={<EmptyState />}
 			/>
 
 			<View style={styles.buttonsContainer}>
-				<Button.Root onPress={actions.handleStartWorkout}>
-					<Button.Content>Começar treino</Button.Content>
-				</Button.Root>
+				{hasExercises && (
+					<Button.Root onPress={actions.handleStartWorkout}>
+						<Button.Content>Começar treino</Button.Content>
+					</Button.Root>
+				)}
 
-				<Button.Root variant="ghost" onPress={actions.handleAddExercise}>
-					<Button.Content>Adicionar exercício</Button.Content>
+				<Button.Root
+					variant={hasExercises ? "ghost" : "primary"}
+					onPress={actions.handleAddExercise}>
+					<Button.Content>Adicionar exercícios</Button.Content>
 				</Button.Root>
 			</View>
 		</Screen>
