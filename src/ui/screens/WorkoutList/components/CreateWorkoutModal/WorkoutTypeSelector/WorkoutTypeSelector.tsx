@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, View } from "react-native"
+import { FlatList, View } from "react-native"
 import { Text } from "@/components/core"
 import { Pressable } from "@/components/core"
 import { useAppTheme } from "@/themes/hooks"
@@ -46,10 +46,10 @@ export const WorkoutTypeSelector = ({
 				horizontal
 				style={styles.typesWrapper}
 				data={workoutTypes}
+				keyExtractor={(item) => item.value}
 				showsHorizontalScrollIndicator={false}
 				renderItem={({ item: type }) => (
 					<Pressable.Root
-						key={type.value}
 						onPress={() => handleTypeSelect(type.value)}
 						style={[
 							styles.typeButton,

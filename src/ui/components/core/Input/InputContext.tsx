@@ -7,7 +7,7 @@ export const InputProvider = InputContext.Provider
 
 export const useInputContext = () => {
 	const context = useContext(InputContext)
-	if (!context) {
+	if (!context?.variant) {
 		throw new Error("Input sub-components must be used within Input")
 	}
 	return context

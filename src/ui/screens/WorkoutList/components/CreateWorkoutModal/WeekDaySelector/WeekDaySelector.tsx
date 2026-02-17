@@ -53,10 +53,10 @@ export const WeekDaySelector = ({
 				style={styles.daysWrapper}
 				data={weekDays}
 				horizontal
+				keyExtractor={(item) => item.value}
 				showsHorizontalScrollIndicator={false}
 				renderItem={({ item: day }) => (
 					<Pressable.Root
-						key={day.value}
 						onPress={() => handleDayToggle(day.value)}
 						style={[
 							styles.dayButton,

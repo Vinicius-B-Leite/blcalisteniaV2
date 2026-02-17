@@ -1,6 +1,5 @@
 import {
 	Modal as RNModal,
-	View,
 	TouchableWithoutFeedback,
 	Animated,
 	Dimensions,
@@ -58,7 +57,7 @@ export const ModalRoot = ({ children, onClose, visible }: Modal.RootProps) => {
 				}),
 			]).start()
 		}
-	}, [visible])
+	}, [visible, overlayOpacity, containerTranslateY, SCREEN_HEIGHT])
 
 	return (
 		<RNModal
