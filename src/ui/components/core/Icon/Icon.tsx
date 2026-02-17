@@ -15,6 +15,8 @@ import { IconCalendar } from "./components/IconCalendar"
 import { IconUser } from "./components/IconUser"
 import { IconLeftArrow } from "./components/IconLeftArrow"
 import { IconX } from "./components/IconX"
+import { IconTrash } from "./components/IconTrash"
+import { IconSearch } from "./components/IconSearch"
 
 export const IconMap = {
 	notification: IconNotification,
@@ -31,6 +33,8 @@ export const IconMap = {
 	user: IconUser,
 	leftArrow: IconLeftArrow,
 	x: IconX,
+	trash: IconTrash,
+	search: IconSearch,
 }
 
 export const Icon = ({
@@ -46,6 +50,12 @@ export const Icon = ({
 	const variants: Record<IconType.VariantKey, { color: string }> = {
 		default: {
 			color: theme.content["icon-default"],
+		},
+		secondary: {
+			color: theme.content["icon-variant"],
+		},
+		error: {
+			color: theme.content["text-error"],
 		},
 	}
 

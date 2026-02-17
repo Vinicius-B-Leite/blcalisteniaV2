@@ -28,6 +28,7 @@ export const inputVariants = (
 				paddingHorizontal: spacings.padding[12],
 				gap: spacings.gap[8],
 				flexDirection: "row" as const,
+				alignItems: "center" as const,
 			},
 			input: {
 				flex: 1,

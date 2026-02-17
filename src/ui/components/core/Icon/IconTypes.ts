@@ -3,6 +3,8 @@ import { IconMap } from "./Icon"
 
 const variantsKey = {
 	default: "default",
+	secondary: "secondary",
+	error: "error",
 }
 
 export namespace Icon {
