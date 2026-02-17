@@ -4,6 +4,6 @@ export type WorkoutCardProps = {
 	exerciseCount: number
 	category: string
 	imageUrl?: string
-	onEdit: () => void
+	onRedirect: () => void
 	onDelete: () => void
 }

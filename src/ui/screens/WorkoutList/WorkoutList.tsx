@@ -51,7 +51,7 @@ export const WorkoutList = () => {
 							exerciseCount={item.exerciseCount}
 							category={item.category}
 							imageUrl={item.imageUrl}
-							onEdit={() => actions.onEditWorkout(item.id)}
+							onRedirect={() => actions.onOpenWorkout(item.id)}
 							onDelete={() => actions.onDeleteWorkout(item.id)}
 						/>
 					)}

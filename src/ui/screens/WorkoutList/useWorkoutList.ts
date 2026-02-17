@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useRouter } from "expo-router"
 
 type Workout = {
 	id: string
@@ -40,12 +41,18 @@ const MOCK_WORKOUTS: Workout[] = [
 ]
 
 export const useWorkoutList = () => {
+	const router = useRouter()
 	const [modalCreateWorkout, setModalCreateWorkout] = useState(false)
 	const [searchText, setSearchText] = useState("")
 	const [workouts, setWorkouts] = useState<Workout[]>(MOCK_WORKOUTS)
 	const [deleteModal, setDeleteModal] = useState<Workout | null>(null)
 
 	const hasWorkouts = workouts.length > 0
+
+	const handleOpenWorkout = (id: string) => {
+		router.push("/workoutDetail")
+		// TODO: Pass workout ID as parameter when implementing dynamic routes
+	}
 
 	const handleOpenModalCreateWorkout = () => {
 		setModalCreateWorkout(true)
@@ -96,6 +103,7 @@ export const useWorkoutList = () => {
 		},
 		actions: {
 			openModal: handleOpenModalCreateWorkout,
+			onOpenWorkout: handleOpenWorkout,
 			closeModal: handleCloseModalCreateWorkout,
 			onSearchTextChange: handleSearchTextChange,
 			onEditWorkout: handleEditWorkout,

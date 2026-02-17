@@ -1,4 +1,3 @@
-import { Pressable } from "react-native"
 import { useAppTheme } from "@/themes"
 import { IconNotification } from "./components/IconNotification"
 import { Icon as IconType } from "./IconTypes"
@@ -17,6 +16,8 @@ import { IconLeftArrow } from "./components/IconLeftArrow"
 import { IconX } from "./components/IconX"
 import { IconTrash } from "./components/IconTrash"
 import { IconSearch } from "./components/IconSearch"
+import { IconEdit } from "./components/IconEdit"
+import { Pressable } from "../Pressable"
 
 export const IconMap = {
 	notification: IconNotification,
@@ -35,6 +36,7 @@ export const IconMap = {
 	x: IconX,
 	trash: IconTrash,
 	search: IconSearch,
+	edit: IconEdit,
 }
 
 export const Icon = ({
@@ -63,12 +65,9 @@ export const Icon = ({
 
 	if (onPress) {
 		return (
-			<Pressable
-				onPress={onPress}
-				style={({ pressed }) => [pressableStyle, pressed && { opacity: 0.7 }]}
-				hitSlop={12}>
+			<Pressable.Root onPress={onPress} style={pressableStyle} hitSlop={12}>
 				<IconComponent color={currentVariant.color} size={size} />
-			</Pressable>
+			</Pressable.Root>
 		)
 	}
 

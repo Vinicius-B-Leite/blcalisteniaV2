@@ -9,7 +9,7 @@ export const WorkoutCard = ({
 	exerciseCount,
 	category,
 	imageUrl,
-	onEdit,
+	onRedirect,
 	onDelete,
 }: WorkoutCardProps) => {
 	const styles = useStyles(stylesTheme)
@@ -38,7 +38,7 @@ export const WorkoutCard = ({
 			</View>
 
 			<View style={styles.actionsContainer}>
-				<Pressable.Root style={styles.iconButton} onPress={onEdit}>
+				<Pressable.Root style={styles.iconButton} onPress={onRedirect}>
 					<Icon name="arrowRightTop" size={20} />
 				</Pressable.Root>
 				<Pressable.Root style={styles.iconButton} onPress={onDelete}>
