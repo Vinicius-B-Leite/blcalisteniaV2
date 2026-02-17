@@ -17,4 +17,7 @@ export const stylesTheme = (theme: ThemeType) =>
 		exercisesList: {
 			gap: spacings.gap[8],
 		},
+		addButtonContainer: {
+			paddingTop: spacings.padding[16],
+		},
 	})

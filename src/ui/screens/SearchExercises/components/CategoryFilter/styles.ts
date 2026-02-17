@@ -22,7 +22,6 @@ export const stylesTheme = (theme: ThemeType) => {
 			backgroundColor: theme.surface.brand,
 		},
 		chipText: {
-			flex: 1,
 			textAlign: "center",
 			color: theme.surface.brand,
 		},

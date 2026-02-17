@@ -1,5 +1,5 @@
 import { View, Image, Animated, TouchableOpacity } from "react-native"
-import { useStyles, useAppTheme } from "@/themes"
+import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { ExerciseCard as ExerciseCardTypes } from "./types"
 import { Text, Icon } from "@/components/core"
@@ -11,14 +11,10 @@ export function ExerciseCard({
 	imageUrl,
 	onAdd,
 	showImage = true,
+	isSelected = false,
 }: ExerciseCardTypes.Props) {
 	const styles = useStyles(stylesTheme)
-	const { states, actions } = useExerciseCard()
-
-	const handlePress = () => {
-		actions.toggleSelection()
-		onAdd?.()
-	}
+	const { states } = useExerciseCard(isSelected)
 
 	return (
 		<View style={styles.container}>
@@ -39,7 +35,7 @@ export function ExerciseCard({
 					</Text>
 				</View>
 			</View>
-			<TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
+			<TouchableOpacity onPress={onAdd} activeOpacity={0.7}>
 				<Animated.View
 					style={[
 						styles.iconButton,
@@ -51,7 +47,7 @@ export function ExerciseCard({
 					<Icon
 						name={"plus"}
 						size={20}
-						variant={states.isSelected ? "brand" : "default"}
+						variant={isSelected ? "brand" : "default"}
 					/>
 				</Animated.View>
 			</TouchableOpacity>

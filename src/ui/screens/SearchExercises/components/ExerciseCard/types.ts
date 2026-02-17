@@ -4,6 +4,7 @@ export namespace ExerciseCard {
 		category: string
 		imageUrl?: string
 		showImage?: boolean
+		isSelected?: boolean
 		onAdd?: () => void
 	}
 }

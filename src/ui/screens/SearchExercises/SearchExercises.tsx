@@ -1,5 +1,5 @@
 import { View, ScrollView, FlatList } from "react-native"
-import { Screen, Header, Text } from "@/components/core"
+import { Screen, Header, Text, Button } from "@/components/core"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useSearchExercises } from "./useSearchExercises"
@@ -9,6 +9,8 @@ export const SearchExercises = () => {
 	const { states, actions } = useSearchExercises()
 	const styles = useStyles(stylesTheme)
 
+	const selectedCount = states.selectedExercises.length
+
 	return (
 		<Screen>
 			<Header.Root>
@@ -16,9 +18,7 @@ export const SearchExercises = () => {
 				<Header.VerticalCenterTitle>Buscar exercícios</Header.VerticalCenterTitle>
 			</Header.Root>
 
-			<ScrollView
-				contentContainerStyle={styles.content}
-				showsVerticalScrollIndicator={false}>
+			<View style={styles.content}>
 				<SearchBar
 					placeholder="Buscar exercícios"
 					value={states.searchText}
@@ -38,7 +38,8 @@ export const SearchExercises = () => {
 							title={item.title}
 							category={item.category}
 							imageUrl={item.imageUrl}
-							onAdd={() => actions.handleExercisePress(item.id)}
+							isSelected={states.selectedExercises.includes(item.id)}
+							onAdd={() => actions.handleToggleExercise(item.id)}
 						/>
 					)}
 					keyExtractor={(item) => item.id}
@@ -58,7 +59,10 @@ export const SearchExercises = () => {
 									title={item.title}
 									category={item.category}
 									showImage={false}
-									onAdd={() => actions.handleExercisePress(item.id)}
+									isSelected={states.selectedExercises.includes(
+										item.id,
+									)}
+									onAdd={() => actions.handleToggleExercise(item.id)}
 								/>
 							)}
 							keyExtractor={(item) => item.id}
@@ -67,7 +71,18 @@ export const SearchExercises = () => {
 						/>
 					</View>
 				)}
-			</ScrollView>
+			</View>
+			<View style={styles.addButtonContainer}>
+				<Button.Root
+					disabled={selectedCount === 0}
+					variant="primary"
+					onPress={actions.handleAddExercises}>
+					<Button.Content>
+						Adicionar {selectedCount > 0 ? selectedCount : ""}{" "}
+						{selectedCount === 1 ? "exercício" : "exercícios"}
+					</Button.Content>
+				</Button.Root>
+			</View>
 		</Screen>
 	)
 }

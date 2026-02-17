@@ -1,23 +1,18 @@
 import { useAppTheme } from "@/themes/hooks"
-import { useState, useRef } from "react"
+import { useRef, useEffect } from "react"
 import { Animated } from "react-native"
 
-export const useExerciseCard = () => {
-	const [isSelected, setIsSelected] = useState(false)
-	const animatedValue = useRef(new Animated.Value(0)).current
+export const useExerciseCard = (isSelected: boolean) => {
+	const animatedValue = useRef(new Animated.Value(isSelected ? 1 : 0)).current
 	const { theme } = useAppTheme()
 
-	const toggleSelection = () => {
-		const newValue = !isSelected
-
+	useEffect(() => {
 		Animated.timing(animatedValue, {
-			toValue: newValue ? 1 : 0,
+			toValue: isSelected ? 1 : 0,
 			duration: 300,
 			useNativeDriver: false,
 		}).start()
-
-		setIsSelected(newValue)
-	}
+	}, [isSelected, animatedValue])
 
 	const rotation = animatedValue.interpolate({
 		inputRange: [0, 1],
@@ -31,13 +26,8 @@ export const useExerciseCard = () => {
 
 	return {
 		states: {
-			isSelected,
 			rotation,
-			animatedValue,
 			backgroundColor,
-		},
-		actions: {
-			toggleSelection,
 		},
 	}
 }

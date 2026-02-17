@@ -39,6 +39,7 @@ export const useSearchExercises = () => {
 	const router = useRouter()
 	const [searchText, setSearchText] = useState("")
 	const [selectedCategory, setSelectedCategory] = useState("Bíceps")
+	const [selectedExercises, setSelectedExercises] = useState<string[]>([])
 
 	const handleSearchChange = (text: string) => {
 		setSearchText(text)
@@ -60,6 +61,20 @@ export const useSearchExercises = () => {
 		console.log("Favorite pressed:", id)
 	}
 
+	const handleToggleExercise = (id: string) => {
+		setSelectedExercises((prev) => {
+			if (prev.includes(id)) {
+				return prev.filter((exerciseId) => exerciseId !== id)
+			}
+			return [...prev, id]
+		})
+	}
+
+	const handleAddExercises = () => {
+		console.log("Adding exercises:", selectedExercises)
+		// Implementar lógica de adicionar exercícios
+	}
+
 	const isCustomExercisesEmpty = CUSTOM_EXERCISES.length === 0
 
 	return {
@@ -70,6 +85,7 @@ export const useSearchExercises = () => {
 			exercises: MOCK_EXERCISES,
 			customExercises: CUSTOM_EXERCISES,
 			isCustomExercisesEmpty,
+			selectedExercises,
 		},
 		actions: {
 			handleSearchChange,
@@ -77,6 +93,8 @@ export const useSearchExercises = () => {
 			handleCategorySelect,
 			handleExercisePress,
 			handleFavoritePress,
+			handleToggleExercise,
+			handleAddExercises,
 		},
 	}
 }
