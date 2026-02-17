@@ -36,7 +36,7 @@ export const ExerciseCard = ({
 			</View>
 			<View style={styles.actionsContainer}>
 				<Pressable.Root onPress={onEditPress} style={styles.actionButton}>
-					<Icon name="edit" size={20} variant="secondary" />
+					<Icon name="edit" size={20} />
 				</Pressable.Root>
 				<Pressable.Root onPress={onDeletePress} style={styles.actionButton}>
 					<Icon name="trash" size={20} variant="error" />
