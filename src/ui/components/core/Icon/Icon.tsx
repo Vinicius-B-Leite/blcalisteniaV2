@@ -14,7 +14,6 @@ import { IconHome } from "./components/IconHome"
 import { IconCalendar } from "./components/IconCalendar"
 import { IconUser } from "./components/IconUser"
 import { IconLeftArrow } from "./components/IconLeftArrow"
-import { IconX } from "./components/IconX"
 
 export const IconMap = {
 	notification: IconNotification,
@@ -30,7 +29,6 @@ export const IconMap = {
 	calendar: IconCalendar,
 	user: IconUser,
 	leftArrow: IconLeftArrow,
-	x: IconX,
 }
 
 export const Icon = ({

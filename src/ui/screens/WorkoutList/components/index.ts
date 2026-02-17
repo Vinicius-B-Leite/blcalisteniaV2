@@ -1,2 +1,1 @@
 export { EmptyState } from "./EmptyState"
-export { CreateWorkoutModal } from "./CreateWorkoutModal"

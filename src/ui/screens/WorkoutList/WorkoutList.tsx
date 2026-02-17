@@ -1,10 +1,7 @@
 import { Header, Screen } from "@/components/core"
-import { CreateWorkoutModal, EmptyState } from "./components"
-import { useWorkoutList } from "./useWorkoutList"
+import { EmptyState } from "./components"
 
 export const WorkoutList = () => {
-	const { states, actions } = useWorkoutList()
-
 	return (
 		<Screen>
 			<Header.Root>
@@ -12,12 +9,7 @@ export const WorkoutList = () => {
 				<Header.VerticalCenterTitle>Meus treinos</Header.VerticalCenterTitle>
 			</Header.Root>
 
-			<EmptyState handleOpenModal={actions.openModal} />
-
-			<CreateWorkoutModal
-				visible={states.modalCreateWorkout}
-				onClose={actions.closeModal}
-			/>
+			<EmptyState />
 		</Screen>
 	)
 }
