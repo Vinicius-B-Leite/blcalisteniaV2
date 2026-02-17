@@ -1,4 +1,4 @@
-import { Text } from "@/components/core"
+import { Text } from "../Text"
 import { Header } from "./HeaderTypes"
 import { styles } from "./styles"
 

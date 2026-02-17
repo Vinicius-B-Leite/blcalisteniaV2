@@ -1,50 +1,25 @@
 import { TouchableOpacity } from "react-native"
-import { spacings, radius, useAppTheme } from "@/themes"
+import { useAppTheme } from "@/themes"
 import { ButtonProvider } from "./ButtonContext"
 import { Button } from "./ButtonTypes"
+import { buttonVariants } from "./ButtonVariants"
 
-export const variantsKeys = {
-	primary: "primary",
-	ghost: "ghost",
-}
-
-export const ButtonRoot = ({ children, variant, ...props }: Button.RootProps) => {
+export const ButtonRoot = ({
+	children,
+	variant = "primary",
+	...props
+}: Button.RootProps) => {
 	const { theme } = useAppTheme()
 
-	const variants: Record<keyof typeof variantsKeys, Button.Variant> = {
-		primary: {
-			root: {
-				gap: spacings.gap[8],
-				padding: spacings.padding[8],
-				borderRadius: radius[24],
-				justifyContent: "center",
-				alignItems: "center",
-				backgroundColor: theme.action["brand-background"],
-			},
-			content: {
-				variant: "title-small-bold",
-			},
-		},
-		ghost: {
-			root: {
-				gap: spacings.gap[8],
-				padding: spacings.padding[8],
-				borderRadius: radius[24],
-				justifyContent: "center",
-				alignItems: "center",
-				borderWidth: 0,
-				borderColor: theme.content["text-default"],
-			},
-			content: {
-				variant: "title-small-bold",
-			},
-		},
+	const variants = buttonVariants(theme)
+
+	let currentVariant = variants[variant]
+	if (props.disabled || props.isLoading) {
+		currentVariant = variants["disabled"]
 	}
 
-	const currentVariant = variants[variant]
-
 	return (
-		<ButtonProvider value={{ variant: currentVariant }}>
+		<ButtonProvider value={{ variant: currentVariant, isLoading: props.isLoading }}>
 			<TouchableOpacity activeOpacity={0.8} style={currentVariant.root} {...props}>
 				{children}
 			</TouchableOpacity>
