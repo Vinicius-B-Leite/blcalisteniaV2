@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react"
-import { Text } from "@/components/core"
+import { Text } from "../Text/Text"
 import { useButtonContext } from "./ButtonContext"
 import { ActivityIndicator } from "react-native"
 import { useAppTheme } from "@/themes/hooks"
