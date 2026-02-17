@@ -1,6 +1,6 @@
 import { FlatList, View } from "react-native"
 import { Screen, Header, Button } from "@/components/core"
-import { WorkoutCard, ExerciseCard, EmptyState } from "./components"
+import { WorkoutCard, ExerciseCard, EmptyState, AddExerciseModal } from "./components"
 import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useWorkoutDetail } from "./useWorkoutDetail"
@@ -37,7 +37,7 @@ const MOCK_EXERCISES = [
 export const WorkoutDetail = () => {
 	const { theme } = useAppTheme()
 	const styles = stylesTheme(theme)
-	const { actions } = useWorkoutDetail()
+	const { actions, state } = useWorkoutDetail()
 
 	const hasExercises = MOCK_EXERCISES.length > 0
 
@@ -92,6 +92,11 @@ export const WorkoutDetail = () => {
 					<Button.Content>Adicionar exercícios</Button.Content>
 				</Button.Root>
 			</View>
+
+			<AddExerciseModal
+				visible={state.isAddExerciseModalVisible}
+				onClose={actions.handleCloseAddExerciseModal}
+			/>
 		</Screen>
 	)
 }

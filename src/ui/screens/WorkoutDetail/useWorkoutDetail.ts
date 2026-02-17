@@ -1,4 +1,8 @@
+import { useState } from "react"
+
 export const useWorkoutDetail = () => {
+	const [isAddExerciseModalVisible, setIsAddExerciseModalVisible] = useState(false)
+
 	const handleEditPress = () => {
 		console.log("Edit workout")
 	}
@@ -20,7 +24,11 @@ export const useWorkoutDetail = () => {
 	}
 
 	const handleAddExercise = () => {
-		console.log("Add exercise")
+		setIsAddExerciseModalVisible(true)
+	}
+
+	const handleCloseAddExerciseModal = () => {
+		setIsAddExerciseModalVisible(false)
 	}
 
 	return {
@@ -31,6 +39,10 @@ export const useWorkoutDetail = () => {
 			handleExerciseDeletePress,
 			handleStartWorkout,
 			handleAddExercise,
+			handleCloseAddExerciseModal,
+		},
+		state: {
+			isAddExerciseModalVisible,
 		},
 	}
 }
