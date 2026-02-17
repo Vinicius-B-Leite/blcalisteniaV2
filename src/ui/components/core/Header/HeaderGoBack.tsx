@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router"
-import { Icon } from "../Icon"
+import { Icon } from "@/components/core"
 import { Header } from "./HeaderTypes"
 
 export const HeaderGoBack = ({ children }: Header.GoBackProps) => {

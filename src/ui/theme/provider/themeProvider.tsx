@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useState } from "react"
-import { dark, ThemeType } from "../tokens"
+import { dark, ThemeType } from "@/themes"
 
 type ThemContext = {
 	theme: ThemeType
