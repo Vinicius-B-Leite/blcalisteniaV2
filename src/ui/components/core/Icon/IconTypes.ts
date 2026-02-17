@@ -5,6 +5,7 @@ const variantsKey = {
 	default: "default",
 	secondary: "secondary",
 	error: "error",
+	brand: "brand",
 }
 
 export namespace Icon {

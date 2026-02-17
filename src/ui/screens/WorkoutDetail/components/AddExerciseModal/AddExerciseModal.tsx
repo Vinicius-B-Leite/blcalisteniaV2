@@ -24,7 +24,7 @@ export const AddExerciseModal = ({ visible, onClose }: AddExerciseModalProps) =>
 			<Modal.Content style={styles.content}>
 				<View style={styles.formSection}>
 					<Pressable.Root
-						onPress={actions.handleSearchExercises}
+						onPress={() => actions.handleSearchExercises(onClose)}
 						style={styles.searchButton}>
 						<Text
 							variant="body-large-regular"

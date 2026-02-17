@@ -18,6 +18,7 @@ import { IconTrash } from "./components/IconTrash"
 import { IconSearch } from "./components/IconSearch"
 import { IconEdit } from "./components/IconEdit"
 import { Pressable } from "../Pressable"
+import { IconPlus } from "./components/IconPlus"
 
 export const IconMap = {
 	notification: IconNotification,
@@ -37,6 +38,7 @@ export const IconMap = {
 	trash: IconTrash,
 	search: IconSearch,
 	edit: IconEdit,
+	plus: IconPlus,
 }
 
 export const Icon = ({
@@ -59,11 +61,15 @@ export const Icon = ({
 		error: {
 			color: theme.content["text-error"],
 		},
+		brand: {
+			color: theme.surface.brand,
+		},
 	}
 
 	const currentVariant = variants[variant]
 
 	if (onPress) {
+		console.log("onPress provided for icon:", name)
 		return (
 			<Pressable.Root onPress={onPress} style={pressableStyle} hitSlop={12}>
 				<IconComponent color={currentVariant.color} size={size} />

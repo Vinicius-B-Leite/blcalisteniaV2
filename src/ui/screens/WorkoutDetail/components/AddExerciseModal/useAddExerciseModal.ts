@@ -1,7 +1,9 @@
 import { useState } from "react"
+import { useRouter } from "expo-router"
 import { MuscleGroup } from "./MuscleGroupSelector"
 
 export const useAddExerciseModal = () => {
+	const router = useRouter()
 	const [exerciseName, setExerciseName] = useState("")
 	const [series, setSeries] = useState("0")
 	const [reps, setReps] = useState("0")
@@ -28,9 +30,9 @@ export const useAddExerciseModal = () => {
 		setSelectedGroup(group)
 	}
 
-	const handleSearchExercises = () => {
-		// TODO: Implementar busca de exercícios
-		console.log("Buscar exercícios")
+	const handleSearchExercises = (onClose: () => void) => {
+		onClose()
+		router.push("/(application)/searchExercises")
 	}
 
 	const handleAdd = (onClose: () => void) => {
