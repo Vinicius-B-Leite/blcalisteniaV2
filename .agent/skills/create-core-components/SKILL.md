@@ -24,10 +24,11 @@ Each core component follows the React Compound Pattern structure:
 
 ```
 ComponentName/
-├── ComponentNameRoot.tsx       # Root component with variants logic
+├── ComponentNameRoot.tsx       # Root component using variants from ComponentNameVariants
 ├── ComponentNameSubComponent.tsx  # Sub-components (Title, Description, etc)
 ├── ComponentNameContext.tsx    # Context provider and hook
 ├── ComponentNameTypes.ts       # TypeScript namespace with all types
+├── ComponentNameVariants.ts    # Variants keys and variants function
 └── index.ts                    # Public API with compound exports
 ```
 
@@ -40,6 +41,7 @@ Card/
 ├── CardDescription.tsx        # Card.Description sub-component
 ├── CardContext.tsx            # Shared context
 ├── CardTypes.ts               # All types
+├── CardVariants.ts            # Variants keys and function
 └── index.ts                   # Exports compound component
 ```
 
@@ -52,14 +54,10 @@ All component types are organized in a namespace exported from `ComponentNameTyp
 import { PropsWithChildren } from "react"
 import { StyleProp, ViewStyle, ViewProps } from "react-native"
 import { Text } from "../Text/TextTypes"
-
-const variantsKeys = {
-	primary: "primary",
-	secondary: "secondary",
-}
+import { componentNameVariantsKeys } from "./ComponentNameVariants"
 
 export namespace ComponentName {
-	export type VariantsKeys = keyof typeof variantsKeys
+	export type VariantsKeys = keyof typeof componentNameVariantsKeys
 
 	export type Variant = {
 		container: StyleProp<ViewStyle>
@@ -87,7 +85,8 @@ export namespace ComponentName {
 - Use `namespace ComponentName` (singular, PascalCase)
 - Export all types within the namespace: `RootProps`, `TitleProps`, `DescriptionProps`, etc.
 - Reference other component types using their namespace (e.g., `Text.Props`)
-- Use `keyof typeof variantsKeys` for variant keys type
+- Import `componentNameVariantsKeys` from `ComponentNameVariants.ts`
+- Use `keyof typeof componentNameVariantsKeys` for variant keys type
 - Root component receives `variant` prop, sub-components get styling from context
 
 ## React Compound Pattern
@@ -169,55 +168,91 @@ const { variant } = useComponentNameContext()
 
 ## Variants System
 
-Components support variants for different visual styles:
+Components support variants for different visual styles. Variants are defined in a separate file `ComponentNameVariants.ts`:
 
 ```typescript
-const variantsKeys = {
+// ComponentNameVariants.ts
+import { spacings, radius } from "@/themes"
+import type { ThemeType } from "@/themes"
+import { ComponentName } from "./ComponentNameTypes"
+
+export const componentNameVariantsKeys = {
 	primary: "primary",
 	secondary: "secondary",
 }
 
-const variants: Record<keyof typeof variantsKeys, ComponentName.Variant> = {
-	primary: {
+export const componentNameVariants = (
+	theme: ThemeType,
+): Record<keyof typeof componentNameVariantsKeys, ComponentName.Variant> => {
+	// Define default properties shared across all variants
+	const defaultVariant = {
 		container: {
-			backgroundColor: theme.surface["surface-secondary"],
 			padding: spacings.padding[16],
 			borderRadius: radius[12],
 			gap: spacings.gap[8],
 		},
 		title: {
-			variant: "title-medium-bold",
-			color: theme.content["text-default"],
+			variant: "title-medium-bold" as const,
 		},
 		description: {
-			variant: "body-small",
-			color: theme.content["text-muted"],
+			variant: "body-small" as const,
 		},
-	},
-	secondary: {
-		container: {
-			backgroundColor: theme.surface["surface-primary"],
-			padding: spacings.padding[12],
-			borderRadius: radius[8],
-			gap: spacings.gap[4],
+	}
+
+	// Each variant can override default properties
+	return {
+		primary: {
+			container: {
+				...defaultVariant.container,
+				backgroundColor: theme.surface["surface-secondary"],
+			},
+			title: {
+				...defaultVariant.title,
+				color: theme.content["text-default"],
+			},
+			description: {
+				...defaultVariant.description,
+				color: theme.content["text-muted"],
+			},
 		},
-		title: {
-			variant: "title-small-bold",
+		secondary: {
+			container: {
+				...defaultVariant.container,
+				padding: spacings.padding[12], // Override default padding
+				borderRadius: radius[8], // Override default radius
+				backgroundColor: theme.surface["surface-primary"],
+			},
+			title: {
+				...defaultVariant.title,
+				variant: "title-small-bold", // Override default variant
+			},
+			description: {
+				...defaultVariant.description,
+				variant: "body-xsmall", // Override default variant
+			},
 		},
-		description: {
-			variant: "body-xsmall",
-		},
-	},
+	}
 }
 ```
 
 **Pattern:**
 
-- Define `variantsKeys` object with string literal values
-- Create `variants` object mapping keys to variant configurations
-- Each variant contains styles for container and all sub-components
-- Use `Record<keyof typeof variantsKeys, ComponentName.Variant>` for type safety
-- Access theme tokens via `useAppTheme()` hook
+- Create separate `ComponentNameVariants.ts` file
+- Export `componentNameVariantsKeys` object with string literal values
+- Export `componentNameVariants` function that receives `theme` and returns variants
+- **Define `defaultVariant` object** with properties common to all variants
+- Use `as const` for literal values in `defaultVariant` to preserve type safety
+- Each variant spreads `...defaultVariant.[property]` and can override specific properties
+- Properties from `defaultVariant` are inherited unless explicitly overridden
+- Use `Record<keyof typeof componentNameVariantsKeys, ComponentName.Variant>` for type safety
+- Import this function in `ComponentNameRoot.tsx` and call it with theme
+
+**Benefits:**
+
+- **Reduces code duplication** - common properties defined once in `defaultVariant`
+- **Easy maintenance** - change default value in one place to affect all variants
+- **Flexible overrides** - any variant can still override any default property
+- **Type-safe** - TypeScript ensures consistency across variants
 
 ## Theme Integration
 
@@ -249,13 +284,7 @@ import { View } from "react-native"
 import { ComponentName } from "./ComponentNameTypes"
 import { ComponentNameProvider } from "./ComponentNameContext"
 import { useAppTheme } from "../../../theme/hooks/useAppTheme"
-import { spacings } from "../../../theme/tokens/spacings"
-import { radius } from "../../../theme/tokens/sizes"
-
-const variantsKeys = {
-  primary: "primary",
-  secondary: "secondary",
-}
+import { componentNameVariants } from "./ComponentNameVariants"
 
 export const ComponentNameRoot = ({
   children,
@@ -265,36 +294,7 @@ export const ComponentNameRoot = ({
 }: ComponentName.RootProps) => {
   const { theme } = useAppTheme()
 
-  const variants: Record<keyof typeof variantsKeys, ComponentName.Variant> = {
-    primary: {
-      container: {
-        backgroundColor: theme.surface["surface-secondary"],
-        padding: spacings.padding[16],
-        borderRadius: radius[12],
-        gap: spacings.gap[8],
-      },
-      title: {
-        variant: "title-medium-bold",
-      },
-      description: {
-        variant: "body-small",
-      },
-    },
-    secondary: {
-      container: {
-        backgroundColor: theme.surface["surface-primary"],
-        padding: spacings.padding[12],
-        borderRadius: radius[8],
-        gap: spacings.gap[4],
-      },
-      title: {
-        variant: "title-small-bold",
-      },
-      description: {
-        variant: "body-xsmall",
-      },
-    },
-  }
+  const variants = componentNameVariants(theme)
 
   const currentVariant = variants[variant]
 
@@ -311,6 +311,8 @@ export const ComponentNameRoot = ({
 **Key points:**
 
 - Exports `ComponentNameRoot` (not default export)
+- Imports `componentNameVariants` function from separate file
+- Calls variants function with theme to get all variants
 - Manages variant selection logic
 - Wraps children with Context Provider
 - Accepts additional style prop for customization
@@ -360,11 +362,12 @@ export const ComponentNameDescription = ({ children }: ComponentName.Description
 - **Sub-component files**: `ComponentNameTitle.tsx`, `ComponentNameDescription.tsx`, etc.
 - **Context file**: `ComponentNameContext.tsx`
 - **Types file**: `ComponentNameTypes.ts`
+- **Variants file**: `ComponentNameVariants.ts`
 - **Namespace**: `ComponentName` (singular, PascalCase)
 - **Context hook**: `useComponentNameContext`
 - **Provider**: `ComponentNameProvider`
-- **Variants keys**: `variantsKeys` (camelCase)
-- **Variants object**: `variants` (camelCase)
+- **Variants keys**: `componentNameVariantsKeys` (camelCase, starts with component name)
+- **Variants function**: `componentNameVariants` (camelCase, starts with component name)
 - **Exported compound component**: `ComponentName` (object with Root and sub-components)
 
 ## Import Patterns
@@ -414,14 +417,10 @@ import { radius } from "../../../theme/tokens/sizes"
 import { PropsWithChildren } from "react"
 import { StyleProp, ViewProps, ViewStyle } from "react-native"
 import { Text } from "../Text/TextTypes"
-
-const variantsKeys = {
-	primary: "primary",
-	secondary: "secondary",
-}
+import { cardVariantsKeys } from "./CardVariants"
 
 export namespace Card {
-	export type VariantsKeys = keyof typeof variantsKeys
+	export type VariantsKeys = keyof typeof cardVariantsKeys
 
 	export type Variant = {
 		container: StyleProp<ViewStyle>
@@ -444,7 +443,73 @@ export namespace Card {
 }
 ```
 
-### Step 2: Create CardContext.tsx
+### Step 2: Create CardVariants.ts
+
+```typescript
+import { spacings, radius } from "@/themes"
+import type { ThemeType } from "@/themes"
+import { Card } from "./CardTypes"
+
+export const cardVariantsKeys = {
+	primary: "primary",
+	secondary: "secondary",
+}
+
+export const cardVariants = (
+	theme: ThemeType,
+): Record<keyof typeof cardVariantsKeys, Card.Variant> => {
+	const defaultVariant = {
+		container: {
+			padding: spacings.padding[16],
+			borderRadius: radius[12],
+			gap: spacings.gap[8],
+		},
+		title: {
+			variant: "title-medium-bold" as const,
+		},
+		description: {
+			variant: "body-small" as const,
+		},
+	}
+
+	return {
+		primary: {
+			container: {
+				...defaultVariant.container,
+				backgroundColor: theme.surface["surface-secondary"],
+			},
+			title: {
+				...defaultVariant.title,
+				color: theme.content["text-default"],
+			},
+			description: {
+				...defaultVariant.description,
+				color: theme.content["text-muted"],
+			},
+		},
+		secondary: {
+			container: {
+				...defaultVariant.container,
+				padding: spacings.padding[12],
+				borderRadius: radius[8],
+				backgroundColor: theme.surface["surface-primary"],
+			},
+			title: {
+				...defaultVariant.title,
+				variant: "title-small-bold",
+				color: theme.content["text-default"],
+			},
+			description: {
+				...defaultVariant.description,
+				variant: "body-xsmall",
+				color: theme.content["text-muted"],
+			},
+		},
+	}
+}
+```
+
+### Step 3: Create CardContext.tsx
 
 ```typescript
 import { createContext, useContext } from "react"
@@ -463,20 +528,14 @@ export const useCardContext = () => {
 }
 ```
 
-### Step 3: Create CardRoot.tsx
+### Step 4: Create CardRoot.tsx
 
 ```typescript
 import { View } from "react-native"
-import { spacings } from "../../../theme/tokens/spacings"
-import { radius } from "../../../theme/tokens/sizes"
 import { CardProvider } from "./CardContext"
 import { useAppTheme } from "../../../theme/hooks/useAppTheme"
 import { Card } from "./CardTypes"
-
-const variantsKeys = {
-  primary: "primary",
-  secondary: "secondary",
-}
+import { cardVariants } from "./CardVariants"
 
 export const CardRoot = ({
   children,
@@ -486,40 +545,7 @@ export const CardRoot = ({
 }: Card.RootProps) => {
   const { theme } = useAppTheme()
 
-  const variants: Record<keyof typeof variantsKeys, Card.Variant> = {
-    primary: {
-      container: {
-        backgroundColor: theme.surface["surface-secondary"],
-        padding: spacings.padding[16],
-        borderRadius: radius[12],
-        gap: spacings.gap[8],
-      },
-      title: {
-        variant: "title-medium-bold",
-        color: theme.content["text-default"],
-      },
-      description: {
-        variant: "body-small",
-        color: theme.content["text-muted"],
-      },
-    },
-    secondary: {
-      container: {
-        backgroundColor: theme.surface["surface-primary"],
-        padding: spacings.padding[12],
-        borderRadius: radius[8],
-        gap: spacings.gap[4],
-      },
-      title: {
-        variant: "title-small-bold",
-        color: theme.content["text-default"],
-      },
-      description: {
-        variant: "body-xsmall",
-        color: theme.content["text-muted"],
-      },
-    },
-  }
+  const variants = cardVariants(theme)
 
   const currentVariant = variants[variant]
 
@@ -533,7 +559,7 @@ export const CardRoot = ({
 }
 ```
 
-### Step 4: Create CardTitle.tsx
+### Step 5: Create CardTitle.tsx
 
 ```typescript
 import { Text } from "../Text/Text"
@@ -546,7 +572,7 @@ export const CardTitle = ({ children }: Card.TitleProps) => {
 }
 ```
 
-### Step 5: Create CardDescription.tsx
+### Step 6: Create CardDescription.tsx
 
 ```typescript
 import { Text } from "../Text/Text"
@@ -559,7 +585,7 @@ export const CardDescription = ({ children }: Card.DescriptionProps) => {
 }
 ```
 
-### Step 6: Create index.ts
+### Step 7: Create index.ts
 
 ```typescript
 import { CardRoot } from "./CardRoot"
@@ -573,6 +599,7 @@ export const Card = {
 }
 
 export { type Card as CardTypes } from "./CardTypes"
+export { cardVariants, cardVariantsKeys } from "./CardVariants"
 ```
 
 ### Usage Example
@@ -595,19 +622,22 @@ export default function ExampleScreen() {
 When creating a new core component using React Compound Pattern, ensure:
 
 - [ ] Created `ComponentNameTypes.ts` with namespace and all sub-component types (including `RootProps`)
+- [ ] Created `ComponentNameVariants.ts` with `componentNameVariantsKeys` and `componentNameVariants` function
 - [ ] Created `ComponentNameContext.tsx` with provider and hook (with error handling)
-- [ ] Created `ComponentNameRoot.tsx` exporting `ComponentNameRoot` with variants system
+- [ ] Created `ComponentNameRoot.tsx` exporting `ComponentNameRoot` importing variants from ComponentNameVariants
 - [ ] Created sub-component files (`ComponentNameTitle.tsx`, `ComponentNameDescription.tsx`, etc.)
-- [ ] Created `index.ts` exporting object with `Root` and sub-components
-- [ ] Used theme tokens (`spacings`, `radius`, `theme`)
-- [ ] Used `useAppTheme()` hook for theme access
+- [ ] Created `index.ts` exporting object with `Root` and sub-components, plus variants
+- [ ] Types in `ComponentNameTypes.ts` import `componentNameVariantsKeys` from `ComponentNameVariants`
+- [ ] Used theme tokens (`spacings`, `radius`, `theme`) in variants file
+- [ ] `ComponentNameVariants` function receives `theme: ThemeType` parameter
 - [ ] Types reference other components via their namespace (e.g., `Text.Props`)
-- [ ] Variants use `Record<keyof typeof variantsKeys, ComponentName.Variant>`
+- [ ] Variants use `Record<keyof typeof componentNameVariantsKeys, ComponentName.Variant>`
 - [ ] Context properly typed with `ComponentName.ContextType`
 - [ ] All sub-components use `useComponentNameContext()` to access variant styles
 - [ ] Root component accepts additional `style` prop for customization
 - [ ] Component can be used as: `<ComponentName.Root variant="primary">` with `<ComponentName.SubComponent>`
 - [ ] All imports follow project patterns
+- [ ] Variants exported from `index.ts` for external use
 
 ## Best Practices
 

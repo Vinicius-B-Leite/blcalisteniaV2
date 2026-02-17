@@ -7,3 +7,4 @@ export const Button = {
 }
 
 export { type Button as ButtonTypes }
+export { buttonVariants, buttonVariantsKeys } from "./ButtonVariants"

@@ -1,17 +1,19 @@
 import { StyleProp, TouchableOpacityProps, ViewStyle } from "react-native"
 import { Text } from "../Text/TextTypes"
-import { variantsKeys } from "./ButtonRoot"
+import { buttonVariantsKeys } from "./ButtonVariants"
 
 export namespace Button {
-	export type VariantsKeys = keyof typeof variantsKeys
+	export type VariantsKeys = keyof typeof buttonVariantsKeys
 	export type Variant = {
 		root: StyleProp<ViewStyle>
 		content: Text.Props
 	}
 	export type RootProps = TouchableOpacityProps & {
-		variant: VariantsKeys
+		variant?: VariantsKeys
+		isLoading?: boolean
 	}
 	export type ContextType = {
 		variant: Variant
+		isLoading?: boolean
 	}
 }

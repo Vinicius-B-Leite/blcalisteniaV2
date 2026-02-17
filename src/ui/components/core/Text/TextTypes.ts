@@ -1,8 +1,8 @@
 import { TextProps as RNTextProps } from "react-native"
-import { variantsKeys } from "./Text"
+import { textVariantsKeys } from "./TextVariants"
 
 export namespace Text {
-	export type VariantsKeys = keyof typeof variantsKeys
+	export type VariantsKeys = keyof typeof textVariantsKeys
 	export type Props = RNTextProps & {
 		variant: VariantsKeys
 	}
