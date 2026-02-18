@@ -13,6 +13,7 @@ export default function ProtectedLayout() {
 			<Stack.Screen options={{ headerShown: false }} name="(tabs)" />
 			<Stack.Screen options={{ headerShown: false }} name="workoutDetail" />
 			<Stack.Screen options={{ headerShown: false }} name="searchExercises" />
+			<Stack.Screen options={{ headerShown: false }} name="chooseImage" />
 		</Stack>
 	)
 }

@@ -19,6 +19,7 @@ import { IconSearch } from "./components/IconSearch"
 import { IconEdit } from "./components/IconEdit"
 import { Pressable } from "../Pressable"
 import { IconPlus } from "./components/IconPlus"
+import { IconAttach } from "./components/IconAttach"
 
 export const IconMap = {
 	notification: IconNotification,
@@ -39,6 +40,7 @@ export const IconMap = {
 	search: IconSearch,
 	edit: IconEdit,
 	plus: IconPlus,
+	attach: IconAttach,
 }
 
 export const Icon = ({

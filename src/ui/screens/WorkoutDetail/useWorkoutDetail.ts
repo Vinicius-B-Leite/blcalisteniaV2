@@ -1,10 +1,12 @@
 import { useState } from "react"
+import { useRouter } from "expo-router"
 
 export const useWorkoutDetail = () => {
+	const router = useRouter()
 	const [isAddExerciseModalVisible, setIsAddExerciseModalVisible] = useState(false)
 
 	const handleEditPress = () => {
-		console.log("Edit workout")
+		router.push("/(application)/chooseImage")
 	}
 
 	const handleExercisePress = (id: string) => {
