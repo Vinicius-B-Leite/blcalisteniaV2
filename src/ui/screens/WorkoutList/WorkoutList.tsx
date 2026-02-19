@@ -1,15 +1,10 @@
 import { View, FlatList } from "react-native"
 import { Header, Screen, Text, Pressable } from "@/components/core"
-import {
-	CreateWorkoutModal,
-	EmptyState,
-	WorkoutCard,
-	SearchBar,
-	DeleteWorkoutModal,
-} from "./components"
+import { EmptyState, WorkoutCard, SearchBar, DeleteWorkoutModal } from "./components"
 import { useWorkoutList } from "./useWorkoutList"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
+import { WorkoutFormModal } from "@/components/containers"
 
 export const WorkoutList = () => {
 	const { states, actions } = useWorkoutList()
@@ -58,9 +53,11 @@ export const WorkoutList = () => {
 				/>
 			)}
 
-			<CreateWorkoutModal
+			<WorkoutFormModal
 				visible={states.modalCreateWorkout}
 				onClose={actions.closeModal}
+				title="Criar treino"
+				confirmButtonText="Criar"
 			/>
 
 			<DeleteWorkoutModal

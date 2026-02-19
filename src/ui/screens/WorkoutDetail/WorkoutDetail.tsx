@@ -4,7 +4,7 @@ import { ExerciseCard, EmptyState, AddExerciseModal } from "./components"
 import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useWorkoutDetail } from "./useWorkoutDetail"
-import { WorkoutBannerCard } from "@/components/containers"
+import { WorkoutBannerCard, WorkoutFormModal } from "@/components/containers"
 
 const MOCK_WORKOUT = {
 	title: "Treino iniciante",
@@ -112,6 +112,20 @@ export const WorkoutDetail = () => {
 			<AddExerciseModal
 				visible={state.isAddExerciseModalVisible}
 				onClose={actions.handleCloseAddExerciseModal}
+			/>
+
+			<WorkoutFormModal
+				title="Editar treino"
+				confirmButtonText="Confirmar"
+				onClose={actions.handleCloseEditWorkoutModal}
+				visible={state.isCreateWorkoutModalVisible}
+				renderHeaderExtra={
+					<Button.Root
+						variant="link"
+						onPress={actions.handleNavigateToChangeImage}>
+						<Button.Content>Editar imagem</Button.Content>
+					</Button.Root>
+				}
 			/>
 		</Screen>
 	)

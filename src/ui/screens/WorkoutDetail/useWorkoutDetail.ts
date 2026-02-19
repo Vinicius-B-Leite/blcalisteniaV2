@@ -3,10 +3,11 @@ import { useRouter } from "expo-router"
 
 export const useWorkoutDetail = () => {
 	const router = useRouter()
+	const [isCreateWorkoutModalVisible, setIsCreateWorkoutModalVisible] = useState(false)
 	const [isAddExerciseModalVisible, setIsAddExerciseModalVisible] = useState(false)
 
 	const handleEditPress = () => {
-		router.push("/(application)/chooseImage")
+		handleOpenEditWorkoutModal()
 	}
 
 	const handleExercisePress = (id: string) => {
@@ -35,6 +36,15 @@ export const useWorkoutDetail = () => {
 
 	const handleNavigateToChangeImage = () => {
 		router.push("/(application)/chooseImage")
+		handleCloseEditWorkoutModal()
+	}
+
+	const handleCloseEditWorkoutModal = () => {
+		setIsCreateWorkoutModalVisible(false)
+	}
+
+	const handleOpenEditWorkoutModal = () => {
+		setIsCreateWorkoutModalVisible(true)
 	}
 
 	return {
@@ -47,9 +57,12 @@ export const useWorkoutDetail = () => {
 			handleAddExercise,
 			handleCloseAddExerciseModal,
 			handleNavigateToChangeImage,
+			handleCloseEditWorkoutModal,
+			handleOpenEditWorkoutModal,
 		},
 		state: {
 			isAddExerciseModalVisible,
+			isCreateWorkoutModalVisible,
 		},
 	}
 }
