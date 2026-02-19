@@ -1,3 +1,6 @@
 export * from "./Home"
 export * from "./Onboarding"
 export * from "./WorkoutList"
+export * from "./WorkoutDetail"
+export * from "./SearchExercises"
+export * from "./ChooseImage"

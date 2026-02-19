@@ -6,6 +6,8 @@ export const buttonVariantsKeys = {
 	primary: "primary",
 	ghost: "ghost",
 	disabled: "disabled",
+	danger: "danger",
+	link: "link",
 }
 
 export const buttonVariants = (
@@ -53,6 +55,31 @@ export const buttonVariants = (
 				...defaultVariant.content,
 				style: {
 					color: theme.content["always-white"],
+				},
+			},
+		},
+		danger: {
+			root: {
+				...defaultVariant.root,
+				backgroundColor: theme.accent.error,
+			},
+			content: {
+				...defaultVariant.content,
+				style: {
+					color: theme.content["always-white"],
+				},
+			},
+		},
+		link: {
+			root: {
+				...defaultVariant.root,
+				backgroundColor: "transparent",
+			},
+			content: {
+				variant: "body-small-reg",
+				style: {
+					color: theme.content["text-brand"],
+					textDecorationLine: "underline",
 				},
 			},
 		},

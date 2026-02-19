@@ -5,6 +5,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Screen as ScreenTypes } from "./ScreenTypes"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
 
+const useTabBarHeight = () => {
+	try {
+		return useBottomTabBarHeight()
+	} catch {
+		return 0
+	}
+}
+
 export const Screen = ({
 	children,
 	scrollable = false,
@@ -15,7 +23,7 @@ export const Screen = ({
 	const { theme } = useAppTheme()
 	const { bottom, top } = useSafeAreaInsets()
 
-	const height = useBottomTabBarHeight()
+	const height = useTabBarHeight()
 
 	const containerStyle: StyleProp<ViewStyle> = [
 		{
