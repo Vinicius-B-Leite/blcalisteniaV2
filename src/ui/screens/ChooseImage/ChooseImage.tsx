@@ -2,9 +2,9 @@ import { Screen, Header, Text, Button } from "@/components/core"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useChooseImage } from "./useChooseImage"
-import { WorkoutCard } from "../WorkoutDetail/components"
 import { ImageSelector } from "./components"
 import { View } from "react-native"
+import { WorkoutBannerCard } from "@/components/containers"
 
 export const ChooseImage = () => {
 	const { states, actions } = useChooseImage()
@@ -23,12 +23,23 @@ export const ChooseImage = () => {
 						Pré visualização
 					</Text>
 
-					<WorkoutCard
-						category="Força"
-						day="Seg"
-						subtitle="Treino de peito + triceps"
-						title="Treino A"
-					/>
+					<WorkoutBannerCard.Root>
+						<WorkoutBannerCard.Content>
+							<WorkoutBannerCard.TextContainer>
+								<WorkoutBannerCard.Title>
+									Treino A
+								</WorkoutBannerCard.Title>
+								<WorkoutBannerCard.Subtitle>
+									Treino de peito + triceps
+								</WorkoutBannerCard.Subtitle>
+							</WorkoutBannerCard.TextContainer>
+							<WorkoutBannerCard.Tags>
+								<WorkoutBannerCard.Tag>Força</WorkoutBannerCard.Tag>
+								<WorkoutBannerCard.Tag>Seg</WorkoutBannerCard.Tag>
+							</WorkoutBannerCard.Tags>
+						</WorkoutBannerCard.Content>
+						<WorkoutBannerCard.EditButton />
+					</WorkoutBannerCard.Root>
 				</View>
 
 				<View>

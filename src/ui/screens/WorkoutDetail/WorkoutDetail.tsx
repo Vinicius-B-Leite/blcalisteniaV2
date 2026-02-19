@@ -1,9 +1,10 @@
 import { FlatList, View } from "react-native"
 import { Screen, Header, Button } from "@/components/core"
-import { WorkoutCard, ExerciseCard, EmptyState, AddExerciseModal } from "./components"
+import { ExerciseCard, EmptyState, AddExerciseModal } from "./components"
 import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useWorkoutDetail } from "./useWorkoutDetail"
+import { WorkoutBannerCard } from "@/components/containers"
 
 const MOCK_WORKOUT = {
 	title: "Treino iniciante",
@@ -56,14 +57,29 @@ export const WorkoutDetail = () => {
 				showsVerticalScrollIndicator={false}
 				ListHeaderComponentStyle={styles.listHeader}
 				ListHeaderComponent={
-					<WorkoutCard
-						title={MOCK_WORKOUT.title}
-						subtitle={MOCK_WORKOUT.subtitle}
-						category={MOCK_WORKOUT.category}
-						day={MOCK_WORKOUT.day}
-						imageUrl={MOCK_WORKOUT.imageUrl}
-						onEditPress={actions.handleEditPress}
-					/>
+					<WorkoutBannerCard.Root
+						onPress={actions.handleNavigateToChangeImage}
+						imageUrl={MOCK_WORKOUT.imageUrl}>
+						<WorkoutBannerCard.Content>
+							<WorkoutBannerCard.TextContainer>
+								<WorkoutBannerCard.Title>
+									{MOCK_WORKOUT.title}
+								</WorkoutBannerCard.Title>
+								<WorkoutBannerCard.Subtitle>
+									{MOCK_WORKOUT.subtitle}
+								</WorkoutBannerCard.Subtitle>
+							</WorkoutBannerCard.TextContainer>
+							<WorkoutBannerCard.Tags>
+								<WorkoutBannerCard.Tag>
+									{MOCK_WORKOUT.category}
+								</WorkoutBannerCard.Tag>
+								<WorkoutBannerCard.Tag>
+									{MOCK_WORKOUT.day}
+								</WorkoutBannerCard.Tag>
+							</WorkoutBannerCard.Tags>
+						</WorkoutBannerCard.Content>
+						<WorkoutBannerCard.EditButton onPress={actions.handleEditPress} />
+					</WorkoutBannerCard.Root>
 				}
 				ItemSeparatorComponent={() => <View style={styles.separator} />}
 				renderItem={({ item }) => (

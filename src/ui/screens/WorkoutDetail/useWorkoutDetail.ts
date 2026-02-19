@@ -33,6 +33,10 @@ export const useWorkoutDetail = () => {
 		setIsAddExerciseModalVisible(false)
 	}
 
+	const handleNavigateToChangeImage = () => {
+		router.push("/(application)/chooseImage")
+	}
+
 	return {
 		actions: {
 			handleEditPress,
@@ -42,6 +46,7 @@ export const useWorkoutDetail = () => {
 			handleStartWorkout,
 			handleAddExercise,
 			handleCloseAddExerciseModal,
+			handleNavigateToChangeImage,
 		},
 		state: {
 			isAddExerciseModalVisible,
