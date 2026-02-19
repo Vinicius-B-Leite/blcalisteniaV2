@@ -4,7 +4,7 @@ import { Text } from "../../core/Text/TextTypes"
 import { Pressable } from "../../core/Pressable/PressableTypes"
 import { workoutBannerCardVariantsKeys } from "./WorkoutBannerCardVariants"
 
-export namespace WorkoutBannerBannerCard {
+export namespace WorkoutBannerCard {
 	export type VariantsKeys = keyof typeof workoutBannerCardVariantsKeys
 
 	export type Variant = {

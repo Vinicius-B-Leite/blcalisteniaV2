@@ -3,7 +3,7 @@ import { useAppTheme } from "@/themes"
 import { WorkoutBannerCardProvider } from "./WorkoutBannerCardContext"
 
 import { workoutBannerCardVariants } from "./WorkoutBannerCardVariants"
-import { WorkoutBannerBannerCard } from "./WorkoutBannerCardTypes"
+import { WorkoutBannerCard } from "./WorkoutBannerCardTypes"
 import { Pressable } from "@/components/core"
 
 const MOCK_IMAGE = require("@/assets/imgs/workout-banner-1.png")
@@ -15,7 +15,7 @@ export const WorkoutBannerCardRoot = ({
 	style,
 	onPress,
 	...props
-}: WorkoutBannerBannerCard.RootProps) => {
+}: WorkoutBannerCard.RootProps) => {
 	const { theme } = useAppTheme()
 
 	const variants = workoutBannerCardVariants(theme)
