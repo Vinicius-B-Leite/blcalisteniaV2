@@ -32,7 +32,7 @@ export const useAddExerciseModal = () => {
 
 	const handleSearchExercises = (onClose: () => void) => {
 		onClose()
-		router.push("/(application)/searchExercises")
+		router.push("/(application)/(workoutDetail)/searchExercises")
 	}
 
 	const handleAdd = (onClose: () => void) => {
