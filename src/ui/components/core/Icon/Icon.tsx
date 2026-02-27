@@ -1,4 +1,3 @@
-import { Pressable } from "react-native"
 import { useAppTheme } from "@/themes"
 import { IconNotification } from "./components/IconNotification"
 import { Icon as IconType } from "./IconTypes"
@@ -15,6 +14,12 @@ import { IconCalendar } from "./components/IconCalendar"
 import { IconUser } from "./components/IconUser"
 import { IconLeftArrow } from "./components/IconLeftArrow"
 import { IconX } from "./components/IconX"
+import { IconTrash } from "./components/IconTrash"
+import { IconSearch } from "./components/IconSearch"
+import { IconEdit } from "./components/IconEdit"
+import { Pressable } from "../Pressable"
+import { IconPlus } from "./components/IconPlus"
+import { IconAttach } from "./components/IconAttach"
 
 export const IconMap = {
 	notification: IconNotification,
@@ -31,6 +36,11 @@ export const IconMap = {
 	user: IconUser,
 	leftArrow: IconLeftArrow,
 	x: IconX,
+	trash: IconTrash,
+	search: IconSearch,
+	edit: IconEdit,
+	plus: IconPlus,
+	attach: IconAttach,
 }
 
 export const Icon = ({
@@ -47,18 +57,25 @@ export const Icon = ({
 		default: {
 			color: theme.content["icon-default"],
 		},
+		secondary: {
+			color: theme.content["icon-variant"],
+		},
+		error: {
+			color: theme.content["text-error"],
+		},
+		brand: {
+			color: theme.surface.brand,
+		},
 	}
 
 	const currentVariant = variants[variant]
 
 	if (onPress) {
+		console.log("onPress provided for icon:", name)
 		return (
-			<Pressable
-				onPress={onPress}
-				style={({ pressed }) => [pressableStyle, pressed && { opacity: 0.7 }]}
-				hitSlop={12}>
+			<Pressable.Root onPress={onPress} style={pressableStyle} hitSlop={12}>
 				<IconComponent color={currentVariant.color} size={size} />
-			</Pressable>
+			</Pressable.Root>
 		)
 	}
 

@@ -1,9 +1,14 @@
-import { Header, Screen } from "@/components/core"
-import { CreateWorkoutModal, EmptyState } from "./components"
+import { View, FlatList } from "react-native"
+import { Header, Screen, Text, Pressable } from "@/components/core"
+import { EmptyState, WorkoutCard, SearchBar, DeleteWorkoutModal } from "./components"
 import { useWorkoutList } from "./useWorkoutList"
+import { useStyles } from "@/themes"
+import { stylesTheme } from "./styles"
+import { WorkoutFormModal } from "@/components/containers"
 
 export const WorkoutList = () => {
 	const { states, actions } = useWorkoutList()
+	const styles = useStyles(stylesTheme)
 
 	return (
 		<Screen>
@@ -12,11 +17,54 @@ export const WorkoutList = () => {
 				<Header.VerticalCenterTitle>Meus treinos</Header.VerticalCenterTitle>
 			</Header.Root>
 
-			<EmptyState handleOpenModal={actions.openModal} />
+			{!states.hasWorkouts ? (
+				<EmptyState handleOpenModal={actions.openModal} />
+			) : (
+				<FlatList
+					data={states.workouts}
+					keyExtractor={(item) => item.id}
+					ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+					ListHeaderComponent={
+						<SearchBar
+							value={states.searchText}
+							onChangeText={actions.onSearchTextChange}
+						/>
+					}
+					ListFooterComponent={
+						<Pressable.Root
+							onPress={actions.openModal}
+							style={styles.addButton}>
+							<Text variant="body-large-bold" style={styles.addButtonText}>
+								Adicionar treino
+							</Text>
+						</Pressable.Root>
+					}
+					renderItem={({ item }) => (
+						<WorkoutCard
+							id={item.id}
+							title={item.title}
+							exerciseCount={item.exerciseCount}
+							category={item.category}
+							imageUrl={item.imageUrl}
+							onRedirect={() => actions.onOpenWorkout(item.id)}
+							onDelete={() => actions.onDeleteWorkout(item.id)}
+						/>
+					)}
+				/>
+			)}
 
-			<CreateWorkoutModal
+			<WorkoutFormModal
 				visible={states.modalCreateWorkout}
 				onClose={actions.closeModal}
+				title="Criar treino"
+				confirmButtonText="Criar"
+			/>
+
+			<DeleteWorkoutModal
+				visible={states.deleteModal !== null}
+				workoutName={states.deleteModal?.title || ""}
+				onClose={actions.onCloseDeleteModal}
+				onConfirm={actions.onConfirmDelete}
 			/>
 		</Screen>
 	)

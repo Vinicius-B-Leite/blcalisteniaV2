@@ -1,389 +1,268 @@
 ---
 name: create-screens-and-routing
-description: Creates screens and configures routing with Expo Router following project patterns: file-based routes, route groups, protected routes, screen components with hooks and theme styles. Use when adding new screens, tabs, layouts, or when the user asks about navigation and routing.
+description: Guia básico para criar screens e rotas com Expo Router. Use quando o usuário pedir para criar uma nova tela ou configurar rotas.
 ---
 
-# Creating Screens and Routing
+# Criando Screens e Rotas
 
-This skill guides the creation of screens and routing configuration using Expo Router and the project's screen/layout patterns.
+Guia básico para criar telas e configurar rotas no projeto.
 
-## Technologies & Stack
-
-- **Expo Router** (file-based routing)
-- **React Native** with TypeScript
-- **Stack** and **Tabs** from `expo-router`
-- **Safe Area** via `react-native-safe-area-context`
-- **Theme** via `useAppTheme` and `useStyles`
-- **Core components** from `src/ui/components/core/` (Screen, Text, Button, Icon, etc.)
-- **Icons**: use only the core `Icon` component. Do not use `@expo/vector-icons`, `Ionicons`, or any other icon library directly.
-
-## Concepts
-
-### Route file vs Screen component
-
-- **Route file** (`src/app/...`): Thin entry point that only imports and renders the screen component. No layout/UI logic here.
-- **Screen component** (`src/ui/screens/...`): Actual UI, hooks, and styles. Reusable and testable.
-
-### Route groups
-
-Parentheses create **groups** (no segment in URL): `(application)`, `(tabs)`.
-
-- Use for layout nesting without changing the URL.
-- Example: `(application)/(tabs)/home` → URL `/home`, not `/(application)/(tabs)/home`.
-
-## App structure (src/app)
+## Estrutura de uma Screen
 
 ```
-app/
-├── _layout.tsx           # Root layout: ThemeProvider, SafeAreaProvider, AuthProvider, Stack
-├── index.tsx             # Entry route (e.g. onboarding) → renders OnboardingScreen
-└── (application)/        # Route group (protected)
-    ├── _layout.tsx       # Protected layout: redirect if not auth, Stack with (tabs)
-    └── (tabs)/           # Route group for tab navigation
-        ├── _layout.tsx   # Tabs layout
-        └── home.tsx      # Tab screen
+src/ui/screens/ScreenName/
+├── index.ts              # Exportador
+├── ScreenName.tsx        # Componente da tela
+├── styles.ts             # Estilos com tema
+├── useScreenName.ts      # Hook com regras de UI
+└── components/           # Componentes específicos da tela
+    └── index.ts          # Exportador dos componentes
 ```
 
-## Route file pattern
+## 1. index.ts - Exportador
 
-Route files are minimal: default export that renders the screen component.
+Arquivo que exporta o componente da tela:
+
+```ts
+// src/ui/screens/ScreenName/index.ts
+export * from "./ScreenName"
+```
+
+Adicione também em `src/ui/screens/index.ts`:
+
+```ts
+export * from "./ScreenName"
+```
+
+## 2. ScreenName.tsx - Componente da Tela
+
+Use sempre `Screen` e `Header` de `@/components/core`:
 
 ```tsx
-// src/app/(application)/(tabs)/home.tsx
-import { HomeScreen } from "../../../ui/screens/Home/Home"
-
-export default function Home() {
-	return <HomeScreen />
-}
-```
-
-**Rules:**
-
-- One default export (the page component).
-- No business logic or layout in the route file; delegate to the screen.
-
-## Screen component structure (src/ui/screens)
-
-Each feature screen lives in its own folder:
-
-```
-ScreenName/
-├── ScreenName.tsx      # Main screen component
-├── styles.ts           # Theme-based styles (stylesTheme)
-├── useScreenName.ts    # Hook: actions, states, refs (UI only)
-├── components/         # Optional: screen-specific components
-│   └── Header/
-│       ├── Header.tsx
-│       ├── styles.ts
-│       └── index.ts
-└── __tests__/          # Optional
-    └── ScreenName.test.tsx
-```
-
-A screen folder may include a **`components/`** subfolder for components used only by that screen. If a component is reused across screens, place it in `src/ui/components/core/` or a shared components folder instead.
-
-### Screen-specific components (components/)
-
-Components in `components/` follow this structure:
-
-```
-ScreenName/components/ComponentName/
-├── ComponentName.tsx
-├── styles.ts                 # Optional: stylesTheme(theme) when component has its own styles
-└── index.ts                  # export { ComponentName } from "./ComponentName"
-```
-
-**Patterns:**
-
-- Props receive data and callbacks from the parent screen (e.g. `userName`, `onNotificationsPress`). The screen hook provides `states` and `actions`; pass them down as props.
-- Use core components: `Text`, `Button`, **`Icon`** (never `Ionicons` or other icon libs directly).
-- Use `useAppTheme()` and `stylesTheme(theme)` in component styles when the component has its own styles.
-- Use theme tokens (`theme.action["brand-primary"]`, `spacings`, `radius`) in styles.
-- Component styles file: `styles.ts` in the component folder, exporting `stylesTheme(theme: ThemeType)`.
-
-**Example: Header component (Home screen)**
-
-```
-Home/components/Header/
-├── Header.tsx
-├── styles.ts
-└── index.ts
-```
-
-```tsx
-// Header.tsx
-import { Image, View } from "react-native"
-import { Text } from "../../../../components/core/Text/Text"
-import { Icon } from "../../../../components/core/Icon"
-import { useAppTheme } from "../../../../theme/hooks/useAppTheme"
-import { stylesTheme } from "./styles"
-
-type HeaderProps = {
-	userName: string
-	onNotificationsPress: () => void
-}
-
-export function Header({ userName, onNotificationsPress }: HeaderProps) {
-	const { theme } = useAppTheme()
-	const styles = stylesTheme(theme)
-
-	return (
-		<View style={styles.row}>
-			<View style={styles.leftContent}>
-				<View style={styles.avatarContainer}>
-					<Image source={{ uri: "..." }} style={styles.avatar} />
-				</View>
-				<View style={styles.textContainer}>
-					<Text variant="title-large-bold">Olá, {userName}!</Text>
-					<Text variant="title-small-reg">Vamos treinar hoje?</Text>
-				</View>
-			</View>
-			<Icon
-				onPress={onNotificationsPress}
-				pressableStyle={styles.bellButton}
-				name="icon-notification"
-				size={21}
-				variant="default"
-			/>
-		</View>
-	)
-}
-```
-
-```typescript
-// styles.ts
-import { StyleSheet } from "react-native"
-import { ThemeType } from "../../../../theme"
-import { radius } from "../../../../theme/tokens/sizes"
-import { spacings } from "../../../../theme/tokens/spacings"
-
-const AVATAR_SIZE = 48
-
-export const stylesTheme = (theme: ThemeType) =>
-	StyleSheet.create({
-		row: {
-			flexDirection: "row",
-			alignItems: "center",
-			justifyContent: "space-between",
-			gap: spacings.padding[8],
-		},
-		avatarContainer: {
-			width: AVATAR_SIZE,
-			height: AVATAR_SIZE,
-			borderRadius: AVATAR_SIZE / 2,
-			overflow: "hidden",
-			backgroundColor: theme.action["brand-primary"],
-		},
-		avatar: {
-			width: AVATAR_SIZE,
-			height: AVATAR_SIZE,
-		},
-	})
-```
-
-**Usage in screen:**
-
-```tsx
-// Home.tsx
-<Header
-	userName={states.userName}
-	onNotificationsPress={actions.handleNotificationsPress}
-/>
-```
-
-### Screen component
-
-- **Always use the core `Screen` component as the main container** of the screen. No other root wrapper (e.g. plain `View`) for the whole screen.
-- Receives no route params in the component signature unless the route passes them.
-- Uses a custom hook that returns `actions`, `states`, and `refs`.
-- Uses `useStyles` with a `stylesTheme(theme, ...)` function for styles.
-- Prefer core components: `Screen`, `Text`, `Button`, `Icon`, etc. **Icons must use the core `Icon` component only**—no `Ionicons`, `@expo/vector-icons`, or other icon libs.
-
-```tsx
-// ScreenName.tsx
-import { View } from "react-native"
-import { Text } from "../../components/core/Text/Text"
-import { Screen } from "../../components/core/Screen/Screen"
-import { useStyles } from "../../theme/hooks/useStyles"
+import { Screen, Header, Text } from "@/components/core"
+import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useScreenName } from "./useScreenName"
 
-export function ScreenNameScreen() {
-	const { actions, states, refs } = useScreenName()
-	const styles = useStyles((theme) => stylesTheme(theme, states.insets))
+export const ScreenName = () => {
+	const { states, actions } = useScreenName()
+	const styles = useStyles(stylesTheme)
 
 	return (
 		<Screen>
-			<View style={styles.container} ref={refs.containerRef}>
-				<Text variant="heading">Title</Text>
-				{/* ... */}
-			</View>
+			<Header.Root>
+				<Header.GoBack />
+				<Header.VerticalCenterTitle>Título</Header.VerticalCenterTitle>
+			</Header.Root>
+
+			<Text>Conteúdo da tela</Text>
 		</Screen>
 	)
 }
 ```
 
-### styles.ts
+### Props do Screen
 
-- Export a function `stylesTheme(theme: ThemeType, ...deps)` that returns a `StyleSheet.create(...)`.
-- Use theme tokens: `theme.surface.background`, `spacings`, etc.
-- Use safe area insets when needed (e.g. bottom padding).
+- `scrollable`: torna a tela rolável
+- `nestedScrollEnabled`: habilita scroll aninhado
 
-```typescript
-// styles.ts
+### Não use `scrollable` quando usar `FlatList` (o FlatList já gerencia o scroll)
+
+## 3. styles.ts - Estilos com Tema
+
+Crie função `stylesTheme` que recebe o `theme`:
+
+```ts
 import { StyleSheet } from "react-native"
-import { ThemeType } from "../../theme"
-import { spacings } from "../../theme/tokens/spacings"
+import { ThemeType, spacings } from "@/themes"
+
+export const stylesTheme = (theme: ThemeType) =>
+	StyleSheet.create({
+		container: {
+			flex: 1,
+			gap: spacings.gap[24],
+			padding: spacings.padding[20],
+		},
+		button: {
+			marginTop: spacings.margin[16],
+		},
+	})
+```
+
+**Quando usar valores dinâmicos** (como insets):
+
+```ts
 import { EdgeInsets } from "react-native-safe-area-context"
 
 export const stylesTheme = (theme: ThemeType, insets: EdgeInsets) =>
 	StyleSheet.create({
 		container: {
-			flex: 1,
-			gap: spacings.gap[32],
-			paddingBottom:
-				Math.max(insets.bottom, spacings.padding[20]) + spacings.padding[20],
+			paddingBottom: Math.max(insets.bottom, spacings.padding[20]),
 		},
 	})
 ```
 
-### useScreenName hook
+Uso no componente: `const styles = useStyles((theme) => stylesTheme(theme, states.insets))`
 
-- **Return always** `{ actions, states, refs }`. Even if one category is empty, expose the key (e.g. `refs: {}`).
-- **UI rules only**: no business logic. The hook handles only UI concerns: navigation (e.g. `useRouter`), safe area, theme, refs, local UI state (e.g. focus, visibility). Business rules (validation, API calls, domain logic) belong in domain/use cases, not in the screen hook.
-- `actions`: handlers for user interactions (e.g. navigate, toggle, submit that delegates to a service).
-- `states`: derived or reactive values for rendering (e.g. `insets`, `theme`, loading flags coming from props/context).
-- `refs`: refs for DOM/native elements used by the screen (e.g. scroll ref, input ref). Use `useRef` and expose them in `refs`.
+## 4. useScreenName.ts - Hook com Regras de UI
 
-```typescript
-// useScreenName.ts
-import { useRef } from "react"
-import { View } from "react-native"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
+Hook retorna sempre `{ states, actions }`:
+
+```ts
+import { useState } from "react"
 import { useRouter } from "expo-router"
-import { useAppTheme } from "../../theme/hooks/useAppTheme"
 
 export const useScreenName = () => {
 	const router = useRouter()
-	const insets = useSafeAreaInsets()
-	const { theme } = useAppTheme()
-	const containerRef = useRef<View>(null)
+	const [searchText, setSearchText] = useState("")
 
 	const handleNavigate = () => {
-		router.navigate("/other-route")
+		router.push("/outra-rota")
+	}
+
+	const handleSearchChange = (text: string) => {
+		setSearchText(text)
 	}
 
 	return {
-		actions: { handleNavigate },
-		states: { insets, theme },
-		refs: { containerRef },
+		states: {
+			searchText,
+		},
+		actions: {
+			handleNavigate,
+			handleSearchChange,
+		},
 	}
 }
 ```
 
-## Root layout (\_layout.tsx)
+**Regras:**
 
-- Wraps app with: `ThemeProvider` → `SafeAreaProvider` → `AuthProvider` → routing.
-- Uses `Stack` from `expo-router`.
-- Uses `Stack.Protected` with `guard={!!auth?.id}` for protected routes.
-- Entry route: `name="index"` with `headerShown: false`.
+- Apenas lógica de UI (navegação, estados locais, refs)
+- Sem lógica de negócio (validações, API, domínio)
+- Sempre retornar `{ states, actions }`
+
+## 5. Componentes Específicos da Tela
+
+Crie em `components/` dentro da pasta da screen:
+
+```
+ScreenName/components/
+├── index.ts                    # export * from "./ComponentName"
+└── ComponentName/
+    ├── index.ts                # export { ComponentName }
+    ├── ComponentName.tsx
+    └── styles.ts               # opcional
+```
+
+**Exemplo:**
 
 ```tsx
-const Routes = () => {
-	const { auth } = useAuth()
+// ComponentName.tsx
+import { View } from "react-native"
+import { Text, Icon } from "@/components/core"
+import { useAppTheme } from "@/themes"
+import { stylesTheme } from "./styles"
+
+type ComponentNameProps = {
+	title: string
+	onPress: () => void
+}
+
+export const ComponentName = ({ title, onPress }: ComponentNameProps) => {
+	const { theme } = useAppTheme()
+	const styles = stylesTheme(theme)
+
 	return (
-		<Stack>
-			<Stack.Screen name="index" options={{ headerShown: false }} />
-			<Stack.Protected guard={!!auth?.id}>
-				<Stack.Screen name="(application)" />
-			</Stack.Protected>
-		</Stack>
+		<View style={styles.container}>
+			<Text>{title}</Text>
+			<Icon name="search" size={20} onPress={onPress} />
+		</View>
 	)
 }
 ```
 
-## Protected layout (e.g. (application)/\_layout.tsx)
+## 6. Configurar Rota em (application)
 
-- Redirect to entry if not authenticated.
-- Use `Stack` with `screenOptions`: `headerShown: false`, `fullScreenGestureEnabled: true` as in the project.
+### Para Stack (tela normal):
+
+1. Crie o arquivo de rota:
 
 ```tsx
-import { Redirect, Stack } from "expo-router"
-import { useAuth } from "../../domain/auth/AuthContext"
+// src/app/(application)/screenName.tsx
+import { ScreenName } from "@/screens"
 
-export default function ProtectedLayout() {
-	const { auth } = useAuth()
-	if (!auth?.id) return <Redirect href="/" />
-	return (
-		<Stack screenOptions={{ headerShown: false, fullScreenGestureEnabled: true }}>
-			<Stack.Screen name="(tabs)" />
-		</Stack>
-	)
+export default function ScreenNameRoute() {
+	return <ScreenName />
 }
 ```
 
-## Tabs layout
-
-- Use `Tabs` from `expo-router`.
-- One `Tabs.Screen` per tab file (e.g. `home`, `profile`).
+2. Registre no layout `src/app/(application)/_layout.tsx`:
 
 ```tsx
-import { Tabs } from "expo-router"
+<Stack.Screen name="screenName" options={{ headerShown: false }} />
+```
 
-export default function TabLayout() {
-	return (
-		<Tabs>
-			<Tabs.Screen name="home" />
-			<Tabs.Screen name="profile" />
-		</Tabs>
-	)
+### Para Tab (aba):
+
+1. Crie o arquivo de rota:
+
+```tsx
+// src/app/(application)/(tabs)/screenName.tsx
+import { ScreenName } from "@/screens"
+
+export default function ScreenNameTab() {
+	return <ScreenName />
 }
 ```
 
-## Adding a new screen (step-by-step)
+2. Registre no layout `src/app/(application)/(tabs)/_layout.tsx`:
 
-### 1. Screen folder and files
+```tsx
+<Tabs.Screen name="screenName" options={{ title: "Título" }} />
+```
 
-- Create `src/ui/screens/FeatureName/FeatureName.tsx` (export `FeatureNameScreen`).
-- Create `src/ui/screens/FeatureName/styles.ts` with `stylesTheme(theme, ...)`.
-- Create `src/ui/screens/FeatureName/useFeatureName.ts` with `useFeatureName()` returning `{ actions, states, refs }` (UI-only, no business logic).
+## Navegação
 
-### 2. Route file
+Use `useRouter` para navegar:
 
-- Create the route file in `src/app/` according to desired URL:
-    - Tab: `(application)/(tabs)/featureName.tsx`
-    - Stack inside app: `(application)/featureName.tsx`
-    - Entry-level: e.g. `someRoute.tsx` and register in root `_layout.tsx` if needed.
-- In the route file: import the screen and default-export a function that renders it.
+```ts
+import { useRouter } from "expo-router"
 
-### 3. Register in layout (if needed)
+const router = useRouter()
 
-- New tab: add `<Tabs.Screen name="featureName" />` in `(application)/(tabs)/_layout.tsx`.
-- New stack screen: add `<Stack.Screen name="featureName" />` in the corresponding `_layout.tsx`.
+// Navegar
+router.push("/rota")
+router.push("/(application)/screenName")
 
-## Navigation
+// Voltar
+router.back()
 
-- Use `useRouter()` from `expo-router`: `router.push(href)`, `router.replace(href)`, `router.back()`.
-- Use path strings: `"/"`, `"/home"`, `"/(application)/(tabs)/profile"` (group names don’t appear in URL).
-- Use `<Link href="...">` for declarative navigation when appropriate.
+// Substituir
+router.replace("/rota")
+```
 
-## Naming conventions
+## Imports com @/
 
-- **Route files**: camelCase, e.g. `home.tsx`, `featureName.tsx`.
-- **Screen folder**: PascalCase, e.g. `Onboarding`, `Home`, `FeatureName`.
-- **Screen component**: `ScreenNameScreen` (e.g. `OnboardingScreen`, `HomeScreen`).
-- **Hook**: `useScreenName` (e.g. `useOnboarding`, `useHome`).
-- **Styles**: `stylesTheme` in `styles.ts`.
+**Sempre use aliases `@/`:**
 
-## Checklist
+```tsx
+import { Screen, Header, Text, Button, Icon } from "@/components/core"
+import { useStyles, useAppTheme } from "@/themes"
+import { ScreenName } from "@/screens"
+```
 
-When creating a new screen and route:
+**Nunca use caminhos relativos** como `"../../../../components/core"`
 
-- [ ] Created folder `src/ui/screens/FeatureName/` with `FeatureName.tsx`, `styles.ts`, `useFeatureName.ts`.
-- [ ] Screen uses **core `Screen`** as the main container (root wrapper of the screen).
-- [ ] Screen hook returns `{ actions, states, refs }`; hook contains **only UI rules**, no business logic.
-- [ ] Styles use `stylesTheme(theme, ...)` and `useStyles`.
-- [ ] Used core components and theme tokens. **Icons only via core `Icon`** (no Ionicons/vector-icons directly).
-- [ ] Created route file in `src/app/` that only renders the screen component.
-- [ ] Registered the route in the correct `_layout.tsx` (Stack or Tabs).
-- [ ] Navigation uses `useRouter()` or `<Link>` with correct paths.
+## Checklist Rápido
+
+- [ ] Criar pasta `src/ui/screens/ScreenName/`
+- [ ] `index.ts` exportando a tela
+- [ ] `ScreenName.tsx` usando `Screen` e `Header` de `@/components/core`
+- [ ] `styles.ts` com função `stylesTheme(theme)`
+- [ ] `useScreenName.ts` retornando `{ states, actions }`
+- [ ] `components/` para componentes específicos (se necessário)
+- [ ] Adicionar export em `src/ui/screens/index.ts`
+- [ ] Criar arquivo de rota em `src/app/(application)/`
+- [ ] Registrar rota no `_layout.tsx` correspondente
+- [ ] Usar imports com `@/`
