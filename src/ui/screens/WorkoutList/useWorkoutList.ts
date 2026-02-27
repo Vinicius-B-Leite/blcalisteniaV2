@@ -50,7 +50,7 @@ export const useWorkoutList = () => {
 	const hasWorkouts = workouts.length > 0
 
 	const handleOpenWorkout = (id: string) => {
-		router.push("/workoutDetail")
+		router.push("/(application)/(workoutDetail)")
 		// TODO: Pass workout ID as parameter when implementing dynamic routes
 	}
 
