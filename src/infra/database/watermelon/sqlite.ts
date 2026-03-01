@@ -4,7 +4,8 @@ import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite"
 
 import schema from "./schema"
 import migrations from "./migrations"
-import UsersModel from "./models/UserModel"
+import UsersModel from "./models/UsersModel"
+import WorkoutsModel from "./models/WorkoutsModel"
 // import Post from './model/Post' // ⬅️ You'll import your Models here
 
 // First, create the adapter to the underlying database:
@@ -26,5 +27,5 @@ const adapter = new SQLiteAdapter({
 // Then, make a Watermelon database from it!
 export const database = new Database({
 	adapter,
-	modelClasses: [UsersModel],
+	modelClasses: [UsersModel, WorkoutsModel],
 })

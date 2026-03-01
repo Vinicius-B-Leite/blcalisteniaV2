@@ -1,5 +1,5 @@
 import { AuthModel } from "src/domain/Auth/AuthModel"
-import UsersModel from "src/infra/database/watermelon/models/UserModel"
+import UsersModel from "src/infra/database/watermelon/models/UsersModel"
 
 export const authAdapters = {
 	toDomain: (data: UsersModel): AuthModel => ({

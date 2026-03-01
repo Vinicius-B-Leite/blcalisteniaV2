@@ -1,51 +1,14 @@
 import { useState } from "react"
 import { useRouter } from "expo-router"
-
-type Workout = {
-	id: string
-	title: string
-	exerciseCount: number
-	category: string
-	imageUrl?: string
-}
-
-const MOCK_WORKOUTS: Workout[] = [
-	{
-		id: "1",
-		title: "Treino A",
-		exerciseCount: 2,
-		category: "Peitoral",
-		imageUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400",
-	},
-	{
-		id: "2",
-		title: "Treino B",
-		exerciseCount: 4,
-		category: "Costas",
-		imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400",
-	},
-	{
-		id: "3",
-		title: "Treino C",
-		exerciseCount: 3,
-		category: "Pernas",
-		imageUrl: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400",
-	},
-	{
-		id: "4",
-		title: "Treino D",
-		exerciseCount: 5,
-		category: "Ombros",
-		imageUrl: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400",
-	},
-]
+import { useGetWorkouts } from "src/domain/Workout/useCases/useGetWorkouts"
+import { WorkoutModel } from "src/domain/Workout/WorkoutModel"
 
 export const useWorkoutList = () => {
 	const router = useRouter()
 	const [modalCreateWorkout, setModalCreateWorkout] = useState(false)
 	const [searchText, setSearchText] = useState("")
-	const [workouts, setWorkouts] = useState<Workout[]>(MOCK_WORKOUTS)
-	const [deleteModal, setDeleteModal] = useState<Workout | null>(null)
+	const { workouts, isLoading } = useGetWorkouts()
+	const [deleteModal, setDeleteModal] = useState<WorkoutModel | null>(null)
 
 	const hasWorkouts = workouts.length > 0
 
@@ -80,7 +43,7 @@ export const useWorkoutList = () => {
 
 	const handleConfirmDelete = () => {
 		if (deleteModal && deleteModal.id) {
-			setWorkouts((prev) => prev.filter((workout) => workout.id !== deleteModal.id))
+			console.log("Delete workout:", deleteModal.id)
 		}
 		handleCloseDeleteModal()
 	}

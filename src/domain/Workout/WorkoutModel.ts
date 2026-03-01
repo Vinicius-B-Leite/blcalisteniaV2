@@ -1,7 +1,13 @@
+import { Category } from "src/constants"
+
+export const weekDaysFrequency = [0, 1, 2, 3, 4, 5, 6] as const
+export type WeekDaysFrequency = (typeof weekDaysFrequency)[number]
+
 export type WorkoutModel = {
-	// id: string
-	// title: string
+	id: string
+	title: string
+	category: Category
+	imageUrl?: string
+	weekDaysFrequency: WeekDaysFrequency[]
 	// exercises: Exercise[]
-	// category: string
-	// imageUrl?: string
 }

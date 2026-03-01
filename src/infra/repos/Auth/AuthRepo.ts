@@ -1,6 +1,6 @@
 import { IAuthRepo } from "src/domain/Auth/IAuthRepo"
 import { database } from "src/infra/database"
-import UsersModel from "src/infra/database/watermelon/models/UserModel"
+import UsersModel from "src/infra/database/watermelon/models/UsersModel"
 import { authAdapters } from "./AuthAdapters"
 
 export const AuthRepo: IAuthRepo = {

@@ -43,7 +43,7 @@ export const WorkoutList = () => {
 						<WorkoutCard
 							id={item.id}
 							title={item.title}
-							exerciseCount={item.exerciseCount}
+							exerciseCount={5}
 							category={item.category}
 							imageUrl={item.imageUrl}
 							onRedirect={() => actions.onOpenWorkout(item.id)}

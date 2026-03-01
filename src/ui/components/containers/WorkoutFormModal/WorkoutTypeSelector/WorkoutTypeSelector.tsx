@@ -3,24 +3,23 @@ import { Text } from "@/components/core"
 import { Pressable } from "@/components/core"
 import { useAppTheme } from "@/themes/hooks"
 import { createStyles } from "./styles"
-
-export type WorkoutType = "strength" | "mobility" | "resistance" | "flexibility"
+import { CATEGORIES, Category } from "src/constants"
 
 interface WorkoutTypeOption {
 	label: string
-	value: WorkoutType
+	value: Category
 }
 
 const workoutTypes: WorkoutTypeOption[] = [
-	{ label: "Força", value: "strength" },
-	{ label: "Mobilidade", value: "mobility" },
-	{ label: "Resistência", value: "resistance" },
-	{ label: "Flexibilidade", value: "flexibility" },
+	{ label: "Força", value: CATEGORIES.strength },
+	{ label: "Mobilidade", value: CATEGORIES.mobility },
+	{ label: "Resistência", value: CATEGORIES.resistance },
+	{ label: "Flexibilidade", value: CATEGORIES.flexibility },
 ]
 
 interface WorkoutTypeSelectorProps {
-	selectedType?: WorkoutType
-	onTypeChange?: (type: WorkoutType) => void
+	selectedType?: Category
+	onTypeChange?: (type: Category) => void
 }
 
 export const WorkoutTypeSelector = ({
@@ -30,11 +29,11 @@ export const WorkoutTypeSelector = ({
 	const { theme } = useAppTheme()
 	const styles = createStyles(theme)
 
-	const handleTypeSelect = (type: WorkoutType) => {
+	const handleTypeSelect = (type: Category) => {
 		onTypeChange?.(type)
 	}
 
-	const isTypeSelected = (type: WorkoutType) => selectedType === type
+	const isTypeSelected = (type: Category) => selectedType === type
 
 	return (
 		<View style={styles.container}>
