@@ -2,17 +2,20 @@ import { IconType } from "@/components/core"
 import { EWorkoutStatus } from "./types"
 
 export const useCardCalendar = () => {
-	const currentWeekDaysNumber = Array.from({ length: 7 }, (_, i) => {
+	const currentDay = new Date().getDate()
+	const leftDays = Array.from({ length: currentDay - 1 }, (_, i) => {
 		const date = new Date()
-		date.setDate(date.getDate() - i)
+		date.setDate(currentDay - i - 1)
 		return date.getDate().toString()
-	}).reverse()
-
-	const weekDaysNames = Array.from({ length: 7 }, (_, i) => {
+	})
+	const rightDays = Array.from({ length: 7 - currentDay }, (_, i) => {
 		const date = new Date()
-		date.setDate(date.getDate() - i)
-		return date.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "")
-	}).reverse()
+		date.setDate(currentDay + i + 1)
+		return date.getDate().toString()
+	})
+	const currentWeekDaysNumber = [...leftDays, currentDay.toString(), ...rightDays]
+
+	const weekDaysNames = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"]
 
 	const currentDayActive = new Date().getDate()
 
