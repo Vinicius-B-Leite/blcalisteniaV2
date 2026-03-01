@@ -3,6 +3,8 @@
 	"compilerOptions": {
 		"strict": true,
 		"noImplicitAny": true,
+		"experimentalDecorators": true,
+		"useDefineForClassFields": false,
 		"baseUrl": ".",
 		"paths": {
 			"@/screens/*": ["src/ui/screens/*"],

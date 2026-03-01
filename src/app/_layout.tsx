@@ -1,7 +1,9 @@
 import { Stack } from "expo-router"
 import { ThemeProvider } from "@/themes"
 import { SafeAreaProvider } from "react-native-safe-area-context"
-import { AuthProvider, useAuth } from "../domain/auth/AuthContext"
+import { AuthProvider, useAuth } from "../domain/Auth/AuthContext"
+import { ReposProviders } from "src/infra/repos"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 if (__DEV__) {
 	import("../../ReactotronConfig").then(() => {
@@ -10,7 +12,11 @@ if (__DEV__) {
 }
 
 const Routes = () => {
-	const { auth } = useAuth()
+	const { auth, isLoadingAuth } = useAuth()
+
+	if (isLoadingAuth) {
+		return null
+	}
 
 	return (
 		<Stack>
@@ -22,15 +28,21 @@ const Routes = () => {
 	)
 }
 
+const client = new QueryClient()
+
 const RootLayout = () => {
 	return (
-		<ThemeProvider>
-			<SafeAreaProvider>
-				<AuthProvider>
-					<Routes />
-				</AuthProvider>
-			</SafeAreaProvider>
-		</ThemeProvider>
+		<QueryClientProvider client={client}>
+			<ThemeProvider>
+				<SafeAreaProvider>
+					<ReposProviders>
+						<AuthProvider>
+							<Routes />
+						</AuthProvider>
+					</ReposProviders>
+				</SafeAreaProvider>
+			</ThemeProvider>
+		</QueryClientProvider>
 	)
 }
 

@@ -38,7 +38,8 @@
 				{
 					"root": "./src/app"
 				}
-			]
+			],
+			"./src/config/plugins/watermelonDb"
 		],
 		"extra": {
 			"router": {

@@ -1,4 +1,7 @@
 import { createContext, useContext, useState } from "react"
+import { useSignIn } from "./useCases/useSignIn"
+import { useGetCurrentUser } from "./useCases/useGetCurrentUser"
+import { useLogout } from "./useCases/useLogout"
 
 type Auth = {
 	id: string
@@ -7,23 +10,45 @@ type Auth = {
 
 type AuthContextType = {
 	auth: Auth | null
-	loginAsGuest(): void
+	loginAsGuest(): Promise<void>
+	isLoadingAuth: boolean
+	logout: () => Promise<void>
 }
 export const AuthContext = createContext({} as AuthContextType)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+	const signIn = useSignIn()
+	const _logout = useLogout()
 	const [auth, setAuth] = useState<Auth | null>(null)
 
-	const loginAsGuest = () => {
-		const guestUser: Auth = {
-			id: "guest",
-			name: "Matheus",
+	const getCurrentUser = useGetCurrentUser({
+		onSuccess: (currentUser) => setAuth(currentUser),
+	})
+
+	const loginAsGuest = async () => {
+		const guestUser: Omit<Auth, "id"> = {
+			name: "Vini",
 		}
-		setAuth(guestUser)
+		const createdUser = await signIn.execute({ name: guestUser.name })
+
+		if (createdUser) {
+			setAuth(createdUser)
+		}
+	}
+
+	const logout = async () => {
+		await _logout.execute()
+		setAuth(null)
 	}
 
 	return (
-		<AuthContext.Provider value={{ auth, loginAsGuest }}>
+		<AuthContext.Provider
+			value={{
+				auth,
+				loginAsGuest,
+				isLoadingAuth: getCurrentUser.isLoading,
+				logout,
+			}}>
 			{children}
 		</AuthContext.Provider>
 	)

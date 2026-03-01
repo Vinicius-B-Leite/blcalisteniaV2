@@ -1,14 +1,15 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useAuth } from "../../../domain/auth/AuthContext"
+import { useAuth } from "../../../domain/Auth/AuthContext"
 import { useAppTheme } from "@/themes"
 
 export const useHome = () => {
 	const insets = useSafeAreaInsets()
 	const { theme } = useAppTheme()
-	const { auth } = useAuth()
+	const { auth, logout } = useAuth()
 
 	const handleNotificationsPress = () => {
 		// TODO: navigate to notifications
+		logout()
 	}
 
 	const handleSeeMoreBlog = () => {
