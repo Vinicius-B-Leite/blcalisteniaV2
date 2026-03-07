@@ -3,14 +3,15 @@ import { useAppTheme } from "@/themes/hooks"
 import { createStyles } from "./styles"
 import { View } from "react-native"
 import { WeekDaySelector, WeekDay } from "./WeekDaySelector"
-import { WorkoutTypeSelector, WorkoutType } from "./WorkoutTypeSelector"
+import { WorkoutTypeSelector } from "./WorkoutTypeSelector"
 import { useState, ReactNode } from "react"
+import { Category } from "src/constants"
 
 export interface WorkoutFormValues {
 	name: string
 	description: string
 	weekDays: WeekDay[]
-	type?: WorkoutType
+	type?: Category
 }
 
 interface WorkoutFormModalProps {
@@ -40,7 +41,7 @@ export const WorkoutFormModal = ({
 	const [selectedDays, setSelectedDays] = useState<WeekDay[]>(
 		initialValues?.weekDays ?? [],
 	)
-	const [selectedType, setSelectedType] = useState<WorkoutType | undefined>(
+	const [selectedType, setSelectedType] = useState<Category | undefined>(
 		initialValues?.type,
 	)
 
