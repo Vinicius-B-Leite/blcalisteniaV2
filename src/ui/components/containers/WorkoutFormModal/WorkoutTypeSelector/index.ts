@@ -1,2 +1,1 @@
-export * from "./WorkoutTypeSelector"
-export type { WorkoutType } from "./WorkoutTypeSelector"
+export { WorkoutTypeSelector } from "./WorkoutTypeSelector"
