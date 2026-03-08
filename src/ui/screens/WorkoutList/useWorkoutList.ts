@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form"
 export const useWorkoutList = () => {
 	const router = useRouter()
 
-	const { workouts, isLoading } = useGetWorkouts()
+	const { workouts, isLoading: isGettingWorkouts } = useGetWorkouts()
 	const createWorkout = useCreateWorkout()
 	const deleteWorkout = useDeleteWorkout()
 
@@ -82,6 +82,7 @@ export const useWorkoutList = () => {
 			hasWorkouts,
 			deleteModal,
 			isDeleting: deleteWorkout.isLoading,
+			isGettingWorkouts,
 		},
 		actions: {
 			openModal: handleOpenModalCreateWorkout,
