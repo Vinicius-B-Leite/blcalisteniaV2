@@ -34,7 +34,7 @@ export const AddExerciseModal = ({ visible, onClose }: AddExerciseModalProps) =>
 						<Icon name="arrowRightTop" size={20} />
 					</Pressable.Root>
 
-					<Input.Root>
+					<Input.Root name="">
 						<Input.Label>Nome do exercício</Input.Label>
 						<Input.FieldWrapper>
 							<Input.Field
@@ -52,7 +52,7 @@ export const AddExerciseModal = ({ visible, onClose }: AddExerciseModalProps) =>
 								style={styles.numberInputLabel}>
 								Séries
 							</Text>
-							<Input.Root>
+							<Input.Root name="">
 								<Input.FieldWrapper>
 									<Input.Field
 										value={states.series}
@@ -71,7 +71,7 @@ export const AddExerciseModal = ({ visible, onClose }: AddExerciseModalProps) =>
 								style={styles.numberInputLabel}>
 								Repetições
 							</Text>
-							<Input.Root>
+							<Input.Root name="">
 								<Input.FieldWrapper>
 									<Input.Field
 										value={states.reps}
@@ -90,7 +90,7 @@ export const AddExerciseModal = ({ visible, onClose }: AddExerciseModalProps) =>
 								style={styles.numberInputLabel}>
 								Descanso
 							</Text>
-							<Input.Root>
+							<Input.Root name="">
 								<Input.FieldWrapper>
 									<Input.Field
 										value={states.rest}

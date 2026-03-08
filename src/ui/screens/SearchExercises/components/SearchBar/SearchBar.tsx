@@ -3,7 +3,7 @@ import { SearchBar as SearchBarTypes } from "./types"
 
 export function SearchBar({ placeholder, value, onChangeText }: SearchBarTypes.Props) {
 	return (
-		<Input.Root>
+		<Input.Root name="">
 			<Input.FieldWrapper>
 				<Icon name="search" size={16} variant="secondary" />
 				<Input.Field

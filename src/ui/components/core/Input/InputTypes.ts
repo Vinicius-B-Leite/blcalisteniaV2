@@ -29,7 +29,7 @@ export namespace Input {
 	export type RootProps<T extends FieldValues = any> = PropsWithChildren<
 		ViewProps & {
 			variant?: VariantsKeys
-			control: Control<T>
+			control?: Control<T>
 			name: Path<T>
 		}
 	>
@@ -45,7 +45,7 @@ export namespace Input {
 	export type ContextType<T extends FieldValues = any> = {
 		variant: Variant
 		inputRef: RefObject<TextInput | null>
-		control: Control<T>
+		control?: Control<T>
 		name: Path<T>
 	}
 }

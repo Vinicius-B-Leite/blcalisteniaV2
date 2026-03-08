@@ -11,7 +11,7 @@ export const SearchBar = ({
 	const styles = useStyles(stylesTheme)
 
 	return (
-		<Input.Root style={styles.root}>
+		<Input.Root name="" style={styles.root}>
 			<Input.FieldWrapper>
 				<Icon name="search" size={16} variant="secondary" />
 				<Input.Field
