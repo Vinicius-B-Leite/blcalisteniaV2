@@ -50,11 +50,11 @@ export const WeekDaySelector = ({
 			</Text>
 
 			<FlatList
-				style={styles.daysWrapper}
 				data={weekDays}
 				horizontal
 				keyExtractor={(item) => item.value}
 				showsHorizontalScrollIndicator={false}
+				contentContainerStyle={styles.daysWrapper}
 				renderItem={({ item: day }) => (
 					<Pressable.Root
 						onPress={() => handleDayToggle(day.value)}

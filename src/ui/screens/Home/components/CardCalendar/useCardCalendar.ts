@@ -13,7 +13,11 @@ export const useCardCalendar = () => {
 		date.setDate(currentDay + i + 1)
 		return date.getDate().toString()
 	})
-	const currentWeekDaysNumber = [...leftDays, currentDay.toString(), ...rightDays]
+	const currentWeekDaysNumber = [
+		...leftDays.reverse(),
+		currentDay.toString(),
+		...rightDays,
+	]
 
 	const weekDaysNames = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"]
 

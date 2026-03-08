@@ -43,7 +43,7 @@ export const WorkoutTypeSelector = ({
 
 			<FlatList
 				horizontal
-				style={styles.typesWrapper}
+				contentContainerStyle={styles.typesWrapper}
 				data={workoutTypes}
 				keyExtractor={(item) => item.value}
 				showsHorizontalScrollIndicator={false}

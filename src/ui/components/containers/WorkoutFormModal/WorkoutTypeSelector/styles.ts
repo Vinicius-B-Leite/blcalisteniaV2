@@ -12,8 +12,6 @@ export const createStyles = (theme: ThemeType) =>
 		},
 		typesWrapper: {
 			gap: spacings.gap[4],
-			width: "100%",
-			flexDirection: "row",
 		},
 		typeButton: {
 			flex: 1,
@@ -27,7 +25,7 @@ export const createStyles = (theme: ThemeType) =>
 		},
 		typeButtonSelected: {
 			backgroundColor: theme.surface["brand-opacity-20"],
-			borderColor: "transparent",
+			// borderColor: "transparent",
 		},
 		typeText: {
 			color: theme.content["text-variant"],

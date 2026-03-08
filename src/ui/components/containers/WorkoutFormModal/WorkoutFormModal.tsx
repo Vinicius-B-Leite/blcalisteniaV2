@@ -4,14 +4,17 @@ import { createStyles } from "./styles"
 import { View } from "react-native"
 import { WeekDaySelector, WeekDay } from "./WeekDaySelector"
 import { WorkoutTypeSelector } from "./WorkoutTypeSelector"
-import { useState, ReactNode } from "react"
+import { ReactNode } from "react"
 import { Category } from "src/constants"
+import { Controller, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { FormSchema, schema } from "./schema"
 
 export interface WorkoutFormValues {
 	name: string
 	description: string
 	weekDays: WeekDay[]
-	type?: Category
+	type: Category
 }
 
 interface WorkoutFormModalProps {
@@ -36,32 +39,31 @@ export const WorkoutFormModal = ({
 	const { theme } = useAppTheme()
 	const styles = createStyles(theme)
 
-	const [name, setName] = useState(initialValues?.name ?? "")
-	const [description, setDescription] = useState(initialValues?.description ?? "")
-	const [selectedDays, setSelectedDays] = useState<WeekDay[]>(
-		initialValues?.weekDays ?? [],
-	)
-	const [selectedType, setSelectedType] = useState<Category | undefined>(
-		initialValues?.type,
-	)
+	const form = useForm<FormSchema>({
+		resolver: zodResolver(schema),
+		mode: "onChange",
+		defaultValues: {
+			name: initialValues?.name ?? "",
+			description: initialValues?.description ?? "",
+			weekDays: initialValues?.weekDays ?? [],
+			type: initialValues?.type,
+		},
+	})
 
-	const handleConfirm = () => {
+	const handleConfirm = form.handleSubmit((formValues) => {
 		const values: WorkoutFormValues = {
-			name,
-			description,
-			weekDays: selectedDays,
-			type: selectedType,
+			name: formValues.name,
+			description: formValues.description,
+			weekDays: formValues.weekDays,
+			type: formValues.type,
 		}
 
 		onConfirm?.(values)
+		form.reset()
 		onClose()
-	}
+	})
 
-	const isFormValid =
-		name.trim() !== "" &&
-		description.trim() !== "" &&
-		selectedDays.length > 0 &&
-		selectedType
+	const isFormValid = form.formState.isValid
 
 	return (
 		<Modal.Root visible={visible} onClose={onClose}>
@@ -73,39 +75,55 @@ export const WorkoutFormModal = ({
 				{renderHeaderExtra}
 
 				<View style={styles.top}>
-					<Input.Root>
+					<Input.Root control={form.control} name="name">
 						<Input.Label>Nome do treino</Input.Label>
 						<Input.FieldWrapper>
-							<Input.Field
-								placeholder="Treino X"
-								value={name}
-								onChangeText={setName}
-							/>
+							<Input.Field placeholder="Treino X" />
 						</Input.FieldWrapper>
+						<Input.Error />
 					</Input.Root>
 
-					<Input.Root>
+					<Input.Root control={form.control} name="description">
 						<Input.Label>Descrição do treino</Input.Label>
 						<Input.FieldWrapper>
-							<Input.Field
-								placeholder="Treino de costas"
-								value={description}
-								onChangeText={setDescription}
-							/>
+							<Input.Field placeholder="Treino de costas" />
 						</Input.FieldWrapper>
+						<Input.Error />
 					</Input.Root>
 				</View>
 
 				<View style={styles.bottom}>
-					<WorkoutTypeSelector
-						selectedType={selectedType}
-						onTypeChange={setSelectedType}
-					/>
+					<Input.Root control={form.control} name="type">
+						<Controller
+							control={form.control}
+							name="type"
+							render={({ field: { onChange, value } }) => (
+								<WorkoutTypeSelector
+									selectedType={value}
+									onTypeChange={onChange}
+								/>
+							)}
+						/>
+						<Input.Error>
+							{form.getFieldState("type").error?.message}
+						</Input.Error>
+					</Input.Root>
 
-					<WeekDaySelector
-						selectedDays={selectedDays}
-						onDaysChange={setSelectedDays}
-					/>
+					<Input.Root control={form.control} name="weekDays">
+						<Controller
+							control={form.control}
+							name="weekDays"
+							render={({ field: { onChange, value } }) => (
+								<WeekDaySelector
+									selectedDays={value}
+									onDaysChange={onChange}
+								/>
+							)}
+						/>
+						<Input.Error>
+							{form.getFieldState("weekDays").error?.message}
+						</Input.Error>
+					</Input.Root>
 
 					<View style={styles.buttonsWrapper}>
 						<Button.Root disabled={!isFormValid} onPress={handleConfirm}>

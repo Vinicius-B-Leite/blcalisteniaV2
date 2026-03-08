@@ -7,6 +7,7 @@ import {
 	ViewProps,
 	ViewStyle,
 } from "react-native"
+import { Control, FieldValues, Path } from "react-hook-form"
 import { Text } from "../Text/TextTypes"
 import { inputVariantsKeys } from "./InputVariants"
 
@@ -25,9 +26,11 @@ export namespace Input {
 		}
 	}
 
-	export type RootProps = PropsWithChildren<
+	export type RootProps<T extends FieldValues = any> = PropsWithChildren<
 		ViewProps & {
 			variant?: VariantsKeys
+			control: Control<T>
+			name: Path<T>
 		}
 	>
 
@@ -37,8 +40,12 @@ export namespace Input {
 
 	export type FieldProps = TextInputProps
 
-	export type ContextType = {
+	export type ErrorProps = PropsWithChildren<Partial<Text.Props>>
+
+	export type ContextType<T extends FieldValues = any> = {
 		variant: Variant
 		inputRef: RefObject<TextInput | null>
+		control: Control<T>
+		name: Path<T>
 	}
 }

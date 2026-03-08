@@ -58,6 +58,7 @@ export const WorkoutList = () => {
 				onClose={actions.closeModal}
 				title="Criar treino"
 				confirmButtonText="Criar"
+				onConfirm={actions.onConfirmCreateWorkout}
 			/>
 
 			<DeleteWorkoutModal

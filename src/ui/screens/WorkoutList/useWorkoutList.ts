@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useRouter } from "expo-router"
 import { useGetWorkouts } from "src/domain/Workout/useCases/useGetWorkouts"
 import { WorkoutModel } from "src/domain/Workout/WorkoutModel"
+import { WorkoutFormValues } from "@/components/containers/WorkoutFormModal/WorkoutFormModal"
 
 export const useWorkoutList = () => {
 	const router = useRouter()
@@ -52,6 +53,9 @@ export const useWorkoutList = () => {
 		setDeleteModal(null)
 	}
 
+	const handleConfirmCreateWorkout = (values: WorkoutFormValues) => {
+		console.log("Create workout with values:", values)
+	}
 	const filteredWorkouts = workouts.filter((workout) =>
 		workout.title.toLowerCase().includes(searchText.toLowerCase()),
 	)
@@ -73,6 +77,7 @@ export const useWorkoutList = () => {
 			onDeleteWorkout: handleDeleteWorkout,
 			onConfirmDelete: handleConfirmDelete,
 			onCloseDeleteModal: handleCloseDeleteModal,
+			onConfirmCreateWorkout: handleConfirmCreateWorkout,
 		},
 	}
 }

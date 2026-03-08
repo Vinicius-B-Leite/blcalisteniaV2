@@ -71,7 +71,7 @@ export const inputVariants = (
 			field: {
 				container: {
 					...defaultVariant.field.container,
-					borderWidth: 2,
+					borderWidth: 1,
 					borderColor: theme.content["text-brand"],
 				},
 				input: {
@@ -92,7 +92,7 @@ export const inputVariants = (
 			field: {
 				container: {
 					...defaultVariant.field.container,
-					borderWidth: 2,
+					borderWidth: 1,
 					borderColor: theme.border.error,
 				},
 				input: {
