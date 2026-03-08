@@ -14,8 +14,8 @@ export const useCreateWorkout = () => {
 			onError: (err) => {
 				console.log("Error creating workout :(", err)
 			},
-			onSuccess: () => {
-				queryClient.invalidateQueries({
+			onSuccess: async () => {
+				await queryClient.invalidateQueries({
 					queryKey: [workoutQueryKeys.all],
 				})
 			},

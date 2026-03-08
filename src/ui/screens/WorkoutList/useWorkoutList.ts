@@ -4,6 +4,7 @@ import { useGetWorkouts } from "src/domain/Workout/useCases/useGetWorkouts"
 import { WorkoutModel } from "src/domain/Workout/WorkoutModel"
 import { WorkoutFormValues } from "@/components/containers/WorkoutFormModal/WorkoutFormModal"
 import { useCreateWorkout } from "src/domain/Workout/useCases/useCreateWorkout"
+import { useDeleteWorkout } from "src/domain/Workout/useCases/useDeleteWorkout"
 import { useForm } from "react-hook-form"
 
 export const useWorkoutList = () => {
@@ -11,6 +12,7 @@ export const useWorkoutList = () => {
 
 	const { workouts, isLoading } = useGetWorkouts()
 	const createWorkout = useCreateWorkout()
+	const deleteWorkout = useDeleteWorkout()
 
 	const [modalCreateWorkout, setModalCreateWorkout] = useState(false)
 
@@ -50,7 +52,7 @@ export const useWorkoutList = () => {
 
 	const handleConfirmDelete = () => {
 		if (deleteModal && deleteModal.id) {
-			console.log("Delete workout:", deleteModal.id)
+			deleteWorkout.execute(deleteModal.id)
 		}
 		handleCloseDeleteModal()
 	}
@@ -79,6 +81,7 @@ export const useWorkoutList = () => {
 			workouts: filteredWorkouts,
 			hasWorkouts,
 			deleteModal,
+			isDeleting: deleteWorkout.isLoading,
 		},
 		actions: {
 			openModal: handleOpenModalCreateWorkout,

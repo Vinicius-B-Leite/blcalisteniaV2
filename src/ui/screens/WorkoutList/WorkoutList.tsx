@@ -61,6 +61,7 @@ export const WorkoutList = () => {
 				workoutName={states.deleteModal?.title || ""}
 				onClose={actions.onCloseDeleteModal}
 				onConfirm={actions.onConfirmDelete}
+				isLoading={states.isDeleting}
 			/>
 		</Screen>
 	)

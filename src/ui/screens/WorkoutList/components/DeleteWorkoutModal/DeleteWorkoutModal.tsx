@@ -9,6 +9,7 @@ export const DeleteWorkoutModal = ({
 	workoutName,
 	onClose,
 	onConfirm,
+	isLoading = false,
 }: DeleteWorkoutModalProps) => {
 	const styles = useStyles(stylesTheme)
 
@@ -19,7 +20,7 @@ export const DeleteWorkoutModal = ({
 			<Modal.Title>Deseja realmente remover o treino {workoutName}?</Modal.Title>
 
 			<View style={styles.buttonsContainer}>
-				<Button.Root variant="danger" onPress={onConfirm}>
+				<Button.Root variant="danger" onPress={onConfirm} isLoading={isLoading}>
 					<Button.Content>Remover</Button.Content>
 				</Button.Root>
 

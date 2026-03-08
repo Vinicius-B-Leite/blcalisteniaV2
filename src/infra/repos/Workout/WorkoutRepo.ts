@@ -34,4 +34,18 @@ export const WorkoutRepo: IWorkoutRepo = {
 			throw new Error("Error creating workout: " + error)
 		}
 	},
+
+	deleteWorkout: async (id) => {
+		try {
+			await database.write(async () => {
+				const workout = await database.collections
+					.get<WorkoutsModel>("workouts")
+					.find(id)
+
+				await workout.destroyPermanently()
+			})
+		} catch (error) {
+			throw new Error("Error deleting workout: " + error)
+		}
+	},
 }

@@ -20,7 +20,11 @@ export const ButtonRoot = ({
 
 	return (
 		<ButtonProvider value={{ variant: currentVariant, isLoading: props.isLoading }}>
-			<TouchableOpacity activeOpacity={0.8} style={currentVariant.root} {...props}>
+			<TouchableOpacity
+				disabled={props.disabled || props.isLoading}
+				activeOpacity={0.8}
+				style={currentVariant.root}
+				{...props}>
 				{children}
 			</TouchableOpacity>
 		</ButtonProvider>
