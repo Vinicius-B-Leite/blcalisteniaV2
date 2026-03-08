@@ -1,8 +1,15 @@
 import { useState } from "react"
-import { useRouter } from "expo-router"
+import { useRouter, useLocalSearchParams } from "expo-router"
+import { useGetWorkoutById } from "src/domain/Workout/useCases/useGetWorkoutById"
 
 export const useWorkoutDetail = () => {
 	const router = useRouter()
+	const params = useLocalSearchParams<{ id: string }>()
+	const { workout, isLoading } = useGetWorkoutById({
+		id: params.id,
+		onError: () => router.back(),
+	})
+
 	const [isCreateWorkoutModalVisible, setIsCreateWorkoutModalVisible] = useState(false)
 	const [isAddExerciseModalVisible, setIsAddExerciseModalVisible] = useState(false)
 
@@ -63,6 +70,8 @@ export const useWorkoutDetail = () => {
 		state: {
 			isAddExerciseModalVisible,
 			isCreateWorkoutModalVisible,
+			workout,
+			isLoading,
 		},
 	}
 }

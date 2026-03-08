@@ -6,6 +6,7 @@ type UseAppQueryParams<T> = {
 	queryFn: () => Promise<T>
 	onSuccess?(data: T): void
 	onError?(): void
+	enabled?: boolean
 }
 export const useAppQuery = <T>(config: UseAppQueryParams<T>) => {
 	const oneSecondInMs = 1000
@@ -23,6 +24,7 @@ export const useAppQuery = <T>(config: UseAppQueryParams<T>) => {
 		queryKey: config.queryKey,
 		queryFn: config.queryFn,
 		staleTime: fiveMinutesInMs,
+		enabled: config.enabled !== undefined ? config.enabled : true,
 	})
 
 	useEffect(() => {

@@ -17,6 +17,22 @@ export const WorkoutRepo: IWorkoutRepo = {
 		return workouts.map(workoutAdapters.toDomain)
 	},
 
+	getWorkoutById: async (id) => {
+		try {
+			const workout = await database.collections
+				.get<WorkoutsModel>("workouts")
+				.find(id)
+
+			if (!workout) {
+				throw new Error("Workout not found with ID: " + id)
+			}
+
+			return workoutAdapters.toDomain(workout)
+		} catch (error) {
+			throw new Error("Error fetching workout by ID: " + error)
+		}
+	},
+
 	createWorkout: async (params) => {
 		try {
 			let createdWorkout: WorkoutsModel | undefined

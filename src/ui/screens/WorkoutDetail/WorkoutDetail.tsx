@@ -1,18 +1,12 @@
 import { FlatList, View } from "react-native"
-import { Screen, Header, Button } from "@/components/core"
-import { ExerciseCard, EmptyState, AddExerciseModal } from "./components"
+import { Screen, Header, Button, Text } from "@/components/core"
+import { ExerciseCard, EmptyState, AddExerciseModal, LoadingState } from "./components"
 import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useWorkoutDetail } from "./useWorkoutDetail"
 import { WorkoutBannerCard, WorkoutFormModal } from "@/components/containers"
-
-const MOCK_WORKOUT = {
-	title: "Treino iniciante",
-	subtitle: "Treino de peito + triceps",
-	imageUrl: require("@/assets/imgs/workout-banner-1.png"),
-	category: "Força",
-	day: "Seg",
-}
+import { workoutUtils } from "src/utils/workout"
+import { workoutBannerUtils } from "src/utils/workoutBanner"
 
 const MOCK_EXERCISES = [
 	{
@@ -41,6 +35,19 @@ export const WorkoutDetail = () => {
 	const { actions, state } = useWorkoutDetail()
 
 	const hasExercises = MOCK_EXERCISES.length > 0
+	const weekDayLabels = state.workout?.weekDaysFrequency
+		? workoutUtils.getWeekDayLabels(state.workout.weekDaysFrequency)
+		: []
+
+	const imageUrl = workoutBannerUtils.resolveWorkoutBanner(state.workout?.imageUrl)
+
+	if (state.isLoading) {
+		return <LoadingState />
+	}
+
+	if (!state.workout) {
+		return null
+	}
 
 	return (
 		<Screen>
@@ -59,23 +66,25 @@ export const WorkoutDetail = () => {
 				ListHeaderComponent={
 					<WorkoutBannerCard.Root
 						onPress={actions.handleNavigateToChangeImage}
-						imageUrl={MOCK_WORKOUT.imageUrl}>
+						imageUrl={imageUrl}>
 						<WorkoutBannerCard.Content>
 							<WorkoutBannerCard.TextContainer>
 								<WorkoutBannerCard.Title>
-									{MOCK_WORKOUT.title}
+									{state.workout.title}
 								</WorkoutBannerCard.Title>
 								<WorkoutBannerCard.Subtitle>
-									{MOCK_WORKOUT.subtitle}
+									{state.workout.description}
 								</WorkoutBannerCard.Subtitle>
 							</WorkoutBannerCard.TextContainer>
 							<WorkoutBannerCard.Tags>
 								<WorkoutBannerCard.Tag>
-									{MOCK_WORKOUT.category}
+									{state.workout.category}
 								</WorkoutBannerCard.Tag>
-								<WorkoutBannerCard.Tag>
-									{MOCK_WORKOUT.day}
-								</WorkoutBannerCard.Tag>
+								{weekDayLabels.map((label, index) => (
+									<WorkoutBannerCard.Tag key={index}>
+										{label}
+									</WorkoutBannerCard.Tag>
+								))}
 							</WorkoutBannerCard.Tags>
 						</WorkoutBannerCard.Content>
 						<WorkoutBannerCard.EditButton onPress={actions.handleEditPress} />

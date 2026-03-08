@@ -32,8 +32,10 @@ export const useWorkoutList = () => {
 	})
 
 	const handleOpenWorkout = (id: string) => {
-		router.push("/(application)/(workoutDetail)")
-		// TODO: Pass workout ID as parameter when implementing dynamic routes
+		router.push({
+			pathname: "/(application)/(workoutDetail)",
+			params: { id },
+		})
 	}
 
 	const handleOpenModalCreateWorkout = () => {
