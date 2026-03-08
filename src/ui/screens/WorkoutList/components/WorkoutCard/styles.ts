@@ -24,7 +24,7 @@ export const stylesTheme = (theme: ThemeType) => {
 		},
 		image: {
 			width: "40%",
-			alignSelf: "stretch",
+			height: 60,
 			borderRadius: radius[8],
 		},
 		infoContainer: {

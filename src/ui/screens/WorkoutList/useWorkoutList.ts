@@ -6,6 +6,7 @@ import { WorkoutFormValues } from "@/components/containers/WorkoutFormModal/Work
 import { useCreateWorkout } from "src/domain/Workout/useCases/useCreateWorkout"
 import { useDeleteWorkout } from "src/domain/Workout/useCases/useDeleteWorkout"
 import { useForm } from "react-hook-form"
+import { workoutBannerUtils } from "src/utils/workoutBanner"
 
 export const useWorkoutList = () => {
 	const router = useRouter()
@@ -72,6 +73,7 @@ export const useWorkoutList = () => {
 			title: values.name,
 			description: values.description,
 			weekDaysFrequency: values.weekDays,
+			imageUrl: workoutBannerUtils.getRandomWorkoutBanner(),
 		})
 	}
 

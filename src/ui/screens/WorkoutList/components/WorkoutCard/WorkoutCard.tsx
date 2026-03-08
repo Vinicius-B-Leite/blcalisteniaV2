@@ -4,6 +4,7 @@ import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { WorkoutCardProps } from "./types"
 import { CATEGORIES, CATEGORY_LABELS } from "src/constants"
+import { workoutBannerUtils } from "src/utils/workoutBanner"
 
 export const WorkoutCard = ({
 	title,
@@ -20,7 +21,7 @@ export const WorkoutCard = ({
 			<View style={styles.contentContainer}>
 				{imageUrl && (
 					<Image
-						source={{ uri: imageUrl }}
+						source={workoutBannerUtils.resolveWorkoutBanner(imageUrl)}
 						style={styles.image}
 						resizeMode="cover"
 					/>
