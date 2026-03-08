@@ -4,6 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 import { AuthProvider, useAuth } from "../domain/Auth/AuthContext"
 import { ReposProviders } from "src/infra/repos"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ExpoImageService, ImageServiceProvider } from "src/infra/imageService"
 
 if (__DEV__) {
 	import("../../ReactotronConfig").then(() => {
@@ -36,9 +37,11 @@ const RootLayout = () => {
 			<ThemeProvider>
 				<SafeAreaProvider>
 					<ReposProviders>
-						<AuthProvider>
-							<Routes />
-						</AuthProvider>
+						<ImageServiceProvider value={ExpoImageService}>
+							<AuthProvider>
+								<Routes />
+							</AuthProvider>
+						</ImageServiceProvider>
 					</ReposProviders>
 				</SafeAreaProvider>
 			</ThemeProvider>

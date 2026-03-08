@@ -64,4 +64,29 @@ export const WorkoutRepo: IWorkoutRepo = {
 			throw new Error("Error deleting workout: " + error)
 		}
 	},
+
+	updateWorkout: async (workout) => {
+		try {
+			const existingWorkout = await database.collections
+				.get<WorkoutsModel>("workouts")
+				.find(workout.id)
+				.catch(() => null)
+
+			if (!existingWorkout) {
+				throw new Error("Workout not found with ID: " + workout.id)
+			}
+
+			let updatedWorkout: WorkoutsModel | undefined
+
+			await database.write(async () => {
+				updatedWorkout = await existingWorkout.update((record) => {
+					Object.assign(record, workoutAdapters.toDTO(workout))
+				})
+			})
+
+			return workoutAdapters.toDomain(updatedWorkout!)
+		} catch (error) {
+			throw new Error("Error updating workout: " + error)
+		}
+	},
 }

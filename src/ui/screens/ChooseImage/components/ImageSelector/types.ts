@@ -5,6 +5,7 @@ export namespace ImageSelector {
 		selectedImage?: string
 		onImageSelect: (imageId: string) => void
 		onAddImage: () => void
+		isAddingImage?: boolean
 	}
 
 	export type ImageOption = {
@@ -21,5 +22,6 @@ export namespace ImageSelector {
 
 	export type AddImageItemProps = {
 		onPress: () => void
+		isLoading?: boolean
 	}
 }

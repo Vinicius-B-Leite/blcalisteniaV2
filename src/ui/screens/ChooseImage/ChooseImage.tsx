@@ -3,12 +3,17 @@ import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useChooseImage } from "./useChooseImage"
 import { ImageSelector } from "./components"
-import { View } from "react-native"
+import { View, ActivityIndicator } from "react-native"
 import { WorkoutBannerCard } from "@/components/containers"
+import { workoutBannerUtils } from "src/utils/workoutBanner"
 
 export const ChooseImage = () => {
 	const { states, actions } = useChooseImage()
 	const styles = useStyles(stylesTheme)
+
+	const previewImage = states.selectedImage
+		? workoutBannerUtils.resolveWorkoutBanner(states.selectedImage)
+		: undefined
 
 	return (
 		<Screen>
@@ -23,19 +28,25 @@ export const ChooseImage = () => {
 						Pré visualização
 					</Text>
 
-					<WorkoutBannerCard.Root>
+					<WorkoutBannerCard.Root imageUrl={previewImage}>
 						<WorkoutBannerCard.Content>
 							<WorkoutBannerCard.TextContainer>
 								<WorkoutBannerCard.Title>
-									Treino A
+									{states.workout?.title || "Treino A"}
 								</WorkoutBannerCard.Title>
 								<WorkoutBannerCard.Subtitle>
-									Treino de peito + triceps
+									{states.workout?.description || "Descrição do treino"}
 								</WorkoutBannerCard.Subtitle>
 							</WorkoutBannerCard.TextContainer>
 							<WorkoutBannerCard.Tags>
-								<WorkoutBannerCard.Tag>Força</WorkoutBannerCard.Tag>
-								<WorkoutBannerCard.Tag>Seg</WorkoutBannerCard.Tag>
+								<WorkoutBannerCard.Tag>
+									{states.workout?.category || "Força"}
+								</WorkoutBannerCard.Tag>
+								{states.workout?.weekDaysFrequency.length && (
+									<WorkoutBannerCard.Tag>
+										{states.workout.weekDaysFrequency.length}x semana
+									</WorkoutBannerCard.Tag>
+								)}
 							</WorkoutBannerCard.Tags>
 						</WorkoutBannerCard.Content>
 						<WorkoutBannerCard.EditButton />
@@ -55,12 +66,16 @@ export const ChooseImage = () => {
 						selectedImage={states.selectedImage}
 						onImageSelect={actions.handleImageSelect}
 						onAddImage={actions.handleAddImage}
+						isAddingImage={states.isAddingImage}
 					/>
 				</View>
 			</View>
 
-			<Button.Root>
-				<Button.Content>Confirmar</Button.Content>
+			<Button.Root
+				onPress={actions.handleConfirm}
+				disabled={!states.selectedImage}
+				isLoading={states.isUpdating}>
+				<Button.Content>"Confirmar"</Button.Content>
 			</Button.Root>
 		</Screen>
 	)

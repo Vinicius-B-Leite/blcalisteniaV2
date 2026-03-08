@@ -5,26 +5,18 @@ import { stylesTheme } from "./styles"
 import { ImageSelector as Types } from "./types"
 import { ImageItem } from "./ImageItem"
 import { AddImageItem } from "./AddImageItem"
+import { WORKOUT_BANNER_PATHS, WORKOUT_BANNER_MAP } from "@/utils/workoutBanner"
 
-const IMAGE_OPTIONS: Types.ImageOption[] = [
-	{
-		id: "banner-1",
-		source: require("@/assets/imgs/workout-banner-1.png"),
-	},
-	{
-		id: "banner-2",
-		source: require("@/assets/imgs/workout-banner-2.png"),
-	},
-	{
-		id: "banner-3",
-		source: require("@/assets/imgs/workout-banner-3.jpg"),
-	},
-]
+const IMAGE_OPTIONS: Types.ImageOption[] = WORKOUT_BANNER_PATHS.map((path) => ({
+	id: path,
+	source: WORKOUT_BANNER_MAP[path],
+}))
 
 export const ImageSelector = ({
 	selectedImage,
 	onImageSelect,
 	onAddImage,
+	isAddingImage,
 }: Types.Props) => {
 	const { theme } = useAppTheme()
 	const styles = stylesTheme(theme)
@@ -41,7 +33,9 @@ export const ImageSelector = ({
 				showsHorizontalScrollIndicator={false}
 				contentContainerStyle={styles.scrollContainer}
 				keyExtractor={(item) => item.id}
-				ListHeaderComponent={<AddImageItem onPress={onAddImage} />}
+				ListHeaderComponent={
+					<AddImageItem onPress={onAddImage} isLoading={isAddingImage} />
+				}
 				renderItem={({ item }) => (
 					<ImageItem
 						id={item.id}

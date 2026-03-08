@@ -24,5 +24,5 @@ export const useAppMutation = <ReturnMutationFn, Variables>({
 		return await mutate.mutateAsync(variables)
 	}
 
-	return { execute, isLoading: mutate.isPending }
+	return { execute, isLoading: mutate.isPending, variables: mutate.variables }
 }

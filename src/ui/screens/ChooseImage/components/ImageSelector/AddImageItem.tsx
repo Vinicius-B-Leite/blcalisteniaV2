@@ -1,20 +1,26 @@
-import { Pressable, View } from "react-native"
+import { Pressable, View, ActivityIndicator } from "react-native"
 import { Icon, Text } from "@/components/core"
 import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
 import { ImageSelector as Types } from "./types"
 
-export const AddImageItem = ({ onPress }: Types.AddImageItemProps) => {
+export const AddImageItem = ({ onPress, isLoading }: Types.AddImageItemProps) => {
 	const { theme } = useAppTheme()
 	const styles = stylesTheme(theme)
 
 	return (
-		<Pressable style={styles.addImageItem} onPress={onPress}>
+		<Pressable style={styles.addImageItem} onPress={onPress} disabled={isLoading}>
 			<View style={styles.addImageContent}>
-				<Icon name="attach" size={14} variant="secondary" />
-				<Text variant="caption-reg" style={styles.addImageText}>
-					Adicionar imagem
-				</Text>
+				{isLoading ? (
+					<ActivityIndicator size="small" color={theme.content["icon-brand"]} />
+				) : (
+					<>
+						<Icon name="attach" size={14} variant="secondary" />
+						<Text variant="caption-reg" style={styles.addImageText}>
+							Adicionar imagem
+						</Text>
+					</>
+				)}
 			</View>
 		</Pressable>
 	)
