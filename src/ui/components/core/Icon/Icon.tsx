@@ -71,7 +71,6 @@ export const Icon = ({
 	const currentVariant = variants[variant]
 
 	if (onPress) {
-		console.log("onPress provided for icon:", name)
 		return (
 			<Pressable.Root onPress={onPress} style={pressableStyle} hitSlop={12}>
 				<IconComponent color={currentVariant.color} size={size} />

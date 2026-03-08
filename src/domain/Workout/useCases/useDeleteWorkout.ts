@@ -12,8 +12,8 @@ export const useDeleteWorkout = () => {
 		onError: (err) => {
 			console.log("Error deleting workout :(", err)
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
 				queryKey: [workoutQueryKeys.all],
 			})
 		},

@@ -49,7 +49,7 @@ export const useWorkoutList = () => {
 	}
 
 	const handleDeleteWorkout = (id: string) => {
-		const workout = workouts.find((w) => w.id === id)
+		const workout = workouts.filter((w) => w.id === id)[0]
 		if (workout) {
 			setDeleteModal(workout)
 		}
