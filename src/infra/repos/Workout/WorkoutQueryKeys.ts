@@ -1,3 +1,3 @@
 export const workoutQueryKeys = {
-	all: ["workouts"] as const,
-}
+	all: "workouts",
+} as const

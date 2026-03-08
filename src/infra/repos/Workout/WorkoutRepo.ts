@@ -11,7 +11,7 @@ export const WorkoutRepo: IWorkoutRepo = {
 			.fetch()
 
 		if (workouts.length === 0) {
-			throw new Error("No workouts found")
+			return []
 		}
 
 		return workouts.map(workoutAdapters.toDomain)
