@@ -2,18 +2,19 @@ import { Modal, Button, Text, Input } from "@/components/core"
 import { useAppTheme } from "@/themes/hooks"
 import { createStyles } from "./styles"
 import { View } from "react-native"
-import { WeekDaySelector, WeekDay } from "./WeekDaySelector"
+import { WeekDaySelector } from "./WeekDaySelector"
 import { WorkoutTypeSelector } from "./WorkoutTypeSelector"
 import { ReactNode } from "react"
 import { Category } from "src/constants"
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormSchema, schema } from "./schema"
+import { WeekDaysFrequency } from "src/domain/Workout/WorkoutModel"
 
 export interface WorkoutFormValues {
 	name: string
 	description: string
-	weekDays: WeekDay[]
+	weekDays: WeekDaysFrequency[]
 	type: Category
 }
 

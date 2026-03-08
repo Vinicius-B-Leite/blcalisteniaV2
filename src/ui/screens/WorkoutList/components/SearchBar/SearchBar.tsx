@@ -3,22 +3,14 @@ import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { SearchBarProps } from "./types"
 
-export const SearchBar = ({
-	value,
-	onChangeText,
-	placeholder = "Buscar treino",
-}: SearchBarProps) => {
+export const SearchBar = ({ control }: SearchBarProps) => {
 	const styles = useStyles(stylesTheme)
 
 	return (
-		<Input.Root name="" style={styles.root}>
+		<Input.Root name="searchText" control={control} style={styles.root}>
 			<Input.FieldWrapper>
 				<Icon name="search" size={16} variant="secondary" />
-				<Input.Field
-					value={value}
-					onChangeText={onChangeText}
-					placeholder={placeholder}
-				/>
+				<Input.Field placeholder={"Buscar treino"} />
 			</Input.FieldWrapper>
 		</Input.Root>
 	)

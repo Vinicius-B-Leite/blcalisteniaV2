@@ -3,7 +3,7 @@ import { Text } from "@/components/core"
 import { Pressable } from "@/components/core"
 import { useAppTheme } from "@/themes/hooks"
 import { createStyles } from "./styles"
-import { CATEGORIES, Category } from "src/constants"
+import { CATEGORIES, Category, CATEGORY_LABELS } from "src/constants"
 
 interface WorkoutTypeOption {
 	label: string
@@ -11,10 +11,10 @@ interface WorkoutTypeOption {
 }
 
 const workoutTypes: WorkoutTypeOption[] = [
-	{ label: "Força", value: CATEGORIES.strength },
-	{ label: "Mobilidade", value: CATEGORIES.mobility },
-	{ label: "Resistência", value: CATEGORIES.resistance },
-	{ label: "Flexibilidade", value: CATEGORIES.flexibility },
+	{ label: CATEGORY_LABELS.strength, value: CATEGORIES.strength },
+	{ label: CATEGORY_LABELS.mobility, value: CATEGORIES.mobility },
+	{ label: CATEGORY_LABELS.resistance, value: CATEGORIES.resistance },
+	{ label: CATEGORY_LABELS.flexibility, value: CATEGORIES.flexibility },
 ]
 
 interface WorkoutTypeSelectorProps {

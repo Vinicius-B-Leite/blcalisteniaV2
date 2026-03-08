@@ -1,5 +1,5 @@
+import { Control } from "react-hook-form"
+
 export type SearchBarProps = {
-	value: string
-	onChangeText: (text: string) => void
-	placeholder?: string
+	control: Control<{ searchText: string }>
 }

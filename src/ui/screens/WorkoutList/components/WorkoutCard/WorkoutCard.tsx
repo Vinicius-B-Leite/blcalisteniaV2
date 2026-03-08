@@ -3,6 +3,7 @@ import { Text, Icon, Pressable } from "@/components/core"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { WorkoutCardProps } from "./types"
+import { CATEGORIES, CATEGORY_LABELS } from "src/constants"
 
 export const WorkoutCard = ({
 	title,
@@ -32,7 +33,7 @@ export const WorkoutCard = ({
 						{exerciseCount} exercícios
 					</Text>
 					<Text variant="body-small-reg" style={styles.subtitle}>
-						{category}
+						{CATEGORY_LABELS[category]}
 					</Text>
 				</View>
 			</View>

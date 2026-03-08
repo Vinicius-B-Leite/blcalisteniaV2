@@ -9,6 +9,7 @@ export const workoutAdapters = {
 		category: CATEGORIES[data.category as keyof typeof CATEGORIES],
 		imageUrl: data.imageUrl,
 		weekDaysFrequency: JSON.parse(data.weekDaysFrequency) as WeekDaysFrequency[],
+		description: data.description,
 	}),
 
 	toDTO: (data: WorkoutModel): Partial<WorkoutsModel> => ({
@@ -16,5 +17,6 @@ export const workoutAdapters = {
 		category: data.category,
 		imageUrl: data.imageUrl,
 		weekDaysFrequency: JSON.stringify(data.weekDaysFrequency),
+		description: data.description,
 	}),
 }

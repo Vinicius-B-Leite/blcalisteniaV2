@@ -6,3 +6,10 @@ export const CATEGORIES: Record<Category, Category> = {
 	resistance: "resistance",
 	flexibility: "flexibility",
 }
+
+export const CATEGORY_LABELS: Record<Category, string> = {
+	strength: "Força",
+	mobility: "Mobilidade",
+	resistance: "Resistência",
+	flexibility: "Flexibilidade",
+}

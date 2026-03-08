@@ -7,7 +7,7 @@ import { stylesTheme } from "./styles"
 import { WorkoutFormModal } from "@/components/containers"
 
 export const WorkoutList = () => {
-	const { states, actions } = useWorkoutList()
+	const { states, actions, form } = useWorkoutList()
 	const styles = useStyles(stylesTheme)
 
 	return (
@@ -24,12 +24,7 @@ export const WorkoutList = () => {
 					data={states.workouts}
 					keyExtractor={(item) => item.id}
 					ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-					ListHeaderComponent={
-						<SearchBar
-							value={states.searchText}
-							onChangeText={actions.onSearchTextChange}
-						/>
-					}
+					ListHeaderComponent={<SearchBar control={form.control} />}
 					ListFooterComponent={
 						<Pressable.Root
 							onPress={actions.openModal}

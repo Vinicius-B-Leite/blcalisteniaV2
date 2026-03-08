@@ -16,4 +16,22 @@ export const WorkoutRepo: IWorkoutRepo = {
 
 		return workouts.map(workoutAdapters.toDomain)
 	},
+
+	createWorkout: async (params) => {
+		try {
+			let createdWorkout: WorkoutsModel | undefined
+
+			await database.write(async () => {
+				createdWorkout = await database.collections
+					.get<WorkoutsModel>("workouts")
+					.create((record) => {
+						Object.assign(record, workoutAdapters.toDTO(params as any))
+					})
+			})
+
+			return workoutAdapters.toDomain(createdWorkout!)
+		} catch (error) {
+			throw new Error("Error creating workout: " + error)
+		}
+	},
 }

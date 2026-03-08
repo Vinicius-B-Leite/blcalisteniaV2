@@ -3,27 +3,26 @@ import { Text } from "@/components/core"
 import { Pressable } from "@/components/core"
 import { useAppTheme } from "@/themes/hooks"
 import { createStyles } from "./styles"
-
-export type WeekDay = "S" | "T" | "Q" | "Qi" | "Se" | "Sa" | "D"
+import { WeekDaysFrequency } from "src/domain/Workout/WorkoutModel"
 
 interface WeekDayOption {
 	label: string
-	value: WeekDay
+	value: WeekDaysFrequency
 }
 
 const weekDays: WeekDayOption[] = [
-	{ label: "D", value: "D" },
-	{ label: "S", value: "S" },
-	{ label: "T", value: "T" },
-	{ label: "Q", value: "Q" },
-	{ label: "Q", value: "Qi" },
-	{ label: "S", value: "Se" },
-	{ label: "S", value: "Sa" },
+	{ label: "D", value: 0 },
+	{ label: "S", value: 1 },
+	{ label: "T", value: 2 },
+	{ label: "Q", value: 3 },
+	{ label: "Q", value: 4 },
+	{ label: "S", value: 5 },
+	{ label: "S", value: 6 },
 ]
 
 interface WeekDaySelectorProps {
-	selectedDays?: WeekDay[]
-	onDaysChange?: (days: WeekDay[]) => void
+	selectedDays?: WeekDaysFrequency[]
+	onDaysChange?: (days: WeekDaysFrequency[]) => void
 }
 
 export const WeekDaySelector = ({
@@ -33,7 +32,7 @@ export const WeekDaySelector = ({
 	const { theme } = useAppTheme()
 	const styles = createStyles(theme)
 
-	const handleDayToggle = (day: WeekDay) => {
+	const handleDayToggle = (day: WeekDaysFrequency) => {
 		const newSelectedDays = selectedDays.includes(day)
 			? selectedDays.filter((d) => d !== day)
 			: [...selectedDays, day]
@@ -41,7 +40,7 @@ export const WeekDaySelector = ({
 		onDaysChange?.(newSelectedDays)
 	}
 
-	const isDaySelected = (day: WeekDay) => selectedDays.includes(day)
+	const isDaySelected = (day: WeekDaysFrequency) => selectedDays.includes(day)
 
 	return (
 		<View style={styles.container}>
@@ -52,7 +51,7 @@ export const WeekDaySelector = ({
 			<FlatList
 				data={weekDays}
 				horizontal
-				keyExtractor={(item) => item.value}
+				keyExtractor={(item) => item.value.toString()}
 				showsHorizontalScrollIndicator={false}
 				contentContainerStyle={styles.daysWrapper}
 				renderItem={({ item: day }) => (

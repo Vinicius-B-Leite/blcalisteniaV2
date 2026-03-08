@@ -5,6 +5,7 @@ export default class WorkoutsModel extends Model {
 	static table = "workouts"
 
 	@text("title") title!: string
+	@text("description") description!: string
 	@text("category") category!: string
 	@text("image_url") imageUrl?: string
 	@json("week_days_frequency", (value) => value ?? []) weekDaysFrequency!: string

@@ -13,7 +13,7 @@ export const useAppQuery = <T>(config: UseAppQueryParams<T>) => {
 	const fiveMinutesInMs = oneMinuteInMs * 5
 
 	const { isLoading, data, isSuccess, isError } = useQuery<T>({
-		queryKey: [config.queryKey],
+		queryKey: config.queryKey,
 		queryFn: config.queryFn,
 		staleTime: fiveMinutesInMs,
 	})

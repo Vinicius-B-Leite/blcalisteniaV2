@@ -3,15 +3,25 @@ import { useRouter } from "expo-router"
 import { useGetWorkouts } from "src/domain/Workout/useCases/useGetWorkouts"
 import { WorkoutModel } from "src/domain/Workout/WorkoutModel"
 import { WorkoutFormValues } from "@/components/containers/WorkoutFormModal/WorkoutFormModal"
+import { useCreateWorkout } from "src/domain/Workout/useCases/useCreateWorkout"
+import { useForm } from "react-hook-form"
 
 export const useWorkoutList = () => {
 	const router = useRouter()
-	const [modalCreateWorkout, setModalCreateWorkout] = useState(false)
-	const [searchText, setSearchText] = useState("")
-	const { workouts, isLoading } = useGetWorkouts()
-	const [deleteModal, setDeleteModal] = useState<WorkoutModel | null>(null)
 
+	const { workouts, isLoading } = useGetWorkouts()
+	const createWorkout = useCreateWorkout()
+
+	const [modalCreateWorkout, setModalCreateWorkout] = useState(false)
+
+	const [deleteModal, setDeleteModal] = useState<WorkoutModel | null>(null)
 	const hasWorkouts = workouts.length > 0
+
+	const form = useForm({
+		defaultValues: {
+			searchText: "",
+		},
+	})
 
 	const handleOpenWorkout = (id: string) => {
 		router.push("/(application)/(workoutDetail)")
@@ -24,10 +34,6 @@ export const useWorkoutList = () => {
 
 	const handleCloseModalCreateWorkout = () => {
 		setModalCreateWorkout(false)
-	}
-
-	const handleSearchTextChange = (text: string) => {
-		setSearchText(text)
 	}
 
 	const handleEditWorkout = (id: string) => {
@@ -54,16 +60,22 @@ export const useWorkoutList = () => {
 	}
 
 	const handleConfirmCreateWorkout = (values: WorkoutFormValues) => {
-		console.log("Create workout with values:", values)
+		createWorkout.execute({
+			category: values.type,
+			title: values.name,
+			description: values.description,
+			weekDaysFrequency: values.weekDays,
+		})
 	}
+	const searchText = form.watch("searchText")
 	const filteredWorkouts = workouts.filter((workout) =>
 		workout.title.toLowerCase().includes(searchText.toLowerCase()),
 	)
 
 	return {
+		form,
 		states: {
 			modalCreateWorkout,
-			searchText,
 			workouts: filteredWorkouts,
 			hasWorkouts,
 			deleteModal,
@@ -72,7 +84,6 @@ export const useWorkoutList = () => {
 			openModal: handleOpenModalCreateWorkout,
 			onOpenWorkout: handleOpenWorkout,
 			closeModal: handleCloseModalCreateWorkout,
-			onSearchTextChange: handleSearchTextChange,
 			onEditWorkout: handleEditWorkout,
 			onDeleteWorkout: handleDeleteWorkout,
 			onConfirmDelete: handleConfirmDelete,

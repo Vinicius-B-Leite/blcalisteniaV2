@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from "@nozbe/watermelondb"
 
 export default appSchema({
-	version: 1,
+	version: 2,
 	tables: [
 		tableSchema({
 			name: "users",
@@ -15,6 +15,7 @@ export default appSchema({
 			name: "workouts",
 			columns: [
 				{ name: "title", type: "string" },
+				{ name: "description", type: "string" },
 				{ name: "category", type: "string" },
 				{ name: "image_url", type: "string", isOptional: true },
 				{ name: "week_days_frequency", type: "string" }, // JSON string to store weekDaysFrequency

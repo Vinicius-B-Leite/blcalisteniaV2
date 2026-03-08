@@ -6,6 +6,7 @@ export type WeekDaysFrequency = (typeof weekDaysFrequency)[number]
 export type WorkoutModel = {
 	id: string
 	title: string
+	description: string
 	category: Category
 	imageUrl?: string
 	weekDaysFrequency: WeekDaysFrequency[]
