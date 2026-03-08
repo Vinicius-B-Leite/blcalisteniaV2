@@ -10,7 +10,12 @@ import { useForm } from "react-hook-form"
 export const useWorkoutList = () => {
 	const router = useRouter()
 
-	const { workouts, isLoading: isGettingWorkouts } = useGetWorkouts()
+	const {
+		workouts,
+		isLoading: isGettingWorkouts,
+		refetch: refetchWorkoutList,
+		isRefetching: isRefetchingWorkouts,
+	} = useGetWorkouts()
 	const createWorkout = useCreateWorkout()
 	const deleteWorkout = useDeleteWorkout()
 
@@ -69,6 +74,7 @@ export const useWorkoutList = () => {
 			weekDaysFrequency: values.weekDays,
 		})
 	}
+
 	const searchText = form.watch("searchText")
 	const filteredWorkouts = workouts.filter((workout) =>
 		workout.title.toLowerCase().includes(searchText.toLowerCase()),
@@ -83,6 +89,7 @@ export const useWorkoutList = () => {
 			deleteModal,
 			isDeleting: deleteWorkout.isLoading,
 			isGettingWorkouts,
+			isRefetchingWorkouts,
 		},
 		actions: {
 			openModal: handleOpenModalCreateWorkout,
@@ -93,6 +100,7 @@ export const useWorkoutList = () => {
 			onConfirmDelete: handleConfirmDelete,
 			onCloseDeleteModal: handleCloseDeleteModal,
 			onConfirmCreateWorkout: handleConfirmCreateWorkout,
+			onRefresh: refetchWorkoutList,
 		},
 	}
 }

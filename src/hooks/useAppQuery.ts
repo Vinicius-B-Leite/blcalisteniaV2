@@ -12,7 +12,14 @@ export const useAppQuery = <T>(config: UseAppQueryParams<T>) => {
 	const oneMinuteInMs = oneSecondInMs * 60
 	const fiveMinutesInMs = oneMinuteInMs * 5
 
-	const { isLoading, data, isSuccess, isError } = useQuery<T>({
+	const {
+		isLoading,
+		data,
+		isSuccess,
+		isError,
+		refetch: _refetch,
+		isRefetching,
+	} = useQuery<T>({
 		queryKey: config.queryKey,
 		queryFn: config.queryFn,
 		staleTime: fiveMinutesInMs,
@@ -29,8 +36,14 @@ export const useAppQuery = <T>(config: UseAppQueryParams<T>) => {
 		}
 	}, [isSuccess, data, isError])
 
+	const refetch = () => {
+		if (isLoading || isRefetching) return
+		_refetch()
+	}
 	return {
 		isLoading,
 		data,
+		refetch,
+		isRefetching,
 	}
 }

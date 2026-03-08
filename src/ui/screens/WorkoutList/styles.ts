@@ -13,5 +13,8 @@ export const stylesTheme = (theme: ThemeType) => {
 		itemSeparator: {
 			height: spacings.gap[12],
 		},
+		refreshControl: {
+			color: theme.content["icon-brand"],
+		},
 	})
 }

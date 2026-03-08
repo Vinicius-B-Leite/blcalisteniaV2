@@ -1,4 +1,4 @@
-import { View, FlatList } from "react-native"
+import { View, FlatList, RefreshControl } from "react-native"
 import { Header, Screen, Text, Pressable, Skeleton } from "@/components/core"
 import {
 	EmptyState,
@@ -37,6 +37,14 @@ export const WorkoutList = () => {
 							Adicionar treino
 						</Text>
 					</Pressable.Root>
+				}
+				refreshControl={
+					<RefreshControl
+						refreshing={states.isRefetchingWorkouts}
+						onRefresh={actions.onRefresh}
+						colors={[styles.refreshControl.color]}
+						tintColor={styles.refreshControl.color}
+					/>
 				}
 				renderItem={({ item }) => (
 					<WorkoutCard
