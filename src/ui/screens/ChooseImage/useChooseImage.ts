@@ -21,7 +21,6 @@ export const useChooseImage = () => {
 
 	const { execute: updateWorkout, isLoading: isUpdating } = useUpdateWorkout()
 
-	// Atualizar selectedImage quando o workout for carregado
 	useEffect(() => {
 		if (workout?.imageUrl) {
 			setSelectedImage(workout.imageUrl)
@@ -36,13 +35,11 @@ export const useChooseImage = () => {
 		try {
 			setIsAddingImage(true)
 
-			// Abrir galeria e obter imagem
 			const result = await imageService.pickImageFromGallery()
 
 			if (!result.canceled && result.assets?.[0]) {
 				const selectedImageUri = result.assets[0].uri
 
-				// Salvar imagem no diretório do app
 				if (workout?.id) {
 					const { localUri } = await imageService.saveImageToAppDirectory(
 						selectedImageUri,
