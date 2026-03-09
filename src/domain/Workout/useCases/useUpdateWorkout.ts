@@ -8,14 +8,14 @@ export const useUpdateWorkout = () => {
 	const workoutRepo = useWorkoutRepo()
 	const queryClient = useQueryClient()
 
-	const { execute, isLoading, variables } = useAppMutation<WorkoutModel, WorkoutModel>({
+	const { execute, isLoading } = useAppMutation<WorkoutModel, WorkoutModel>({
 		mutationFn: (workout) => workoutRepo.updateWorkout(workout),
 		onError: (err) => {
 			console.log("Error updating workout :(", err)
 		},
-		onSuccess: async () => {
+		onSuccess: async (updatedWorkout) => {
 			await queryClient.invalidateQueries({
-				queryKey: [workoutQueryKeys.detail, { id: variables?.id }],
+				queryKey: [workoutQueryKeys.detail, { id: updatedWorkout.id }],
 			})
 			await queryClient.invalidateQueries({
 				queryKey: [workoutQueryKeys.all],

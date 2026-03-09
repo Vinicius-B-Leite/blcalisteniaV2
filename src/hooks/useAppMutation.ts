@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query"
 
 type UseAppMutationParams<ReturnMutationFn, Variables> = {
 	mutationFn: (variables: Variables) => Promise<ReturnMutationFn>
-	onSuccess?(): void
+	onSuccess?(success: ReturnMutationFn): void
 	onError?(err: unknown): void
 }
 export const useAppMutation = <ReturnMutationFn, Variables>({
@@ -12,8 +12,8 @@ export const useAppMutation = <ReturnMutationFn, Variables>({
 }: UseAppMutationParams<ReturnMutationFn, Variables>) => {
 	const mutate = useMutation({
 		mutationFn,
-		onSuccess: () => {
-			onSuccess?.()
+		onSuccess: (data) => {
+			onSuccess?.(data)
 		},
 		onError: (err) => {
 			onError?.(err)
@@ -24,5 +24,5 @@ export const useAppMutation = <ReturnMutationFn, Variables>({
 		return await mutate.mutateAsync(variables)
 	}
 
-	return { execute, isLoading: mutate.isPending, variables: mutate.variables }
+	return { execute, isLoading: mutate.isPending }
 }

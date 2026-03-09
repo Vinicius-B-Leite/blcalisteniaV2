@@ -55,7 +55,7 @@ export const ChooseImage = () => {
 
 				<View>
 					<Text variant="body-large-bold" style={styles.secondTitle}>
-						Escolhe uma imagem
+						Escolha uma imagem
 					</Text>
 					<Text variant="body-small-reg" style={styles.description}>
 						Você pode escolher uma imagem que disponibilizamos ou adicionar
@@ -75,7 +75,7 @@ export const ChooseImage = () => {
 				onPress={actions.handleConfirm}
 				disabled={!states.selectedImage}
 				isLoading={states.isUpdating}>
-				<Button.Content>"Confirmar"</Button.Content>
+				<Button.Content>Confirmar</Button.Content>
 			</Button.Root>
 		</Screen>
 	)
