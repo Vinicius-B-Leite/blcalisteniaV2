@@ -4,9 +4,9 @@ import { useGetWorkoutById } from "src/domain/Workout/useCases/useGetWorkoutById
 
 export const useWorkoutDetail = () => {
 	const router = useRouter()
-	const params = useLocalSearchParams<{ id: string }>()
+	const params = useLocalSearchParams<{ workoutId: string }>()
 	const { workout, isLoading } = useGetWorkoutById({
-		id: params.id,
+		id: params.workoutId,
 		onError: () => router.back(),
 	})
 
@@ -43,9 +43,7 @@ export const useWorkoutDetail = () => {
 
 	const handleNavigateToChangeImage = () => {
 		if (workout?.id) {
-			router.push(
-				`/(application)/(workoutDetail)/chooseImage?workoutId=${workout.id}`,
-			)
+			router.push(`/(application)/workout/${workout.id}/chooseImage`)
 		}
 		handleCloseEditWorkoutModal()
 	}

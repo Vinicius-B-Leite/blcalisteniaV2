@@ -33,8 +33,8 @@ export const useWorkoutList = () => {
 
 	const handleOpenWorkout = (id: string) => {
 		router.push({
-			pathname: "/(application)/(workoutDetail)",
-			params: { id },
+			pathname: "/(application)/workout/[workoutId]",
+			params: { workoutId: id },
 		})
 	}
 
