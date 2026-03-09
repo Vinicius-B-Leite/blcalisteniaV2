@@ -5,7 +5,7 @@ type UseAppQueryParams<T> = {
 	queryKey: unknown[]
 	queryFn: () => Promise<T>
 	onSuccess?(data: T): void
-	onError?(): void
+	onError?(error: unknown): void
 	enabled?: boolean
 }
 export const useAppQuery = <T>(config: UseAppQueryParams<T>) => {
@@ -20,6 +20,7 @@ export const useAppQuery = <T>(config: UseAppQueryParams<T>) => {
 		isError,
 		refetch: _refetch,
 		isRefetching,
+		error,
 	} = useQuery<T>({
 		queryKey: config.queryKey,
 		queryFn: config.queryFn,
@@ -34,9 +35,9 @@ export const useAppQuery = <T>(config: UseAppQueryParams<T>) => {
 		}
 
 		if (isError) {
-			config.onError?.()
+			config.onError?.(error)
 		}
-	}, [isSuccess, data, isError])
+	}, [isSuccess, data, isError, error])
 
 	const refetch = () => {
 		if (isLoading || isRefetching) return

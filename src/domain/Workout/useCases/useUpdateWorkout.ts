@@ -14,6 +14,8 @@ export const useUpdateWorkout = () => {
 		mutationFn: async (workout) => {
 			const oldWorkout = await workoutRepo.getWorkoutById(workout.id)
 
+			const updatedWorkout = await workoutRepo.updateWorkout(workout)
+
 			if (oldWorkout?.imageUrl) {
 				const isSameImage = oldWorkout.imageUrl === workout.imageUrl
 				const isOldImageLocal = imageService.isLocalImageUri(oldWorkout.imageUrl)
@@ -23,7 +25,7 @@ export const useUpdateWorkout = () => {
 				}
 			}
 
-			return workoutRepo.updateWorkout(workout)
+			return updatedWorkout
 		},
 		onError: (err) => {
 			console.log("Error updating workout :(", err)

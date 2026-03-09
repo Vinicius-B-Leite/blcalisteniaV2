@@ -8,6 +8,9 @@ export const useGetWorkouts = () => {
 	const { data, isLoading, refetch, isRefetching } = useAppQuery({
 		queryKey: [workoutQueryKeys.all],
 		queryFn: () => workoutRepo.getAllWorkouts(),
+		onError: (err) => {
+			console.log({ err })
+		},
 	})
 
 	return { workouts: data ?? [], isLoading, refetch, isRefetching }
