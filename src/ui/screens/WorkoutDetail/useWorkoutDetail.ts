@@ -43,7 +43,10 @@ export const useWorkoutDetail = () => {
 
 	const handleNavigateToChangeImage = () => {
 		if (workout?.id) {
-			router.push(`/(application)/workout/${workout.id}/chooseImage`)
+			router.push({
+				pathname: `/(application)/workout/[workoutId]/chooseImage`,
+				params: { workoutId: workout.id },
+			})
 		}
 		handleCloseEditWorkoutModal()
 	}
