@@ -39,14 +39,7 @@ export const useChooseImage = () => {
 
 			if (!result.canceled && result.assets?.[0]) {
 				const selectedImageUri = result.assets[0].uri
-
-				if (workout?.id) {
-					const { localUri } = await imageService.saveImageToAppDirectory(
-						selectedImageUri,
-						workout.id,
-					)
-					setSelectedImage(localUri)
-				}
+				setSelectedImage(selectedImageUri)
 			}
 		} catch (error) {
 			console.error("Error adding image:", error)
@@ -60,9 +53,20 @@ export const useChooseImage = () => {
 		if (!workout || !selectedImage) return
 
 		try {
+			let imageUrlToSave = selectedImage
+
+			const isLocalImage = imageService.isLocalImageUri(selectedImage)
+			if (isLocalImage) {
+				const { localUri } = await imageService.saveImageToAppDirectory(
+					selectedImage,
+					workout.id,
+				)
+				imageUrlToSave = localUri
+			}
+
 			await updateWorkout({
 				...workout,
-				imageUrl: selectedImage,
+				imageUrl: imageUrlToSave,
 			})
 
 			router.back()

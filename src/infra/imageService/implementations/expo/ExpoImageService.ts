@@ -74,7 +74,6 @@ export const ExpoImageService: IImageService = {
 
 	deleteImage: async (imageUrl: string): Promise<void> => {
 		try {
-			// Só deletar se for uma imagem no diretório do app (não as predefinidas)
 			const isLocalImage = imageUrl.startsWith(IMAGES_DIR)
 			if (isLocalImage) {
 				const fileInfo = await fileSystemService.getInfoAsync(imageUrl)
