@@ -5,15 +5,20 @@ import { createStyles } from "./styles"
 import { MuscleGroupSelector } from "./MuscleGroupSelector"
 import { useAddExerciseModal } from "./useAddExerciseModal"
 
-interface AddExerciseModalProps {
+type AddExerciseModalProps = {
 	visible: boolean
 	onClose: () => void
+	workoutId: string
 }
 
-export const AddExerciseModal = ({ visible, onClose }: AddExerciseModalProps) => {
+export const AddExerciseModal = ({
+	visible,
+	onClose,
+	workoutId,
+}: AddExerciseModalProps) => {
 	const { theme } = useAppTheme()
 	const styles = createStyles(theme)
-	const { states, actions } = useAddExerciseModal()
+	const { states, actions } = useAddExerciseModal({ workoutId })
 
 	return (
 		<Modal.Root visible={visible} onClose={onClose}>

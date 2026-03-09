@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useRouter } from "expo-router"
 import { MuscleGroup } from "./MuscleGroupSelector"
 
-export const useAddExerciseModal = () => {
+export const useAddExerciseModal = ({ workoutId }: { workoutId: string }) => {
 	const router = useRouter()
 	const [exerciseName, setExerciseName] = useState("")
 	const [series, setSeries] = useState("0")
@@ -32,7 +32,10 @@ export const useAddExerciseModal = () => {
 
 	const handleSearchExercises = (onClose: () => void) => {
 		onClose()
-		router.push("/(application)/(workoutDetail)/searchExercises")
+		router.push({
+			pathname: "/(application)/workout/[workoutId]/searchExercises",
+			params: { workoutId: workoutId },
+		})
 	}
 
 	const handleAdd = (onClose: () => void) => {

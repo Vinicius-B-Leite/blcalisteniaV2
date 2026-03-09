@@ -121,6 +121,7 @@ export const WorkoutDetail = () => {
 			<AddExerciseModal
 				visible={state.isAddExerciseModalVisible}
 				onClose={actions.handleCloseAddExerciseModal}
+				workoutId={state.workout?.id || ""}
 			/>
 
 			<WorkoutFormModal
