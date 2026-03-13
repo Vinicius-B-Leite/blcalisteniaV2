@@ -39,7 +39,7 @@
 					"root": "./src/app"
 				}
 			],
-			"./src/config/plugins/watermelonDb",
+			"./src/configs/plugins/watermelonDb",
 			[
 				"expo-image-picker",
 				{

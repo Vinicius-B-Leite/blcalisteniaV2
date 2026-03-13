@@ -1,5 +1,5 @@
 import { View, FlatList, RefreshControl } from "react-native"
-import { Header, Screen, Text, Pressable, Skeleton } from "@/components/core"
+import { Header, Screen, Text, Pressable } from "@/components/core"
 import {
 	EmptyState,
 	WorkoutCard,
@@ -10,7 +10,7 @@ import {
 import { useWorkoutList } from "./useWorkoutList"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
-import { WorkoutFormModal } from "@/components/containers"
+import { WorkoutFormModal } from "@/components/molecules"
 
 export const WorkoutList = () => {
 	const { states, actions, form } = useWorkoutList()

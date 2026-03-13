@@ -1,14 +1,14 @@
-import { useAppMutation } from "src/hooks"
-import { useWorkoutRepo } from "src/infra/repos/Workout/WorkoutRepoProvider"
+import { useAppMutation } from "@/hooks"
+import { useWorkoutRepo, workoutQueryKeys } from "@/repos/Workout"
 import { WorkoutModel } from "../WorkoutModel"
+//TODO: pensar em extrair client
 import { useQueryClient } from "@tanstack/react-query"
-import { workoutQueryKeys } from "src/infra/repos/Workout/WorkoutQueryKeys"
-import { useImageService } from "src/infra/imageService/ImageServiceProvider"
+import { useImageStorage } from "@/infra/services"
 
 export const useUpdateWorkout = () => {
 	const workoutRepo = useWorkoutRepo()
 	const queryClient = useQueryClient()
-	const imageService = useImageService()
+	const imageStorage = useImageStorage()
 
 	const { execute, isLoading } = useAppMutation<WorkoutModel, WorkoutModel>({
 		mutationFn: async (workout) => {
@@ -18,10 +18,12 @@ export const useUpdateWorkout = () => {
 
 			if (oldWorkout?.imageUrl) {
 				const isSameImage = oldWorkout.imageUrl === workout.imageUrl
-				const isOldImageLocal = imageService.isLocalImageUri(oldWorkout.imageUrl)
+				const isOldImageAppDirectory = imageStorage.isAppDirectoryImage(
+					oldWorkout.imageUrl,
+				)
 
-				if (!isSameImage && isOldImageLocal) {
-					await imageService.deleteImage(oldWorkout.imageUrl)
+				if (!isSameImage && isOldImageAppDirectory) {
+					await imageStorage.deleteImage(oldWorkout.imageUrl)
 				}
 			}
 

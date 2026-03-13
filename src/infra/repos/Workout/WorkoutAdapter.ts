@@ -1,5 +1,5 @@
 import { CATEGORIES } from "src/constants"
-import { WeekDaysFrequency, WorkoutModel } from "src/domain/Workout/WorkoutModel"
+import { WorkoutModel } from "src/domain/Workout/WorkoutModel"
 import WorkoutsModel from "src/infra/database/watermelon/models/WorkoutsModel"
 
 export const workoutAdapters = {
@@ -8,7 +8,7 @@ export const workoutAdapters = {
 		title: data.title,
 		category: CATEGORIES[data.category as keyof typeof CATEGORIES],
 		imageUrl: data.imageUrl,
-		weekDaysFrequency: JSON.parse(data.weekDaysFrequency) as WeekDaysFrequency[],
+		weekDaysFrequency: data.weekDaysFrequency,
 		description: data.description,
 	}),
 
@@ -16,7 +16,7 @@ export const workoutAdapters = {
 		title: data.title,
 		category: data.category,
 		imageUrl: data.imageUrl,
-		weekDaysFrequency: JSON.stringify(data.weekDaysFrequency),
+		weekDaysFrequency: data.weekDaysFrequency,
 		description: data.description,
 	}),
 }

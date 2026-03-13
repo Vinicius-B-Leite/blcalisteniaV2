@@ -1,6 +1,5 @@
-import { useAppQuery } from "src/hooks"
-import { workoutQueryKeys } from "src/infra/repos/Workout/WorkoutQueryKeys"
-import { useWorkoutRepo } from "src/infra/repos/Workout/WorkoutRepoProvider"
+import { useAppQuery } from "@/hooks"
+import { workoutQueryKeys, useWorkoutRepo } from "@/repos/Workout"
 
 export const useGetWorkouts = () => {
 	const workoutRepo = useWorkoutRepo()

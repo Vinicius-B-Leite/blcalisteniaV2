@@ -1,5 +1,5 @@
 import { Redirect } from "expo-router"
-import { useAuth } from "../domain/Auth/AuthContext"
+import { useAuth } from "@/domains/Auth"
 import { OnboardingScreen } from "@/screens"
 
 export default function Index() {

@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react"
 import { useRouter, useLocalSearchParams } from "expo-router"
-import { useGetWorkoutById } from "src/domain/Workout/useCases/useGetWorkoutById"
-import { useUpdateWorkout } from "src/domain/Workout/useCases/useUpdateWorkout"
-import { useImageService } from "src/infra/imageService/ImageServiceProvider"
+import { useGetWorkoutById, useUpdateWorkout } from "@/domains/Workout/useCases"
+import { useImageStorage } from "@/infra/services"
 import { Alert } from "react-native"
 
 export const useChooseImage = () => {
 	const router = useRouter()
 	const params = useLocalSearchParams<{ workoutId: string }>()
-	const imageService = useImageService()
+	const imageStorage = useImageStorage()
 	const { workout } = useGetWorkoutById({
 		id: params.workoutId,
 		onError: () => router.back(),
@@ -35,7 +34,7 @@ export const useChooseImage = () => {
 		try {
 			setIsAddingImage(true)
 
-			const result = await imageService.pickImageFromGallery()
+			const result = await imageStorage.pickImageFromGallery()
 
 			if (!result.canceled && result.assets?.[0]) {
 				const selectedImageUri = result.assets[0].uri
@@ -55,9 +54,9 @@ export const useChooseImage = () => {
 		try {
 			let imageUrlToSave = selectedImage
 
-			const isLocalImage = imageService.isLocalImageUri(selectedImage)
-			if (isLocalImage) {
-				const { localUri } = await imageService.saveImageToAppDirectory(
+			const isSaveInDirectoryApp = imageStorage.isAppDirectoryImage(selectedImage)
+			if (!isSaveInDirectoryApp) {
+				const { localUri } = await imageStorage.saveImageToAppDirectory(
 					selectedImage,
 					workout.id,
 				)

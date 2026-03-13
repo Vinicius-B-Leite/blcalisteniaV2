@@ -1,5 +1,5 @@
-import { useAppMutation } from "src/hooks"
-import { useAuthRepo } from "src/infra/repos"
+import { useAppMutation } from "@/hooks"
+import { useAuthRepo } from "@/repos/Auth"
 
 export const useLogout = () => {
 	const authRepo = useAuthRepo()

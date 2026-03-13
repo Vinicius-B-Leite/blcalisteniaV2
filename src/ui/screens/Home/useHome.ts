@@ -1,5 +1,5 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useAuth } from "../../../domain/Auth/AuthContext"
+import { useAuth } from "@/domains/Auth"
 import { useAppTheme } from "@/themes"
 
 export const useHome = () => {

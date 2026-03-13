@@ -1,26 +1,27 @@
-import { useAppMutation } from "src/hooks"
-import { useWorkoutRepo } from "src/infra/repos/Workout/WorkoutRepoProvider"
+import { useAppMutation } from "@/hooks"
+import { useWorkoutRepo, workoutQueryKeys } from "@/repos/Workout"
 import { useQueryClient } from "@tanstack/react-query"
-import { workoutQueryKeys } from "src/infra/repos/Workout/WorkoutQueryKeys"
-import { useImageService } from "src/infra/imageService/ImageServiceProvider"
+import { useImageStorage } from "@/infra/services"
 
 export const useDeleteWorkout = () => {
 	const workoutRepo = useWorkoutRepo()
+
+	//TODO: pensar em como extrair o client
 	const queryClient = useQueryClient()
-	const imageService = useImageService()
+	const imageStorage = useImageStorage()
 
 	const { execute, isLoading } = useAppMutation<void, string>({
 		mutationFn: async (id) => {
 			const workout = await workoutRepo.getWorkoutById(id)
 
-			const isLocalImage = workout?.imageUrl
-				? imageService.isLocalImageUri(workout.imageUrl)
-				: false
-			if (workout?.imageUrl && isLocalImage) {
-				await imageService.deleteImage(workout.imageUrl)
-			}
-
 			await workoutRepo.deleteWorkout(id)
+
+			const isAppDirectoryImage = imageStorage.isAppDirectoryImage(
+				String(workout?.imageUrl),
+			)
+			if (workout?.imageUrl && isAppDirectoryImage) {
+				await imageStorage.deleteImage(workout.imageUrl)
+			}
 		},
 		onError: (err) => {
 			console.log("Error deleting workout :(", err)

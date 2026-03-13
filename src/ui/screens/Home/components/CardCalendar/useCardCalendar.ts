@@ -2,6 +2,7 @@ import { IconType } from "@/components/core"
 import { EWorkoutStatus } from "./types"
 
 export const useCardCalendar = () => {
+	//TODO: corrigir essa merda
 	const currentDay = new Date().getDate()
 	const leftDays = Array.from({ length: currentDay - 1 }, (_, i) => {
 		const date = new Date()

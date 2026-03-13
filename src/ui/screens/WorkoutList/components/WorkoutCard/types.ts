@@ -1,4 +1,4 @@
-import { Category } from "src/constants"
+import { Category } from "@/constants"
 
 export type WorkoutCardProps = {
 	id: string

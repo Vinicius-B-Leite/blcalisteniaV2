@@ -3,8 +3,8 @@ import { Text, Icon, Pressable } from "@/components/core"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { WorkoutCardProps } from "./types"
-import { CATEGORIES, CATEGORY_LABELS } from "src/constants"
-import { workoutBannerUtils } from "src/utils/workoutBanner"
+import { CATEGORY_LABELS } from "@/constants"
+import { workoutBannerUtils } from "@/utils"
 
 export const WorkoutCard = ({
 	title,

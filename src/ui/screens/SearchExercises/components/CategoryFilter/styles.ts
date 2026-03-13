@@ -1,7 +1,5 @@
 import { StyleSheet } from "react-native"
-import { ThemeType } from "@/themes/types"
-import { spacings } from "@/themes/tokens/spacings"
-import { radius } from "@/themes/tokens/sizes"
+import { ThemeType, spacings, radius } from "@/themes"
 
 export const stylesTheme = (theme: ThemeType) => {
 	return StyleSheet.create({
@@ -14,6 +12,7 @@ export const stylesTheme = (theme: ThemeType) => {
 			gap: spacings.gap[8],
 			paddingVertical: spacings.padding[4],
 			paddingHorizontal: spacings.padding[4],
+			//TODO: verificar se é necessário um width fixo ou se pode ser dinâmico
 			width: 80,
 			backgroundColor: theme.surface["brand-opacity-20"],
 			borderRadius: radius[8],

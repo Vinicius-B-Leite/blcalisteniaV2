@@ -21,6 +21,7 @@ export const ExerciseCard = ({
 		<View style={styles.container}>
 			<View style={styles.contentContainer}>
 				<Image
+					//TODO: resolver imagem padrão caso imageUrl seja undefined
 					source={imageUrl ? imageUrl : MOCK_IMAGE}
 					style={styles.image}
 					resizeMode="cover"

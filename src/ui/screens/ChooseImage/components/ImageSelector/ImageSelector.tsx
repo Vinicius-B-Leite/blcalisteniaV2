@@ -5,12 +5,7 @@ import { stylesTheme } from "./styles"
 import { ImageSelector as Types } from "./types"
 import { ImageItem } from "./ImageItem"
 import { AddImageItem } from "./AddImageItem"
-import { WORKOUT_BANNER_PATHS, WORKOUT_BANNER_MAP } from "@/utils/workoutBanner"
-
-const IMAGE_OPTIONS: Types.ImageOption[] = WORKOUT_BANNER_PATHS.map((path) => ({
-	id: path,
-	source: WORKOUT_BANNER_MAP[path],
-}))
+import { IMAGE_OPTIONS } from "./constants"
 
 export const ImageSelector = ({
 	selectedImage,

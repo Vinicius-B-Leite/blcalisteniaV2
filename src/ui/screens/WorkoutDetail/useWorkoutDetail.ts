@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useRouter, useLocalSearchParams } from "expo-router"
-import { useGetWorkoutById } from "src/domain/Workout/useCases/useGetWorkoutById"
+import { useGetWorkoutById } from "@/domains/Workout"
 
 export const useWorkoutDetail = () => {
 	const router = useRouter()

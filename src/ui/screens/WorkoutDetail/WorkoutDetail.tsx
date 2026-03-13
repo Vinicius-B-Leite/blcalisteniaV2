@@ -1,12 +1,11 @@
 import { FlatList, View } from "react-native"
-import { Screen, Header, Button, Text } from "@/components/core"
+import { Screen, Header, Button } from "@/components/core"
 import { ExerciseCard, EmptyState, AddExerciseModal, LoadingState } from "./components"
 import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useWorkoutDetail } from "./useWorkoutDetail"
-import { WorkoutBannerCard, WorkoutFormModal } from "@/components/containers"
-import { workoutUtils } from "src/utils/workout"
-import { workoutBannerUtils } from "src/utils/workoutBanner"
+import { WorkoutBannerCard, WorkoutFormModal } from "@/components/molecules"
+import { workoutUtils, workoutBannerUtils } from "@/utils"
 
 const MOCK_EXERCISES = [
 	{

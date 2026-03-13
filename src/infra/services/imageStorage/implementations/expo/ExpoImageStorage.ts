@@ -1,12 +1,12 @@
 import * as ImagePicker from "expo-image-picker"
-import { IImageService, ImagePickerResult } from "../../IImageService"
-import { ExpoFileSystemService, IFileSystemService } from "../../../fileSystemService"
+import { IImageStorage, ImagePickerResult } from "../../IImageStorage"
+import { FileSystemService, IFileSystemService } from "../../../fileSystem"
 
-const fileSystemService: IFileSystemService = ExpoFileSystemService
+const fileSystemService: IFileSystemService = FileSystemService
 
-const IMAGES_DIR = `${fileSystemService.documentDirectory}images/`
+const BASE_IMAGES_DIR = `${fileSystemService.documentDirectory}images/`
 
-export const ExpoImageService: IImageService = {
+export const ExpoImageService: IImageStorage = {
 	pickImageFromGallery: async (): Promise<ImagePickerResult> => {
 		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
 
@@ -37,14 +37,14 @@ export const ExpoImageService: IImageService = {
 		prefix: string,
 	): Promise<{ localUri: string }> => {
 		try {
-			await fileSystemService.ensureDirectoryExists(IMAGES_DIR)
+			await fileSystemService.ensureDirectoryExists(BASE_IMAGES_DIR)
 
 			const fileExtension = uri.split(".").pop() || "jpg"
 			const timestamp = Date.now()
 			const fileName = `${prefix}_${timestamp}.${fileExtension}`
-			const destinationUri = `${IMAGES_DIR}${fileName}`
+			const destinationUri = `${BASE_IMAGES_DIR}${fileName}`
 
-			await fileSystemService.copyAsync({
+			await fileSystemService.copy({
 				from: uri,
 				to: destinationUri,
 			})
@@ -56,17 +56,17 @@ export const ExpoImageService: IImageService = {
 		}
 	},
 
-	getImagePath: (imageUrl?: string): string | undefined => {
-		if (!imageUrl) return undefined
+	getImagePath: (imageUrl: string): string | undefined => {
+		if (!imageUrl || imageUrl.trim() === "") return undefined
 
-		const isLocalUri = imageUrl.startsWith("file://")
-		if (isLocalUri) {
+		const isAppDirectoryImage = ExpoImageService.isAppDirectoryImage(imageUrl)
+		if (isAppDirectoryImage) {
 			return imageUrl
 		}
 
 		const isFileNameOnly = !imageUrl.includes("/")
 		if (isFileNameOnly) {
-			return `${IMAGES_DIR}${imageUrl}`
+			return `${BASE_IMAGES_DIR}${imageUrl}`
 		}
 
 		return imageUrl
@@ -74,11 +74,11 @@ export const ExpoImageService: IImageService = {
 
 	deleteImage: async (imageUrl: string): Promise<void> => {
 		try {
-			const isLocalImage = imageUrl.startsWith(IMAGES_DIR)
-			if (isLocalImage) {
+			const isSaveInAppDirectory = ExpoImageService.isAppDirectoryImage(imageUrl)
+			if (isSaveInAppDirectory) {
 				const fileInfo = await fileSystemService.getInfoAsync(imageUrl)
 				if (fileInfo.exists) {
-					await fileSystemService.deleteAsync(imageUrl)
+					await fileSystemService.delete(imageUrl)
 				}
 			}
 		} catch (error) {
@@ -86,7 +86,7 @@ export const ExpoImageService: IImageService = {
 		}
 	},
 
-	isLocalImageUri: (imageUrl?: string): boolean => {
-		return !!imageUrl && imageUrl.startsWith("file://")
+	isAppDirectoryImage: (imageUrl?: string): boolean => {
+		return !!imageUrl && imageUrl.startsWith(BASE_IMAGES_DIR)
 	},
 }

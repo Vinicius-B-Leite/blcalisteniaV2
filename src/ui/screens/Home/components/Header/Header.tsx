@@ -17,6 +17,7 @@ export const Header = ({ userName, onNotificationsPress }: HeaderProps) => {
 			<View style={styles.leftContent}>
 				<View style={styles.avatarContainer}>
 					<Image
+						//TODO: remover dep externa
 						source={{
 							uri:
 								"https://ui-avatars.com/api/?name=" +

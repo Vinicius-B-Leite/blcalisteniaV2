@@ -1,5 +1,5 @@
 import { Redirect, Stack } from "expo-router"
-import { useAuth } from "../../domain/Auth/AuthContext"
+import { useAuth } from "@/domains/Auth"
 
 export default function ProtectedLayout() {
 	const { auth } = useAuth()

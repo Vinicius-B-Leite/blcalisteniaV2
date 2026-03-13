@@ -12,7 +12,7 @@ export const workoutBannerCardVariantsKeys = {
 export const workoutBannerCardVariants = (
 	theme: ThemeType,
 ): Record<keyof typeof workoutBannerCardVariantsKeys, WorkoutBannerCard.Variant> => {
-	const defaultVariant = {
+	const defaultVariant: WorkoutBannerCard.Variant = {
 		container: {
 			width: "100%" as const,
 			height: height * 0.3,

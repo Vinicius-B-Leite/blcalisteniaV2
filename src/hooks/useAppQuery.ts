@@ -29,7 +29,7 @@ export const useAppQuery = <T>(config: UseAppQueryParams<T>) => {
 	})
 
 	useEffect(() => {
-		if (isSuccess && data) {
+		if (isSuccess && data !== undefined) {
 			config.onSuccess?.(data)
 			return
 		}

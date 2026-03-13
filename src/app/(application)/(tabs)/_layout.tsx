@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router"
-import { TabBar } from "@/components/containers"
+//TODO: alterar o nome de container -> molecules
+import { TabBar } from "@/components/molecules"
 
 const TabLayout = () => {
 	return (

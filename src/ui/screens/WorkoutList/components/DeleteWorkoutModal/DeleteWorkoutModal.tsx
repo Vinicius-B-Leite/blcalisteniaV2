@@ -1,5 +1,5 @@
 import { View } from "react-native"
-import { Modal, Button, Text } from "@/components/core"
+import { Modal, Button } from "@/components/core"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { DeleteWorkoutModalProps } from "./types"

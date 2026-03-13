@@ -12,9 +12,15 @@
 			"@/components/*": ["src/ui/components/*"],
 			"@/themes/*": ["src/ui/theme/*"],
 			"@/themes": ["src/ui/theme"],
-			"@/utils/*": ["src/utils/*"],
+			"@/utils": ["src/utils"],
 			"@/assets/*": ["src/assets/*"],
-			"@/tests": ["src/tests"]
+			"@/tests": ["src/tests"],
+			"@/domains/*": ["src/domain/*"],
+			"@/hooks": ["src/hooks"],
+			"@/types/*": ["src/types/*"],
+			"@/repos/*": ["src/infra/repos/*"],
+			"@/constants": ["src/constants"],
+			"@/infra/*": ["src/infra/*"]
 		}
 	},
 	"include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]

@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native"
-import { ThemeType } from "@/themes/types"
-import { radius, spacings } from "@/themes/tokens"
+import { ThemeType, radius, spacings } from "@/themes"
 
 export const createStyles = (theme: ThemeType) =>
 	StyleSheet.create({

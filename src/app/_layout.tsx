@@ -1,10 +1,10 @@
 import { Stack } from "expo-router"
 import { ThemeProvider } from "@/themes"
 import { SafeAreaProvider } from "react-native-safe-area-context"
-import { AuthProvider, useAuth } from "../domain/Auth/AuthContext"
+import { AuthProvider, useAuth } from "@/domains/Auth"
 import { ReposProviders } from "src/infra/repos"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { ExpoImageService, ImageServiceProvider } from "src/infra/imageService"
+import { ImageStorageProvider, ImageStorageService } from "@/infra/services"
 
 if (__DEV__) {
 	import("../../ReactotronConfig").then(() => {
@@ -16,6 +16,7 @@ const Routes = () => {
 	const { auth, isLoadingAuth } = useAuth()
 
 	if (isLoadingAuth) {
+		//TODO: adicionar loading screen ou splash screen
 		return null
 	}
 
@@ -37,11 +38,11 @@ const RootLayout = () => {
 			<ThemeProvider>
 				<SafeAreaProvider>
 					<ReposProviders>
-						<ImageServiceProvider value={ExpoImageService}>
+						<ImageStorageProvider value={ImageStorageService}>
 							<AuthProvider>
 								<Routes />
 							</AuthProvider>
-						</ImageServiceProvider>
+						</ImageStorageProvider>
 					</ReposProviders>
 				</SafeAreaProvider>
 			</ThemeProvider>

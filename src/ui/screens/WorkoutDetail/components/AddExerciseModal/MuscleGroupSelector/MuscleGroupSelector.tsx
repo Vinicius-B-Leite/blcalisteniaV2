@@ -3,6 +3,7 @@ import { Text, Pressable } from "@/components/core"
 import { useAppTheme } from "@/themes/hooks"
 import { createStyles } from "./styles"
 
+//TODO: mover para uma constante global
 export type MuscleGroup = "Bíceps" | "Pernas" | "Peitoral" | "Costas" | "Core" | "Ombros"
 
 interface MuscleGroupOption {

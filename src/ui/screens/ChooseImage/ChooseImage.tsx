@@ -3,9 +3,9 @@ import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useChooseImage } from "./useChooseImage"
 import { ImageSelector } from "./components"
-import { View, ActivityIndicator } from "react-native"
-import { WorkoutBannerCard } from "@/components/containers"
-import { workoutBannerUtils } from "src/utils/workoutBanner"
+import { View } from "react-native"
+import { WorkoutBannerCard } from "@/components/molecules"
+import { workoutBannerUtils } from "@/utils"
 
 export const ChooseImage = () => {
 	const { states, actions } = useChooseImage()

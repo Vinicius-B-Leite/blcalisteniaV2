@@ -1,5 +1,5 @@
-import { Pressable, View, ActivityIndicator } from "react-native"
-import { Icon, Text } from "@/components/core"
+import { View, ActivityIndicator } from "react-native"
+import { Icon, Pressable, Text } from "@/components/core"
 import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
 import { ImageSelector as Types } from "./types"
@@ -9,7 +9,10 @@ export const AddImageItem = ({ onPress, isLoading }: Types.AddImageItemProps) =>
 	const styles = stylesTheme(theme)
 
 	return (
-		<Pressable style={styles.addImageItem} onPress={onPress} disabled={isLoading}>
+		<Pressable.Root
+			style={styles.addImageItem}
+			onPress={onPress}
+			disabled={isLoading}>
 			<View style={styles.addImageContent}>
 				{isLoading ? (
 					<ActivityIndicator size="small" color={theme.content["icon-brand"]} />
@@ -22,6 +25,6 @@ export const AddImageItem = ({ onPress, isLoading }: Types.AddImageItemProps) =>
 					</>
 				)}
 			</View>
-		</Pressable>
+		</Pressable.Root>
 	)
 }

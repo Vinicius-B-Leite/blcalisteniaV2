@@ -16,7 +16,7 @@ export const ExpoFileSystemService: IFileSystemService = {
 		}
 	},
 
-	makeDirectoryAsync: async (dirUri: string, options) => {
+	createDirectory: async (dirUri: string, options) => {
 		await FileSystem.makeDirectoryAsync(dirUri, options)
 	},
 
@@ -27,11 +27,11 @@ export const ExpoFileSystemService: IFileSystemService = {
 		}
 	},
 
-	copyAsync: async (options) => {
+	copy: async (options) => {
 		await FileSystem.copyAsync(options)
 	},
 
-	deleteAsync: async (fileUri: string) => {
+	delete: async (fileUri: string) => {
 		await FileSystem.deleteAsync(fileUri)
 	},
 }

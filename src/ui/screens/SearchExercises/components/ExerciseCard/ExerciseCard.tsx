@@ -2,7 +2,7 @@ import { View, Image, Animated, TouchableOpacity } from "react-native"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { ExerciseCard as ExerciseCardTypes } from "./types"
-import { Text, Icon } from "@/components/core"
+import { Text, Icon, Pressable } from "@/components/core"
 import { useExerciseCard } from "./useExerciseCard"
 
 export function ExerciseCard({
@@ -35,7 +35,7 @@ export function ExerciseCard({
 					</Text>
 				</View>
 			</View>
-			<TouchableOpacity onPress={onAdd} activeOpacity={0.7}>
+			<Pressable.Root onPress={onAdd}>
 				<Animated.View
 					style={[
 						styles.iconButton,
@@ -50,7 +50,7 @@ export function ExerciseCard({
 						variant={isSelected ? "brand" : "default"}
 					/>
 				</Animated.View>
-			</TouchableOpacity>
+			</Pressable.Root>
 		</View>
 	)
 }

@@ -1,7 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native"
 import { ThemeType } from "@/themes/types"
-import { spacings } from "@/themes/tokens/spacings"
-import { radius } from "@/themes/tokens/sizes"
+import { spacings, radius } from "@/themes/tokens"
 
 const { width: screenWidth } = Dimensions.get("window")
 
@@ -66,8 +65,6 @@ export const stylesTheme = (theme: ThemeType) => {
 		},
 		addImageText: {
 			color: theme.content["text-variant"],
-			fontSize: 10,
-			fontWeight: "500",
 		},
 	})
 }

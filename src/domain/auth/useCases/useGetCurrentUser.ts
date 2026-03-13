@@ -1,16 +1,12 @@
-import { authQueryKeys, useAuthRepo } from "src/infra/repos"
+import { authQueryKeys, useAuthRepo } from "@/repos/Auth"
 import { AuthModel } from "../AuthModel"
-import { useAppQuery } from "src/hooks"
-
-type UseGetCurrentUserParams = {
-	onSuccess?(data: AuthModel): void
-	onError?(): void
-}
+import { useAppQuery } from "@/hooks"
+import { ComumParamsUseCase } from "@/types/comumParamsUseCase"
 
 export const useGetCurrentUser = ({
 	onError,
 	onSuccess,
-}: UseGetCurrentUserParams = {}) => {
+}: ComumParamsUseCase<AuthModel, unknown> = {}) => {
 	const authRepo = useAuthRepo()
 
 	const { isLoading, data } = useAppQuery<AuthModel | null>({

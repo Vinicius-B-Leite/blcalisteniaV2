@@ -20,11 +20,11 @@ export interface IFileSystemService {
 
 	getInfoAsync: (fileUri: string) => Promise<FileInfo>
 
-	makeDirectoryAsync: (dirUri: string, options?: MakeDirectoryOptions) => Promise<void>
+	createDirectory: (dirUri: string, options?: MakeDirectoryOptions) => Promise<void>
 
 	ensureDirectoryExists: (dirUri: string) => Promise<void>
 
-	copyAsync: (options: CopyOptions) => Promise<void>
+	copy: (options: CopyOptions) => Promise<void>
 
-	deleteAsync: (fileUri: string) => Promise<void>
+	delete: (fileUri: string) => Promise<void>
 }

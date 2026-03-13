@@ -8,7 +8,7 @@ export interface ImagePickerResult {
 	}>
 }
 
-export interface IImageService {
+export interface IImageStorage {
 	pickImageFromGallery: () => Promise<ImagePickerResult>
 
 	saveImageToAppDirectory: (
@@ -16,9 +16,9 @@ export interface IImageService {
 		prefix: string,
 	) => Promise<{ localUri: string }>
 
-	getImagePath: (imageUrl?: string) => string | undefined
+	getImagePath: (imageUrl: string) => string | undefined
 
 	deleteImage: (imageUrl: string) => Promise<void>
 
-	isLocalImageUri: (imageUrl?: string) => boolean
+	isAppDirectoryImage: (imageUrl: string) => boolean
 }

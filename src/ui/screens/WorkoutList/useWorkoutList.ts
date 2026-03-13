@@ -1,12 +1,14 @@
 import { useState } from "react"
 import { useRouter } from "expo-router"
-import { useGetWorkouts } from "src/domain/Workout/useCases/useGetWorkouts"
-import { WorkoutModel } from "src/domain/Workout/WorkoutModel"
-import { WorkoutFormValues } from "@/components/containers/WorkoutFormModal/WorkoutFormModal"
-import { useCreateWorkout } from "src/domain/Workout/useCases/useCreateWorkout"
-import { useDeleteWorkout } from "src/domain/Workout/useCases/useDeleteWorkout"
+import {
+	useGetWorkouts,
+	WorkoutModel,
+	useCreateWorkout,
+	useDeleteWorkout,
+} from "@/domains/Workout"
+import { WorkoutFormValues } from "@/components/molecules"
 import { useForm } from "react-hook-form"
-import { workoutBannerUtils } from "src/utils/workoutBanner"
+import { workoutBannerUtils } from "@/utils"
 
 export const useWorkoutList = () => {
 	const router = useRouter()

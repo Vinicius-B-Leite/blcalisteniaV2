@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native"
 import { ThemeType } from "@/themes/types"
-import { spacings } from "@/themes/tokens/spacings"
-import { radius } from "@/themes/tokens/sizes"
+import { spacings, radius } from "@/themes"
 
+//TODO: REVISAR TODOS OS TOKENS AQUI
 export const stylesTheme = (theme: ThemeType) => {
 	return StyleSheet.create({
 		container: {

@@ -1,3 +1,4 @@
+import { ImageStorageService } from "@/infra/services"
 import { ImageSourcePropType } from "react-native"
 
 export const WORKOUT_BANNER_PATHS = [
@@ -22,8 +23,8 @@ const getRandomWorkoutBanner = (): string => {
 const resolveWorkoutBanner = (path?: string): ImageSourcePropType => {
 	if (!path) return DEFAULT_BANNER
 
-	const isLocalUri = path.startsWith("file://")
-	if (isLocalUri) {
+	const isFromAppDirectory = ImageStorageService.isAppDirectoryImage(path)
+	if (isFromAppDirectory) {
 		return { uri: path }
 	}
 
