@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useRouter } from "expo-router"
-import { MuscleGroup } from "./MuscleGroupSelector"
+import { MuscleGroup } from "@/constants"
 
 export const useAddExerciseModal = ({ workoutId }: { workoutId: string }) => {
 	const router = useRouter()

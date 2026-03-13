@@ -1,1 +1,1 @@
-export { MuscleGroupSelector, type MuscleGroup } from "./MuscleGroupSelector"
+export { MuscleGroupSelector } from "./MuscleGroupSelector"
