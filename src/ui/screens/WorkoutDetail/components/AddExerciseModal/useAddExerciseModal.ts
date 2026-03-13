@@ -39,7 +39,6 @@ export const useAddExerciseModal = ({ workoutId }: { workoutId: string }) => {
 	}
 
 	const handleAdd = (onClose: () => void) => {
-		// TODO: Implementar lógica de adicionar exercício
 		console.log({
 			exerciseName,
 			series,

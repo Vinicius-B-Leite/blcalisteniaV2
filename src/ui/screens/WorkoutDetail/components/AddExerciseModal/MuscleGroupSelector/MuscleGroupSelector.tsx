@@ -2,9 +2,7 @@ import { FlatList, View } from "react-native"
 import { Text, Pressable } from "@/components/core"
 import { useAppTheme } from "@/themes/hooks"
 import { createStyles } from "./styles"
-
-//TODO: mover para uma constante global
-export type MuscleGroup = "Bíceps" | "Pernas" | "Peitoral" | "Costas" | "Core" | "Ombros"
+import { MuscleGroup, MUSCLES_GROUP_LABELS } from "@/constants"
 
 interface MuscleGroupOption {
 	label: string
@@ -12,15 +10,15 @@ interface MuscleGroupOption {
 }
 
 const muscleGroups: MuscleGroupOption[] = [
-	{ label: "Bíceps", value: "Bíceps" },
-	{ label: "Pernas", value: "Pernas" },
-	{ label: "Peitoral", value: "Peitoral" },
-	{ label: "Costas", value: "Costas" },
-	{ label: "Core", value: "Core" },
-	{ label: "Ombros", value: "Ombros" },
+	{ label: MUSCLES_GROUP_LABELS.biceps, value: "biceps" },
+	{ label: MUSCLES_GROUP_LABELS.legs, value: "legs" },
+	{ label: MUSCLES_GROUP_LABELS.chest, value: "chest" },
+	{ label: MUSCLES_GROUP_LABELS.back, value: "back" },
+	{ label: MUSCLES_GROUP_LABELS.core, value: "core" },
+	{ label: MUSCLES_GROUP_LABELS.shoulders, value: "shoulders" },
 ]
 
-interface MuscleGroupSelectorProps {
+type MuscleGroupSelectorProps = {
 	selectedGroup: MuscleGroup | null
 	onGroupChange?: (group: MuscleGroup | null) => void
 }

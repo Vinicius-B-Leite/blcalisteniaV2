@@ -1,5 +1,4 @@
 import { Tabs } from "expo-router"
-//TODO: alterar o nome de container -> molecules
 import { TabBar } from "@/components/molecules"
 
 const TabLayout = () => {
@@ -9,6 +8,7 @@ const TabLayout = () => {
 			screenOptions={{ headerShown: false }}>
 			<Tabs.Screen name="home" />
 			<Tabs.Screen name="workout" />
+			<Tabs.Screen name="profile" />
 		</Tabs>
 	)
 }

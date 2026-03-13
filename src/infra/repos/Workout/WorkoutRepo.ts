@@ -83,7 +83,6 @@ export const WorkoutRepo: IWorkoutRepo = {
 					Object.assign(record, workoutAdapters.toDTO(workout))
 				})
 			})
-
 			return workoutAdapters.toDomain(updatedWorkout!)
 		} catch (error) {
 			throw new Error("Error updating workout: " + error)

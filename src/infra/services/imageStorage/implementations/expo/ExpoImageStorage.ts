@@ -1,10 +1,13 @@
 import * as ImagePicker from "expo-image-picker"
 import { IImageStorage, ImagePickerResult } from "../../IImageStorage"
 import { FileSystemService, IFileSystemService } from "../../../fileSystem"
+import { WORKOUT_BANNER_PATHS } from "@/utils"
 
 const fileSystemService: IFileSystemService = FileSystemService
 
 const BASE_IMAGES_DIR = `${fileSystemService.documentDirectory}images/`
+
+console.log(BASE_IMAGES_DIR)
 
 export const ExpoImageService: IImageStorage = {
 	pickImageFromGallery: async (): Promise<ImagePickerResult> => {
@@ -19,6 +22,7 @@ export const ExpoImageService: IImageStorage = {
 			allowsEditing: true,
 			aspect: [16, 9],
 			quality: 0.8,
+			selectionLimit: 1,
 		})
 
 		return {
@@ -35,7 +39,7 @@ export const ExpoImageService: IImageStorage = {
 	saveImageToAppDirectory: async (
 		uri: string,
 		prefix: string,
-	): Promise<{ localUri: string }> => {
+	): Promise<{ uri: string }> => {
 		try {
 			await fileSystemService.ensureDirectoryExists(BASE_IMAGES_DIR)
 
@@ -49,7 +53,7 @@ export const ExpoImageService: IImageStorage = {
 				to: destinationUri,
 			})
 
-			return { localUri: destinationUri }
+			return { uri: destinationUri }
 		} catch (error) {
 			console.error("Error saving image to app directory:", error)
 			throw new Error("Falha ao salvar a imagem: " + error)
@@ -86,7 +90,15 @@ export const ExpoImageService: IImageStorage = {
 		}
 	},
 
-	isAppDirectoryImage: (imageUrl?: string): boolean => {
+	isAppDirectoryImage: (imageUrl: string): boolean => {
 		return !!imageUrl && imageUrl.startsWith(BASE_IMAGES_DIR)
+	},
+
+	isLocalImage: (imageUrl: string): boolean => {
+		const localStartsWith = WORKOUT_BANNER_PATHS.map((path) => path.substring(0, 9))
+		const isLocal = localStartsWith.some((localPath) =>
+			imageUrl.startsWith(localPath),
+		)
+		return !!imageUrl && isLocal
 	},
 }

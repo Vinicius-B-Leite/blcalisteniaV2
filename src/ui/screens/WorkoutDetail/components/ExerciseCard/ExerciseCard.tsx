@@ -4,7 +4,7 @@ import { Text, Pressable, Icon } from "@/components/core"
 import { ExerciseCard as ExerciseCardTypes } from "./types"
 import { stylesTheme } from "./styles"
 
-const MOCK_IMAGE = require("@/assets/imgs/exercise-card-bg.png")
+const DEFAULT_BANNER = require("@/assets/imgs/exercise-card-bg.png")
 
 export const ExerciseCard = ({
 	title,
@@ -21,8 +21,7 @@ export const ExerciseCard = ({
 		<View style={styles.container}>
 			<View style={styles.contentContainer}>
 				<Image
-					//TODO: resolver imagem padrão caso imageUrl seja undefined
-					source={imageUrl ? imageUrl : MOCK_IMAGE}
+					source={imageUrl ? imageUrl : DEFAULT_BANNER}
 					style={styles.image}
 					resizeMode="cover"
 				/>

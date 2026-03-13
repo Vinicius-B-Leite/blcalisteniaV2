@@ -50,7 +50,6 @@ export const useWorkoutList = () => {
 
 	const handleEditWorkout = (id: string) => {
 		console.log("Edit workout:", id)
-		// TODO: Implement edit functionality
 	}
 
 	const handleDeleteWorkout = (id: string) => {

@@ -8,13 +8,10 @@ export const useHome = () => {
 	const { auth, logout } = useAuth()
 
 	const handleNotificationsPress = () => {
-		// TODO: navigate to notifications
 		logout()
 	}
 
-	const handleSeeMoreBlog = () => {
-		// TODO: navigate to blog list
-	}
+	const handleSeeMoreBlog = () => {}
 
 	return {
 		actions: { handleNotificationsPress, handleSeeMoreBlog },

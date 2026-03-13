@@ -3,21 +3,30 @@ import { ThemeProvider } from "@/themes"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { AuthProvider, useAuth } from "@/domains/Auth"
 import { ReposProviders } from "src/infra/repos"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { ImageStorageProvider, ImageStorageService } from "@/infra/services"
+import {
+	ImageStorageProvider,
+	ImageStorageService,
+	QueryCacheProvider,
+	QueryCacheService,
+} from "@/infra/services"
+import * as SplashScreen from "expo-splash-screen"
 
 if (__DEV__) {
 	import("../../ReactotronConfig").then(() => {
 		console.tron("Reactotron Configured")
 	})
 }
+SplashScreen.preventAutoHideAsync()
 
 const Routes = () => {
 	const { auth, isLoadingAuth } = useAuth()
 
 	if (isLoadingAuth) {
-		//TODO: adicionar loading screen ou splash screen
 		return null
+	}
+
+	if (!isLoadingAuth) {
+		SplashScreen.hide()
 	}
 
 	return (
@@ -30,11 +39,9 @@ const Routes = () => {
 	)
 }
 
-const client = new QueryClient()
-
 const RootLayout = () => {
 	return (
-		<QueryClientProvider client={client}>
+		<QueryCacheProvider value={QueryCacheService}>
 			<ThemeProvider>
 				<SafeAreaProvider>
 					<ReposProviders>
@@ -46,7 +53,7 @@ const RootLayout = () => {
 					</ReposProviders>
 				</SafeAreaProvider>
 			</ThemeProvider>
-		</QueryClientProvider>
+		</QueryCacheProvider>
 	)
 }
 

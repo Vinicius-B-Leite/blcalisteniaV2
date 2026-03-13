@@ -22,13 +22,12 @@ const getRandomWorkoutBanner = (): string => {
 
 const resolveWorkoutBanner = (path?: string): ImageSourcePropType => {
 	if (!path) return DEFAULT_BANNER
-
-	const isFromAppDirectory = ImageStorageService.isAppDirectoryImage(path)
-	if (isFromAppDirectory) {
-		return { uri: path }
+	const isLocalImage = ImageStorageService.isLocalImage(path)
+	if (isLocalImage) {
+		return WORKOUT_BANNER_MAP[path]
 	}
 
-	return WORKOUT_BANNER_MAP[path] ?? DEFAULT_BANNER
+	return { uri: path }
 }
 
 export const workoutBannerUtils = {

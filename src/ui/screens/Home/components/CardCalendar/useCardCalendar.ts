@@ -2,23 +2,16 @@ import { IconType } from "@/components/core"
 import { EWorkoutStatus } from "./types"
 
 export const useCardCalendar = () => {
-	//TODO: corrigir essa merda
-	const currentDay = new Date().getDate()
-	const leftDays = Array.from({ length: currentDay - 1 }, (_, i) => {
-		const date = new Date()
-		date.setDate(currentDay - i - 1)
-		return date.getDate().toString()
-	})
-	const rightDays = Array.from({ length: 7 - currentDay }, (_, i) => {
-		const date = new Date()
-		date.setDate(currentDay + i + 1)
-		return date.getDate().toString()
-	})
-	const currentWeekDaysNumber = [
-		...leftDays.reverse(),
-		currentDay.toString(),
-		...rightDays,
-	]
+	const currentDayNumber = new Date().getDate()
+	const currentWeekDayNumber = new Date().getDay()
+	const leftDays = Array.from({ length: currentWeekDayNumber }, (_, i) =>
+		(currentDayNumber - (currentWeekDayNumber - i)).toString(),
+	)
+	const rightDays = Array.from({ length: 6 - currentWeekDayNumber }, (_, i) =>
+		(currentDayNumber + i + 1).toString(),
+	)
+	const currentDay = currentDayNumber.toString()
+	const currentWeekDaysNumber = [...leftDays, currentDay.toString(), ...rightDays]
 
 	const weekDaysNames = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"]
 

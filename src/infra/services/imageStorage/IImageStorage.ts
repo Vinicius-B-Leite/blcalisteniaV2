@@ -11,14 +11,13 @@ export interface ImagePickerResult {
 export interface IImageStorage {
 	pickImageFromGallery: () => Promise<ImagePickerResult>
 
-	saveImageToAppDirectory: (
-		uri: string,
-		prefix: string,
-	) => Promise<{ localUri: string }>
+	saveImageToAppDirectory: (uri: string, prefix: string) => Promise<{ uri: string }>
 
 	getImagePath: (imageUrl: string) => string | undefined
 
 	deleteImage: (imageUrl: string) => Promise<void>
 
 	isAppDirectoryImage: (imageUrl: string) => boolean
+
+	isLocalImage: (imageUrl: string) => boolean
 }

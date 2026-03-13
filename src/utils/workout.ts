@@ -11,10 +11,16 @@ const DAY_LABELS: Record<WeekDaysFrequency, string> = {
 }
 
 const getWeekDayLabel = (day: WeekDaysFrequency): string => {
+	if (!(day in DAY_LABELS)) {
+		return ""
+	}
 	return DAY_LABELS[day]
 }
 
 const getWeekDayLabels = (days: WeekDaysFrequency[]): string[] => {
+	if (!days || days.length === 0) {
+		return []
+	}
 	return days.map(getWeekDayLabel)
 }
 

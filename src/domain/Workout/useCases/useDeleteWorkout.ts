@@ -1,13 +1,10 @@
 import { useAppMutation } from "@/hooks"
 import { useWorkoutRepo, workoutQueryKeys } from "@/repos/Workout"
-import { useQueryClient } from "@tanstack/react-query"
-import { useImageStorage } from "@/infra/services"
+import { useImageStorage, useQueryCache } from "@/infra/services"
 
 export const useDeleteWorkout = () => {
 	const workoutRepo = useWorkoutRepo()
-
-	//TODO: pensar em como extrair o client
-	const queryClient = useQueryClient()
+	const queryCacheService = useQueryCache()
 	const imageStorage = useImageStorage()
 
 	const { execute, isLoading } = useAppMutation<void, string>({
@@ -27,9 +24,7 @@ export const useDeleteWorkout = () => {
 			console.log("Error deleting workout :(", err)
 		},
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: [workoutQueryKeys.all],
-			})
+			await queryCacheService.invalidateCacheSingle([workoutQueryKeys.all])
 		},
 	})
 

@@ -38,6 +38,7 @@ export const useChooseImage = () => {
 
 			if (!result.canceled && result.assets?.[0]) {
 				const selectedImageUri = result.assets[0].uri
+
 				setSelectedImage(selectedImageUri)
 			}
 		} catch (error) {
@@ -52,20 +53,9 @@ export const useChooseImage = () => {
 		if (!workout || !selectedImage) return
 
 		try {
-			let imageUrlToSave = selectedImage
-
-			const isSaveInDirectoryApp = imageStorage.isAppDirectoryImage(selectedImage)
-			if (!isSaveInDirectoryApp) {
-				const { localUri } = await imageStorage.saveImageToAppDirectory(
-					selectedImage,
-					workout.id,
-				)
-				imageUrlToSave = localUri
-			}
-
 			await updateWorkout({
 				...workout,
-				imageUrl: imageUrlToSave,
+				imageUrl: selectedImage,
 			})
 
 			router.back()

@@ -1,13 +1,11 @@
 import { useAppMutation } from "@/hooks"
-import { useWorkoutRepo } from "@/repos/Workout"
+import { useWorkoutRepo, workoutQueryKeys } from "@/repos/Workout"
 import { WorkoutModel } from "../WorkoutModel"
-import { useQueryClient } from "@tanstack/react-query"
-import { workoutQueryKeys } from "src/infra/repos/Workout/WorkoutQueryKeys"
+import { useQueryCache } from "@/infra/services"
 
 export const useCreateWorkout = () => {
 	const workoutRepo = useWorkoutRepo()
-	//TODO: pensar como extrair isso pra um hook de repositorio, ou algo do tipo, pra não precisar ficar importando o useQueryClient (dep externa)
-	const queryClient = useQueryClient()
+	const queryCacheService = useQueryCache()
 
 	const { execute, isLoading } = useAppMutation<WorkoutModel, Omit<WorkoutModel, "id">>(
 		{
@@ -16,9 +14,7 @@ export const useCreateWorkout = () => {
 				console.log("Error creating workout :(", err)
 			},
 			onSuccess: async () => {
-				await queryClient.invalidateQueries({
-					queryKey: [workoutQueryKeys.all],
-				})
+				await queryCacheService.invalidateCacheSingle([workoutQueryKeys.all])
 			},
 		},
 	)
