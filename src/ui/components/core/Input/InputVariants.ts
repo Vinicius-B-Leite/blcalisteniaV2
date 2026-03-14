@@ -28,6 +28,7 @@ export const inputVariants = (
 				paddingHorizontal: spacings.padding[12],
 				gap: spacings.gap[8],
 				flexDirection: "row" as const,
+				alignItems: "center" as const,
 			},
 			input: {
 				flex: 1,
@@ -70,7 +71,7 @@ export const inputVariants = (
 			field: {
 				container: {
 					...defaultVariant.field.container,
-					borderWidth: 2,
+					borderWidth: 1,
 					borderColor: theme.content["text-brand"],
 				},
 				input: {
@@ -91,7 +92,7 @@ export const inputVariants = (
 			field: {
 				container: {
 					...defaultVariant.field.container,
-					borderWidth: 2,
+					borderWidth: 1,
 					borderColor: theme.border.error,
 				},
 				input: {

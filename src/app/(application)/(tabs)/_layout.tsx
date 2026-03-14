@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router"
-import { TabBar } from "@/components/containers"
+import { TabBar } from "@/components/molecules"
 
 const TabLayout = () => {
 	return (
@@ -8,6 +8,7 @@ const TabLayout = () => {
 			screenOptions={{ headerShown: false }}>
 			<Tabs.Screen name="home" />
 			<Tabs.Screen name="workout" />
+			<Tabs.Screen name="profile" />
 		</Tabs>
 	)
 }

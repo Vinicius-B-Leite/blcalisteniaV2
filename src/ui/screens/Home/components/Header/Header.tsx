@@ -16,15 +16,14 @@ export const Header = ({ userName, onNotificationsPress }: HeaderProps) => {
 		<View style={styles.row}>
 			<View style={styles.leftContent}>
 				<View style={styles.avatarContainer}>
-					<Image
-						source={{
-							uri:
-								"https://ui-avatars.com/api/?name=" +
-								encodeURIComponent(userName) +
-								"&background=DD7700&color=fff&size=96",
-						}}
-						style={styles.avatar}
-					/>
+					<View style={styles.avatar}>
+						<Text variant="title-large-bold">
+							{userName.charAt(0).toUpperCase()}
+						</Text>
+						<Text variant="title-large-bold">
+							{userName.charAt(1).toUpperCase()}
+						</Text>
+					</View>
 				</View>
 				<View style={styles.textContainer}>
 					<Text variant="title-large-bold">Olá, {userName}!</Text>

@@ -1,5 +1,5 @@
 import { Redirect, Stack } from "expo-router"
-import { useAuth } from "../../domain/auth/AuthContext"
+import { useAuth } from "@/domains/Auth"
 
 export default function ProtectedLayout() {
 	const { auth } = useAuth()
@@ -11,6 +11,7 @@ export default function ProtectedLayout() {
 	return (
 		<Stack screenOptions={{ headerShown: false, fullScreenGestureEnabled: true }}>
 			<Stack.Screen options={{ headerShown: false }} name="(tabs)" />
+			<Stack.Screen options={{ headerShown: false }} name="workout" />
 		</Stack>
 	)
 }

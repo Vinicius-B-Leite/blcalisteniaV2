@@ -1,5 +1,5 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { useAuth } from "../../../domain/auth/AuthContext"
+import { useAuth } from "@/domains/Auth"
 import { useAppTheme } from "@/themes"
 import { useRouter } from "expo-router"
 

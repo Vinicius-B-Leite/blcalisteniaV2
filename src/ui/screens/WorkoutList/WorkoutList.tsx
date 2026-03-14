@@ -1,9 +1,77 @@
-import { Header, Screen } from "@/components/core"
-import { CreateWorkoutModal, EmptyState } from "./components"
+import { View, FlatList, RefreshControl } from "react-native"
+import { Header, Screen, Text, Pressable } from "@/components/core"
+import {
+	EmptyState,
+	WorkoutCard,
+	SearchBar,
+	DeleteWorkoutModal,
+	LoadingState,
+} from "./components"
 import { useWorkoutList } from "./useWorkoutList"
+import { useStyles } from "@/themes"
+import { stylesTheme } from "./styles"
+import { WorkoutFormModal } from "@/components/molecules"
 
 export const WorkoutList = () => {
-	const { states, actions } = useWorkoutList()
+	const { states, actions, form } = useWorkoutList()
+	const styles = useStyles(stylesTheme)
+
+	const List = () => {
+		if (states.isGettingWorkouts) {
+			return <LoadingState />
+		}
+
+		if (!states.hasWorkouts && !states.isSearching) {
+			return <EmptyState handleOpenModal={actions.openModal} />
+		}
+
+		return (
+			<FlatList
+				data={states.workouts}
+				keyExtractor={(item) => item.id}
+				ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+				ListFooterComponent={
+					!states.isSearching ? (
+						<Pressable.Root
+							onPress={actions.openModal}
+							style={styles.addButton}>
+							<Text variant="body-large-bold" style={styles.addButtonText}>
+								Adicionar treino
+							</Text>
+						</Pressable.Root>
+					) : null
+				}
+				refreshControl={
+					<RefreshControl
+						refreshing={states.isRefetchingWorkouts}
+						onRefresh={actions.onRefresh}
+						colors={[styles.refreshControl.color]}
+						tintColor={styles.refreshControl.color}
+					/>
+				}
+				renderItem={({ item }) => (
+					<WorkoutCard
+						id={item.id}
+						title={item.title}
+						exerciseCount={5}
+						category={item.category}
+						imageUrl={item.imageUrl}
+						onRedirect={() => actions.onOpenWorkout(item.id)}
+						onDelete={() => actions.onDeleteWorkout(item.id)}
+					/>
+				)}
+				ListEmptyComponent={
+					states.isSearching ? (
+						<View style={styles.searchEmptyContainer}>
+							<Text variant="body-large-regular">
+								Não foi possível encontrar seus treinos.
+							</Text>
+						</View>
+					) : null
+				}
+			/>
+		)
+	}
 
 	return (
 		<Screen>
@@ -12,11 +80,23 @@ export const WorkoutList = () => {
 				<Header.VerticalCenterTitle>Meus treinos</Header.VerticalCenterTitle>
 			</Header.Root>
 
-			<EmptyState handleOpenModal={actions.openModal} />
+			<SearchBar control={form.control} />
+			<List />
 
-			<CreateWorkoutModal
+			<WorkoutFormModal
 				visible={states.modalCreateWorkout}
 				onClose={actions.closeModal}
+				title="Criar treino"
+				confirmButtonText="Criar"
+				onConfirm={actions.onConfirmCreateWorkout}
+			/>
+
+			<DeleteWorkoutModal
+				visible={states.deleteModal !== null}
+				workoutName={states.deleteModal?.title || ""}
+				onClose={actions.onCloseDeleteModal}
+				onConfirm={actions.onConfirmDelete}
+				isLoading={states.isDeleting}
 			/>
 		</Screen>
 	)

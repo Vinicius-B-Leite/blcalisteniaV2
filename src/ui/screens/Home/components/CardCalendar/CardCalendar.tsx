@@ -2,7 +2,7 @@ import { ScrollView, View } from "react-native"
 import { useAppTheme } from "@/themes"
 import { styleTheme } from "./styles"
 import { Text, Icon, Pressable } from "@/components/core"
-import { stringUtils } from "@/utils/string"
+import { stringUtils } from "@/utils"
 import { useCardCalendar } from "./useCardCalendar"
 
 export const CardCalendar = () => {

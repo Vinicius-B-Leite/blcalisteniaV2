@@ -27,6 +27,10 @@ export const stylesTheme = (theme: ThemeType) =>
 		avatar: {
 			width: AVATAR_SIZE,
 			height: AVATAR_SIZE,
+			justifyContent: "center",
+			alignItems: "center",
+			flexDirection: "row",
+			gap: spacings.gap[2],
 		},
 		textContainer: {
 			flexDirection: "column",
