@@ -16,5 +16,10 @@ export const stylesTheme = (theme: ThemeType) => {
 		refreshControl: {
 			color: theme.content["icon-brand"],
 		},
+		searchEmptyContainer: {
+			flex: 1,
+			justifyContent: "center",
+			alignItems: "center",
+		},
 	})
 }

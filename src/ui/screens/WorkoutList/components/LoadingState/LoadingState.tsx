@@ -8,7 +8,6 @@ export const LoadingState = () => {
 
 	return (
 		<View style={styles.container}>
-			<Skeleton style={[styles.skeleton, styles.skeletonSmall]} />
 			<Skeleton style={[styles.skeleton, styles.skeletonLarge]} />
 			<Skeleton style={[styles.skeleton, styles.skeletonLarge]} />
 			<Skeleton style={[styles.skeleton, styles.skeletonLarge]} />

@@ -17,7 +17,7 @@ export const WorkoutCard = ({
 	const styles = useStyles(stylesTheme)
 
 	return (
-		<View style={styles.container}>
+		<Pressable.Root onPress={onRedirect} style={styles.container}>
 			<View style={styles.contentContainer}>
 				{imageUrl && (
 					<Image
@@ -47,6 +47,6 @@ export const WorkoutCard = ({
 					<Icon name="trash" size={20} variant="error" />
 				</Pressable.Root>
 			</View>
-		</View>
+		</Pressable.Root>
 	)
 }

@@ -21,7 +21,7 @@ export const WorkoutList = () => {
 			return <LoadingState />
 		}
 
-		if (!states.hasWorkouts) {
+		if (!states.hasWorkouts && !states.isSearching) {
 			return <EmptyState handleOpenModal={actions.openModal} />
 		}
 
@@ -30,13 +30,16 @@ export const WorkoutList = () => {
 				data={states.workouts}
 				keyExtractor={(item) => item.id}
 				ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
-				ListHeaderComponent={<SearchBar control={form.control} />}
 				ListFooterComponent={
-					<Pressable.Root onPress={actions.openModal} style={styles.addButton}>
-						<Text variant="body-large-bold" style={styles.addButtonText}>
-							Adicionar treino
-						</Text>
-					</Pressable.Root>
+					!states.isSearching ? (
+						<Pressable.Root
+							onPress={actions.openModal}
+							style={styles.addButton}>
+							<Text variant="body-large-bold" style={styles.addButtonText}>
+								Adicionar treino
+							</Text>
+						</Pressable.Root>
+					) : null
 				}
 				refreshControl={
 					<RefreshControl
@@ -57,6 +60,15 @@ export const WorkoutList = () => {
 						onDelete={() => actions.onDeleteWorkout(item.id)}
 					/>
 				)}
+				ListEmptyComponent={
+					states.isSearching ? (
+						<View style={styles.searchEmptyContainer}>
+							<Text variant="body-large-regular">
+								Não foi possível encontrar seus treinos.
+							</Text>
+						</View>
+					) : null
+				}
 			/>
 		)
 	}
@@ -68,6 +80,7 @@ export const WorkoutList = () => {
 				<Header.VerticalCenterTitle>Meus treinos</Header.VerticalCenterTitle>
 			</Header.Root>
 
+			<SearchBar control={form.control} />
 			<List />
 
 			<WorkoutFormModal

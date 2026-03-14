@@ -25,7 +25,6 @@ export const useWorkoutList = () => {
 	const [modalCreateWorkout, setModalCreateWorkout] = useState(false)
 
 	const [deleteModal, setDeleteModal] = useState<WorkoutModel | null>(null)
-	const hasWorkouts = workouts.length > 0
 
 	const form = useForm({
 		defaultValues: {
@@ -84,6 +83,8 @@ export const useWorkoutList = () => {
 	const filteredWorkouts = workouts.filter((workout) =>
 		workout.title.toLowerCase().includes(searchText.toLowerCase()),
 	)
+	const hasWorkouts = filteredWorkouts.length > 0
+	const isSearching = searchText.length > 0
 
 	return {
 		form,
@@ -95,6 +96,7 @@ export const useWorkoutList = () => {
 			isDeleting: deleteWorkout.isLoading,
 			isGettingWorkouts,
 			isRefetchingWorkouts,
+			isSearching,
 		},
 		actions: {
 			openModal: handleOpenModalCreateWorkout,
