@@ -1,8 +1,9 @@
 import { IImageStorage } from "../IImageStorage"
-import { ExpoImageService } from "./expo/ExpoImageStorage"
+import { select } from "@/utils"
 
-let ImageStorageService: IImageStorage
-
-ImageStorageService = ExpoImageService
+const ImageStorageService = select.env<IImageStorage>({
+	test: () => require("./inMemory/InMemoryImageStorage").InMemoryImageStorage,
+	default: () => require("./expo/ExpoImageStorage").ExpoImageService,
+})
 
 export { ImageStorageService }

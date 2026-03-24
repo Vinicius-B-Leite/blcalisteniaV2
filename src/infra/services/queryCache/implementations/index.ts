@@ -7,6 +7,7 @@ let QueryCacheServiceProvider: (props: PropsWithChildren) => React.JSX.Element
 let QueryCacheService: IQueryCache
 
 QueryCacheServiceProvider = QueryCacheProvider
+
 QueryCacheService = ReactQueryService
 
 export { QueryCacheService, QueryCacheServiceProvider }

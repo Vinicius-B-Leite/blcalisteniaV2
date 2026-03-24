@@ -1,5 +1,5 @@
 import z from "zod"
-import { CATEGORIES } from "src/constants"
+import { CATEGORIES } from "@/constants"
 
 export const schema = z.object({
 	name: z.string().min(1, "O nome do treino é obrigatório"),

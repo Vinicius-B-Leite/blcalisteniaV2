@@ -58,9 +58,9 @@ export const useWorkoutList = () => {
 		}
 	}
 
-	const handleConfirmDelete = () => {
+	const handleConfirmDelete = async () => {
 		if (deleteModal && deleteModal.id) {
-			deleteWorkout.execute(deleteModal.id)
+			await deleteWorkout.execute(deleteModal.id)
 		}
 		handleCloseDeleteModal()
 	}

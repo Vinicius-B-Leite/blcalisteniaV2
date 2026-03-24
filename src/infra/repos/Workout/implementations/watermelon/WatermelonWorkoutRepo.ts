@@ -1,9 +1,9 @@
-import { IWorkoutRepo } from "src/domain/Workout/IWorkoutRepo"
+import { IWorkoutRepo } from "@/domains/Workout"
 import { database } from "src/infra/database"
-import { workoutAdapters } from "./WorkoutAdapter"
+import { workoutAdapters } from "../../WorkoutAdapter"
 import WorkoutsModel from "src/infra/database/watermelon/models/WorkoutsModel"
 
-export const WorkoutRepo: IWorkoutRepo = {
+export const WatermelonWorkoutRepo: IWorkoutRepo = {
 	getAllWorkouts: async () => {
 		const workouts = await database.collections
 			.get<WorkoutsModel>("workouts")
@@ -53,6 +53,12 @@ export const WorkoutRepo: IWorkoutRepo = {
 
 	deleteWorkout: async (id) => {
 		try {
+			const hasWorkout = await WatermelonWorkoutRepo.getWorkoutById(id)
+
+			if (!hasWorkout) {
+				throw new Error("Workout not found with ID: " + id)
+			}
+
 			await database.write(async () => {
 				const workout = await database.collections
 					.get<WorkoutsModel>("workouts")
@@ -67,21 +73,18 @@ export const WorkoutRepo: IWorkoutRepo = {
 
 	updateWorkout: async (workout) => {
 		try {
-			const existingWorkout = await database.collections
-				.get<WorkoutsModel>("workouts")
-				.find(workout.id)
-				.catch(() => null)
+			const hasWorkout = await WatermelonWorkoutRepo.getWorkoutById(workout.id)
 
-			if (!existingWorkout) {
+			if (!hasWorkout) {
 				throw new Error("Workout not found with ID: " + workout.id)
 			}
 
 			let updatedWorkout: WorkoutsModel | undefined
 
 			await database.write(async () => {
-				updatedWorkout = await existingWorkout.update((record) => {
-					Object.assign(record, workoutAdapters.toDTO(workout))
-				})
+				updatedWorkout = await database.collections
+					.get<WorkoutsModel>("workouts")
+					.find(workout.id)
 			})
 			return workoutAdapters.toDomain(updatedWorkout!)
 		} catch (error) {

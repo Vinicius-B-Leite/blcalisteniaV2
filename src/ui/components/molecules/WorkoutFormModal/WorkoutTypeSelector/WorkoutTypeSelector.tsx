@@ -3,7 +3,7 @@ import { Text } from "@/components/core"
 import { Pressable } from "@/components/core"
 import { useAppTheme } from "@/themes/hooks"
 import { createStyles } from "./styles"
-import { CATEGORIES, Category, CATEGORY_LABELS } from "src/constants"
+import { CATEGORIES, Category, CATEGORY_LABELS } from "@/constants"
 
 interface WorkoutTypeOption {
 	label: string

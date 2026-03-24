@@ -1,8 +1,9 @@
 import { IFileSystemService } from "../IFileSystemService"
-import { ExpoFileSystemService } from "./expo/ExpoFileSystemService"
+import { select } from "@/utils"
 
-let FileSystemService: IFileSystemService
-
-FileSystemService = ExpoFileSystemService
+const FileSystemService = select.env<IFileSystemService>({
+	test: () => require("./inMemory/InMemoryFileSystemService").InMemoryFileSystemService,
+	default: () => require("./expo/ExpoFileSystemService").ExpoFileSystemService,
+})
 
 export { FileSystemService }

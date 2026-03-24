@@ -2,6 +2,7 @@ import { View, Image } from "react-native"
 import { Text, Button } from "@/components/core"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
+import { WORKOUT_LIST_SCREEN_TEST_IDS } from "../../constants"
 
 type EmptyStateProps = {
 	handleOpenModal(): void
@@ -10,7 +11,7 @@ type EmptyStateProps = {
 export const EmptyState = ({ handleOpenModal }: EmptyStateProps) => {
 	const styles = useStyles(stylesTheme)
 	return (
-		<View style={styles.container}>
+		<View style={styles.container} testID={WORKOUT_LIST_SCREEN_TEST_IDS.EMPTY_STATE}>
 			<View style={styles.content}>
 				<View style={styles.imagesContainer}>
 					<Image

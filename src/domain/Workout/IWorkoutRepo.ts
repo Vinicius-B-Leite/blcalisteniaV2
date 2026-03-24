@@ -6,4 +6,5 @@ export interface IWorkoutRepo {
 	createWorkout: (params: Omit<WorkoutModel, "id">) => Promise<WorkoutModel>
 	deleteWorkout: (id: string) => Promise<void>
 	updateWorkout: (workout: WorkoutModel) => Promise<WorkoutModel>
+	clear?: () => Promise<void>
 }

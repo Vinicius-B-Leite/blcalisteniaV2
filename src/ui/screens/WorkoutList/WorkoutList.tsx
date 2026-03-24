@@ -11,6 +11,7 @@ import { useWorkoutList } from "./useWorkoutList"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { WorkoutFormModal } from "@/components/molecules"
+import { WORKOUT_LIST_SCREEN_TEST_IDS } from "./constants"
 
 export const WorkoutList = () => {
 	const { states, actions, form } = useWorkoutList()
@@ -62,13 +63,16 @@ export const WorkoutList = () => {
 				)}
 				ListEmptyComponent={
 					states.isSearching ? (
-						<View style={styles.searchEmptyContainer}>
+						<View
+							style={styles.searchEmptyContainer}
+							testID={WORKOUT_LIST_SCREEN_TEST_IDS.NO_SEARCH_RESULTS}>
 							<Text variant="body-large-regular">
 								Não foi possível encontrar seus treinos.
 							</Text>
 						</View>
 					) : null
 				}
+				testID={WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_LIST}
 			/>
 		)
 	}

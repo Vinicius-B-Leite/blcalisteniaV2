@@ -5,6 +5,7 @@ import { stylesTheme } from "./styles"
 import { WorkoutCardProps } from "./types"
 import { CATEGORY_LABELS } from "@/constants"
 import { workoutBannerUtils } from "@/utils"
+import { WORKOUT_LIST_SCREEN_TEST_IDS } from "../../constants"
 
 export const WorkoutCard = ({
 	title,
@@ -13,11 +14,15 @@ export const WorkoutCard = ({
 	imageUrl,
 	onRedirect,
 	onDelete,
+	id,
 }: WorkoutCardProps) => {
 	const styles = useStyles(stylesTheme)
 
 	return (
-		<Pressable.Root onPress={onRedirect} style={styles.container}>
+		<Pressable.Root
+			onPress={onRedirect}
+			style={styles.container}
+			testID={WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM}>
 			<View style={styles.contentContainer}>
 				{imageUrl && (
 					<Image
@@ -40,10 +45,16 @@ export const WorkoutCard = ({
 			</View>
 
 			<View style={styles.actionsContainer}>
-				<Pressable.Root style={styles.iconButton} onPress={onRedirect}>
+				<Pressable.Root
+					style={styles.iconButton}
+					onPress={onRedirect}
+					testID={WORKOUT_LIST_SCREEN_TEST_IDS.TO_DETAILS_BUTTON({ id })}>
 					<Icon name="arrowRightTop" size={20} />
 				</Pressable.Root>
-				<Pressable.Root style={styles.iconButton} onPress={onDelete}>
+				<Pressable.Root
+					style={styles.iconButton}
+					onPress={onDelete}
+					testID={WORKOUT_LIST_SCREEN_TEST_IDS.DELETE_BUTTON({ id })}>
 					<Icon name="trash" size={20} variant="error" />
 				</Pressable.Root>
 			</View>

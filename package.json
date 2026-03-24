@@ -52,8 +52,5 @@
 		"reactotron-react-native": "^5.1.13",
 		"typescript": "~5.8.3"
 	},
-	"private": true,
-	"jest": {
-		"preset": "jest-expo"
-	}
+	"private": true
 }

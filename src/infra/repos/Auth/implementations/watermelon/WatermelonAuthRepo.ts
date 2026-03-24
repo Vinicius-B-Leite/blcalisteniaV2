@@ -1,9 +1,9 @@
-import { IAuthRepo } from "src/domain/Auth/IAuthRepo"
+import { IAuthRepo } from "@/domains/Auth"
 import { database } from "src/infra/database"
 import UsersModel from "src/infra/database/watermelon/models/UsersModel"
-import { authAdapters } from "./AuthAdapters"
+import { authAdapters } from "../../AuthAdapters"
 
-export const AuthRepo: IAuthRepo = {
+export const WatermelonAuthRepo: IAuthRepo = {
 	signInAnonymous: async (params) => {
 		try {
 			let createdUser: UsersModel | null = null
