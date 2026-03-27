@@ -1,41 +1,75 @@
-import { View, Image, Animated, TouchableOpacity } from "react-native"
+import { View, Image, Animated } from "react-native"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { ExerciseCard as ExerciseCardTypes } from "./types"
-import { Text, Icon, Pressable } from "@/components/core"
+import { Text, Icon, Pressable, Skeleton } from "@/components/core"
 import { useExerciseCard } from "./useExerciseCard"
+import { MUSCLES_GROUP_LABELS } from "@/constants"
+import { useState, useEffect } from "react"
+import { SEARCH_EXERCISES_SCREEN_TEST_IDS } from "../../constants"
 
 export function ExerciseCard({
-	title,
-	category,
-	imageUrl,
+	id,
+	name,
+	musclesGroups,
+	bannerUrl,
 	onAdd,
-	showImage = true,
 	isSelected = false,
+	isCustom = false,
 }: ExerciseCardTypes.Props) {
+	const [imageError, setImageError] = useState(false)
+	const [isLoading, setIsLoading] = useState(!!bannerUrl)
+
+	//TODO: MELHORAR ISSO AQUI DPS, TLVZ EM CASO DE ERRO USAR IMAGEM DEFAULT
+	useEffect(() => {
+		if (!bannerUrl) return setImageError(true)
+
+		Image.getSize(
+			bannerUrl,
+			() => setIsLoading(false),
+			() => {
+				setImageError(true)
+				setIsLoading(false)
+			},
+		)
+	}, [bannerUrl])
+
 	const styles = useStyles(stylesTheme)
 	const { states } = useExerciseCard(isSelected)
 
+	const musclesGroupsLabels = musclesGroups
+		?.map((muscle) => MUSCLES_GROUP_LABELS[muscle].toLowerCase())
+		?.join(", ")
+
+	if (isLoading) {
+		return <Skeleton style={styles.loadingItem} />
+	}
+
+	const containerTestID = isCustom
+		? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM
+		: SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM
+	const toggleTestID = SEARCH_EXERCISES_SCREEN_TEST_IDS.TOGGLE_EXERCISE_BUTTON({ id })
+
 	return (
-		<View style={styles.container}>
+		<View style={styles.container} testID={containerTestID}>
 			<View style={styles.content}>
-				{showImage && imageUrl && (
+				{bannerUrl && !imageError && !isLoading && (
 					<Image
-						source={{ uri: imageUrl }}
+						source={{ uri: bannerUrl }}
 						style={styles.image}
 						resizeMode="cover"
 					/>
 				)}
 				<View style={styles.textContainer}>
 					<Text variant="body-small-bold" numberOfLines={1}>
-						{title}
+						{name}
 					</Text>
 					<Text variant="body-small-reg" numberOfLines={1}>
-						{category}
+						{musclesGroupsLabels}
 					</Text>
 				</View>
 			</View>
-			<Pressable.Root onPress={onAdd}>
+			<Pressable.Root onPress={onAdd} testID={toggleTestID}>
 				<Animated.View
 					style={[
 						styles.iconButton,

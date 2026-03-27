@@ -1,0 +1,569 @@
+---
+name: create-integration-tests
+description: Cria testes de integração para telas seguindo os padrões do projeto com repositórios InMemory, customRender, helpers de repositório testável e gerenciamento de cache do React Query. Use ao criar novos testes de integração para telas, testar mutations/queries, ou quando o usuário perguntar sobre padrões de teste neste projeto.
+---
+
+# Criando Testes de Integração (Screen Integration Tests)
+
+Esta skill guia a criação de testes de integração seguindo as convenções do projeto, usando repositórios InMemory, utilitários de renderização customizados e React Testing Library.
+
+## Tecnologias & Stack
+
+- **Jest** (~29.7.0) com preset **jest-expo**
+- **@testing-library/react-native** (^13.2.0) — queries e interações com componentes
+- **Repositórios InMemory** — selecionados por ambiente via `select.env`
+- **React Query** — configurado com `retry: false` e `gcTime: Infinity` no ambiente de teste
+- **`customRender`** — envolve componentes com todos os providers do app automaticamente
+
+## Visão Geral da Arquitetura
+
+Os testes de integração exercitam o **slice vertical completo**: UI → hooks de caso de uso → repositório in-memory → cache do React Query. Não há mock de lógica de domínio ou repositórios — apenas dependências externas como navegação (expo-router) são mockadas com `jest.fn()`.
+
+## Estrutura de Arquivos
+
+Cada teste de tela vive junto à tela:
+
+```
+src/ui/screens/NomeDaTela/
+├── __tests__/
+│   └── NomeDaTela.tsx        # Arquivo de teste de integração
+├── __mocks__/
+│   └── nomeDaTelaMocks.ts    # Dados de fixture estáticos correspondendo aos modelos de domínio
+├── constants.ts               # TEST_IDS exportados como objeto com namespace
+└── NomeDaTela.tsx             # Componente da tela
+```
+
+## Passo a Passo
+
+### 1. Criar Constantes de Test IDs (`constants.ts`)
+
+Todo elemento interativo ou renderizado condicionalmente precisa ter um `testID`. Convenção: prefixo com namespace + nome semântico. IDs dinâmicos usam funções:
+
+```typescript
+const prefix = "entity-list-screen"
+
+export const ENTITY_LIST_SCREEN_TEST_IDS = {
+	LOADING_STATE: `${prefix}-loading-state`,
+	ENTITY_ITEM: `${prefix}-entity-item`,
+	EMPTY_STATE: `${prefix}-empty-state`,
+	SEARCH_INPUT: `${prefix}-search-input`,
+	ENTITY_LIST: `${prefix}-entity-list`,
+	DELETE_BUTTON: ({ id }: { id: string }) => `${prefix}-delete-button-${id}`,
+	TO_DETAILS_BUTTON: ({ id }: { id: string }) => `${prefix}-to-details-button-${id}`,
+}
+```
+
+**Regras:**
+
+- Todas as chaves em `SCREAMING_SNAKE_CASE`
+- Prefixo em `kebab-case` correspondendo ao nome da tela
+- Botões parametrizados recebem `{ id: string }` e retornam string
+- IDs são sempre importados de `constants.ts`, nunca hardcodados nos arquivos de teste
+
+### 2. Criar Fixtures de Mock (`__mocks__/nomeDaTelaMocks.ts`)
+
+Os dados de fixture devem corresponder exatamente ao shape do **modelo de domínio** (ex: `WorkoutModel`, `ExerciseModel`):
+
+```typescript
+import { EntityModel } from "@/domain/Entity/EntityModel"
+
+const entities: EntityModel[] = [
+	{
+		id: "1",
+		title: "Primeira Entidade",
+		// ... todos os campos obrigatórios
+	},
+	{
+		id: "2",
+		title: "Segunda Entidade",
+		// ...
+	},
+]
+
+export const entityMocks = {
+	entities,
+}
+```
+
+**Quando a entidade tem campos dinâmicos** (ex: `userId` que vem de um `AuthRepo.signInAnonymous`), exporte uma lista base sem esses campos e faça o spread inline no teste:
+
+```typescript
+// __mocks__/entityMocks.ts
+const userEntitiesBase: Omit<EntityModel, "id" | "userId">[] = [
+	{ name: "Entidade do Usuário", ... },
+]
+
+export const entityMocks = {
+	entities,
+	userEntitiesBase,
+}
+
+// no arquivo de teste
+const user = await AuthRepo.signInAnonymous({ name: "Test User" })
+await EntityRepo.createEntity({ ...entityMocks.userEntitiesBase[0], userId: user.id })
+```
+
+**Regras:**
+
+- Sempre use IDs hardcodados (`"1"`, `"2"`) para asserções previsíveis
+- Exporte um objeto nomeado agrupando todas as fixtures da tela
+- **Nunca crie objetos de entidade literais dentro dos `it`s** — defina todos os dados em `__mocks__`, inclusive bases para entidades com campos dinâmicos
+
+### 3. Organizar Testes com `describe` Aninhados
+
+Todo arquivo de teste usa um `describe` global com o nome da tela e, dentro dele, `describe`s filhos para cada contexto funcional da tela. Isso mantém os testes agrupados por responsabilidade e facilita a leitura dos resultados no terminal.
+
+**Estrutura padrão:**
+
+```typescript
+describe("Entity List Screen (Integration)", () => {
+  beforeEach(async () => {
+    await asTestableRepository(EntityRepo).clear()
+    queryClient.clear()
+    jest.clearAllMocks()
+  })
+
+  // General screen tests (loading, empty state, data display)
+  it("should show loading state when fetching entities", () => { ... })
+  it("should show empty state when there are no entities", async () => { ... })
+  it("should show items after loading", async () => { ... })
+
+  describe("search", () => {
+    it("should filter items by search text", async () => { ... })
+    it("should show empty message when no results found", async () => { ... })
+    it("should restore all items when search is cleared", async () => { ... })
+  })
+
+  describe("filter", () => {
+    it("should filter items by selected category", async () => { ... })
+    it("should show all items when filter is removed", async () => { ... })
+  })
+
+  describe("deletion", () => {
+    it("should open confirmation modal when delete button is pressed", async () => { ... })
+    it("should delete item and update the list on confirm", async () => { ... })
+    it("should close modal without deleting on cancel", async () => { ... })
+  })
+
+  describe("navigation", () => {
+    it("should navigate to detail screen with the correct id", async () => { ... })
+  })
+
+  describe("pull-to-refresh", () => {
+    it("should refresh the list when pull to refresh is triggered", async () => { ... })
+  })
+})
+```
+
+**Regras para nomeação dos `describe`s filhos:**
+
+- Use lowercase names in English: `"search"`, `"filter"`, `"deletion"`, `"navigation"`, `"pull-to-refresh"`, `"creation"`, `"editing"`, `"confirmation modal"`
+- Agrupe por **funcionalidade** da tela, não por tipo de asserção
+- Só crie um `describe` filho se houver **2 ou mais casos de teste** para aquele contexto — um único `it` deve viver direto no describe pai
+- `beforeEach` com seed só faz sentido quando há **múltiplos testes** que compartilham o mesmo estado inicial; para um único teste, use seed inline dentro do próprio `it`
+- O `beforeEach` global cobre todos os filhos — não repita nos `describe`s filhos a menos que precise de setup específico
+
+**Exemplo com setup adicional no filho:**
+
+```typescript
+describe("Entity List Screen (Integration)", () => {
+  beforeEach(async () => {
+    await asTestableRepository(EntityRepo).clear()
+    queryClient.clear()
+    jest.clearAllMocks()
+  })
+
+  describe("search", () => {
+    beforeEach(async () => {
+      // seed data needed for all search tests
+      await EntityRepo.createEntity(entityMocks.entities[0])
+      await EntityRepo.createEntity(entityMocks.entities[1])
+    })
+
+    it("should filter items by search text", async () => { ... })
+    it("should restore all items when search is cleared", async () => { ... })
+  })
+})
+```
+
+---
+
+### 4. Escrever o Arquivo de Teste (`__tests__/NomeDaTela.tsx`)
+
+#### Padrão de imports
+
+```typescript
+import { act, asTestableRepository, fireEvent, render, screen, waitFor } from "@/tests"
+import { ScreenComponent } from "../ScreenComponent"
+import { SCREEN_TEST_IDS } from "../constants"
+import { EntityRepo } from "@/repos/Entity"
+import { entityMocks } from "../__mocks__/entityMocks"
+import { queryClient } from "@/infra/services/queryCache/implementations/reactQuery/ReactQueryProvider"
+import { Router, useRouter } from "expo-router"
+```
+
+**Regra importante**: sempre importe `render`, `screen`, `fireEvent`, `waitFor`, `act`, `asTestableRepository` de `@/tests` (nunca diretamente de `@testing-library/react-native`).
+
+#### Mock de navegação (se a tela navega)
+
+```typescript
+const mockPush = jest.fn()
+
+jest.mocked(useRouter).mockReturnValue({
+	push: mockPush,
+} as unknown as Router)
+```
+
+#### Mocks globais (`jest.setup.ts`)
+
+Hooks e módulos que **toda tela vai precisar mockar** devem ser configurados uma única vez em `jest.setup.ts`, não repetidos em cada arquivo de teste.
+
+**Regra prática:**
+
+- **`jest.setup.ts`** → mocks de infraestrutura transversal (debounce, roteamento, módulos nativos)
+- **Por arquivo de teste** → mocks com retorno específico ao contexto da tela (ex: `jest.mocked(useRouter).mockReturnValue(...)`)
+
+```typescript
+// jest.setup.ts — configuração global
+jest.mock("expo-router", () => ({
+	useRouter: jest.fn(),
+}))
+
+jest.mock("@/hooks", () => ({
+	...jest.requireActual("@/hooks"),
+	useDebounceValue: (value: unknown) => value, // passthrough: sem delay
+}))
+```
+
+> **Debounce é detalhe de performance, não de lógica.** O mock como passthrough elimina a necessidade de `{ timeout: 2000 }` nos `waitFor` e torna os testes determinísticos. O comportamento real do debounce (delay, cleanup) merece um unit test próprio com `jest.useFakeTimers()`.
+
+#### Teardown no `beforeEach`
+
+```typescript
+beforeEach(async () => {
+	await asTestableRepository(EntityRepo).clear()
+	queryClient.clear()
+	jest.clearAllMocks()
+})
+```
+
+**Sempre nesta ordem:**
+
+1. `asTestableRepository(Repo).clear()` — limpa o store InMemory e reseta o contador de IDs
+2. `queryClient.clear()` — invalida o cache do React Query
+3. `jest.clearAllMocks()` — reseta o histórico de chamadas dos mocks
+
+#### Padrões de casos de teste
+
+**Estado de carregamento (síncrono — sem await):**
+
+```typescript
+	it("should show loading state when fetching entities", () => {
+  render(<ScreenComponent />)
+  expect(screen.getByTestId(SCREEN_TEST_IDS.LOADING_STATE)).toBeTruthy()
+})
+```
+
+**Estado vazio (assíncrono):**
+
+```typescript
+	it("should show empty state when there are no entities", async () => {
+  render(<ScreenComponent />)
+  expect(await screen.findByTestId(SCREEN_TEST_IDS.EMPTY_STATE)).toBeTruthy()
+})
+```
+
+**Exibição de dados após carregamento:**
+
+```typescript
+	it("should show items after loading", async () => {
+  await EntityRepo.createEntity(entityMocks.entities[0])
+
+  render(<ScreenComponent />)
+  expect(screen.getByTestId(SCREEN_TEST_IDS.LOADING_STATE)).toBeTruthy()
+
+  const items = await screen.findAllByTestId(SCREEN_TEST_IDS.ENTITY_ITEM)
+  expect(items.length).toBeGreaterThan(0)
+})
+```
+
+**Mutation (delete) with modal confirmation:**
+
+```typescript
+it("should delete an entity and update the list", async () => {
+  await EntityRepo.createEntity(entityMocks.entities[0])
+  render(<ScreenComponent />)
+
+  await screen.findByText(entityMocks.entities[0].title)
+
+  fireEvent.press(
+    screen.getByTestId(SCREEN_TEST_IDS.DELETE_BUTTON({ id: entityMocks.entities[0].id }))
+  )
+
+  const confirmBtn = await screen.findByTestId(
+    SCREEN_TEST_IDS.DELETE_BUTTON({ id: "confirm" })
+  )
+
+  await act(async () => {
+    await fireEvent.press(confirmBtn)
+  })
+
+  await waitFor(async () => {
+    expect(screen.queryByText(entityMocks.entities[0].title)).toBeFalsy()
+    expect(await screen.findByTestId(SCREEN_TEST_IDS.EMPTY_STATE)).toBeTruthy()
+  })
+})
+```
+
+**Pull-to-refresh:**
+
+```typescript
+it("should refresh the list when pull to refresh is triggered", async () => {
+  await EntityRepo.createEntity(entityMocks.entities[0])
+  render(<ScreenComponent />)
+
+  await screen.findAllByTestId(SCREEN_TEST_IDS.ENTITY_ITEM)
+
+  await act(async () => {
+    await EntityRepo.createEntity(entityMocks.entities[1])
+  })
+
+  const list = screen.getByTestId(SCREEN_TEST_IDS.ENTITY_LIST)
+  await act(async () => {
+    list.props.refreshControl.props.onRefresh()
+  })
+
+  await waitFor(() => {
+    expect(screen.getAllByTestId(SCREEN_TEST_IDS.ENTITY_ITEM).length).toBe(2)
+  })
+})
+```
+
+**Search / filter (teste o comportamento, não o texto):**
+
+```typescript
+it("should filter items by search text and restore all when cleared", async () => {
+  await EntityRepo.createEntity(entityMocks.entities[0])
+  await EntityRepo.createEntity(entityMocks.entities[1])
+  render(<ScreenComponent />)
+
+  await screen.findAllByTestId(SCREEN_TEST_IDS.ENTITY_ITEM)
+
+  const searchInput = screen.getByTestId(SCREEN_TEST_IDS.SEARCH_INPUT)
+  fireEvent.changeText(searchInput, entityMocks.entities[0].title.substring(0, 5))
+
+  await waitFor(() => {
+    expect(screen.getAllByTestId(SCREEN_TEST_IDS.ENTITY_ITEM).length).toBe(1)
+  })
+
+  fireEvent.changeText(searchInput, "")
+
+  await waitFor(() => {
+    expect(screen.getAllByTestId(SCREEN_TEST_IDS.ENTITY_ITEM).length).toBe(2)
+  })
+})
+```
+
+> **Nunca use `getByText` para verificar comportamento de filtro.** Prefira contar elementos por `testID`. `getByText` é frágil — quebra com qualquer mudança de copy.
+
+**Se a tela possui múltiplas seções filtráveis (ex: itens default + itens custom), cubra todas no mesmo teste:**
+
+```typescript
+it("should filter items by search text across all sections", async () => {
+  // seed default items
+  await EntityRepo.createEntity(entityMocks.entities[0]) // matches "Flex"
+  // seed custom items
+  await EntityRepo.createEntity(entityMocks.customEntities[0]) // matches "Custom"
+  await EntityRepo.createEntity(entityMocks.customEntities[1]) // matches "Other"
+
+  render(<ScreenComponent />)
+  await screen.findAllByTestId(SCREEN_TEST_IDS.ENTITY_ITEM)
+
+  const searchInput = screen.getByTestId(SCREEN_TEST_IDS.SEARCH_INPUT)
+
+  // filter that matches only default
+  fireEvent.changeText(searchInput, "Flex")
+  await waitFor(() => {
+    expect(screen.getAllByTestId(SCREEN_TEST_IDS.ENTITY_ITEM).length).toBe(1)
+    expect(screen.queryAllByTestId(SCREEN_TEST_IDS.CUSTOM_ENTITY_ITEM).length).toBe(0)
+  })
+
+  // filter that matches only custom
+  fireEvent.changeText(searchInput, "Other")
+  await waitFor(() => {
+    expect(screen.queryAllByTestId(SCREEN_TEST_IDS.ENTITY_ITEM).length).toBe(0)
+    expect(screen.getAllByTestId(SCREEN_TEST_IDS.CUSTOM_ENTITY_ITEM).length).toBe(1)
+  })
+
+  // clear restores all
+  fireEvent.changeText(searchInput, "")
+  await waitFor(() => {
+    expect(screen.getAllByTestId(SCREEN_TEST_IDS.ENTITY_ITEM).length).toBe(1)
+    expect(screen.getAllByTestId(SCREEN_TEST_IDS.CUSTOM_ENTITY_ITEM).length).toBe(2)
+  })
+})
+```
+
+**Navigation assertion:**
+
+```typescript
+it("should navigate to detail screen with the correct id when button is pressed", async () => {
+  await EntityRepo.createEntity(entityMocks.entities[0])
+  await EntityRepo.createEntity(entityMocks.entities[1])
+  render(<ScreenComponent />)
+
+  const buttons = await screen.findAllByTestId(
+    new RegExp(SCREEN_TEST_IDS.TO_DETAILS_BUTTON({ id: ".*" }))
+  )
+
+  fireEvent.press(buttons[1])
+
+  expect(mockPush).toHaveBeenCalledWith({
+    pathname: "/(application)/entity/[entityId]",
+    params: { entityId: entityMocks.entities[1].id },
+  })
+})
+```
+
+## Requisitos do Repositório InMemory
+
+Todo novo repositório **deve** ter uma implementação InMemory em:
+
+```
+src/infra/repos/Entity/implementations/inMemory/InMemoryEntityRepo.ts
+```
+
+Deve implementar `IEntityRepo & ITestableRepository`:
+
+```typescript
+import { IEntityRepo } from "@/domain/Entity/IEntityRepo"
+import { ITestableRepository } from "@/tests"
+import { EntityModel } from "@/domain/Entity/EntityModel"
+
+const store: EntityModel[] = []
+let idCounter = 1
+
+export const InMemoryEntityRepo: IEntityRepo & ITestableRepository<EntityModel> = {
+	// Métodos de domínio
+	getAllEntities: async () => {
+		return new Promise<EntityModel[]>((resolve) => {
+			setTimeout(() => resolve([...store]), 500) // simula latência assíncrona
+		})
+	},
+
+	createEntity: async (params) => {
+		const entity: EntityModel = { ...params, id: String(idCounter++) }
+		store.push(entity)
+		return entity
+	},
+
+	// ITestableRepository
+	seed: async (data) => {
+		for (const item of data) {
+			store.push({ ...item, id: item.id || String(idCounter++) })
+		}
+	},
+
+	clear: async () => {
+		store.length = 0
+		idCounter = 1
+	},
+}
+```
+
+**Seleção via `select.env`** em `implementations/index.ts`:
+
+```typescript
+import { select } from "@/utils/select"
+import { IEntityRepo } from "@/domain/Entity/IEntityRepo"
+
+export const EntityRepo = select.env<IEntityRepo>({
+	test: () => require("./inMemory/InMemoryEntityRepo").InMemoryEntityRepo,
+	default: () => require("./watermelon/WatermelonEntityRepo").WatermelonEntityRepo,
+})
+```
+
+## Configuração do React Query para Testes
+
+Em `src/infra/services/queryCache/implementations/reactQuery/ReactQueryProvider.tsx`, o client já está configurado para testes via `select.env`:
+
+```typescript
+// Já existe — NÃO alterar
+const config = select.env<QueryClientConfig | undefined>({
+	test: {
+		defaultOptions: {
+			queries: { retry: false, gcTime: Infinity },
+			mutations: { retry: false, gcTime: Infinity },
+		},
+	},
+	default: undefined,
+})
+export const queryClient = new QueryClient(config)
+```
+
+Garante: sem ruído de retry, cache com vida útil infinita, comportamento assíncrono previsível.
+
+## Checklist Antes de Escrever os Testes
+
+- [ ] `constants.ts` exporta `SCREEN_TEST_IDS` com todas as chaves necessárias
+- [ ] Todos os elementos interativos na tela têm `testID` vinculado às constantes
+- [ ] `__mocks__/nomeDaTelaMocks.ts` criado com dados de fixture tipados
+- [ ] Repositório InMemory implementa tanto a interface de domínio quanto `ITestableRepository`
+- [ ] Repositório InMemory selecionado via `select.env` em `implementations/index.ts`
+- [ ] `beforeEach` global limpa repo, query client e mocks do jest
+- [ ] Navegação mockada com `jest.mocked(useRouter).mockReturnValue`
+- [ ] Mocks de infraestrutura transversal (debounce, router) configurados em `jest.setup.ts`, não por arquivo
+- [ ] Se a tela tem múltiplos filtros combinados por AND, existe um `it` que aplica todos simultaneamente
+- [ ] Todos os imports vêm de `@/tests`, não diretamente de `@testing-library/react-native`
+- [ ] `describe` global criado com o nome da tela no formato `"Nome da Tela (Integration)"`
+- [ ] `describe`s filhos criados para cada contexto funcional com 2+ casos de teste
+- [ ] Coverage da tela >= 80% (statements, branches, functions, lines)
+
+## Cobertura Mínima (Coverage)
+
+Todo arquivo de tela testado deve atingir **no mínimo 80% de cobertura** em todas as métricas: statements, branches, functions e lines.
+
+Para verificar a cobertura de um arquivo específico:
+
+```bash
+yarn test --coverage --collectCoverageFrom="src/ui/screens/NomeDaTela/**/*.{ts,tsx}"
+```
+
+**O que cobrir obrigatoriamente:**
+
+- Estado de carregamento (loading)
+- Estado vazio (empty state)
+- Exibição de dados após fetch
+- Todas as actions do usuário (press, changeText, scroll)
+- Todos os fluxos de modal (abrir, confirmar, cancelar)
+- Navegação para outras telas
+
+**Branches que costumam passar despercebidas:**
+
+- Renderização condicional (`condition ? <A /> : <B />`) — teste ambos os lados
+- Tratamento de erro de mutation — simule falha no repo e verifique feedback ao usuário
+- Itens com e sem campos opcionais (ex: `imageUrl` nulo vs preenchido)
+
+## Armadilhas Comuns
+
+| Armadilha                                                                                  | Solução                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Esquecer `queryClient.clear()` no `beforeEach`                                             | Cache stale causa testes instáveis entre execuções                                                                                                                                               |
+| Não aguardar `asTestableRepository(Repo).clear()`                                          | Store não ficará vazio — testes compartilham estado                                                                                                                                              |
+| Usar `getBy*` para dados assíncronos                                                       | Use `findBy*` que aguarda internamente                                                                                                                                                           |
+| Envolver asserções síncronas em `waitFor`                                                  | Use `waitFor` apenas quando o estado muda de forma assíncrona                                                                                                                                    |
+| Hardcodar strings de testID nos arquivos de teste                                          | Sempre importar de `constants.ts`                                                                                                                                                                |
+| Passar `testID` via prop para componentes de feature                                       | Componentes de feature importam `SCREEN_TEST_IDS` diretamente; props de testID só fazem sentido em componentes genéricos/reutilizáveis da design system                                          |
+| Passar string hardcoded de testID ao componente filho                                      | Passe o dado semântico (ex: `muscleGroup`, `id`) e deixe o componente montar o testID internamente via constante                                                                                 |
+| Inserir dados no store após `render()`                                                     | Insira antes de renderizar para evitar condições de corrida                                                                                                                                      |
+| Agrupar testes não relacionados no mesmo `describe`                                        | Cada `describe` filho deve ter responsabilidade única                                                                                                                                            |
+| Repetir `beforeEach` global nos `describe`s filhos                                         | Use `beforeEach` filho apenas para setup adicional exclusivo                                                                                                                                     |
+| Criar `describe` filho com apenas um `it`                                                  | Mova o teste diretamente para o describe pai — um describe com um único it não agrega organização                                                                                                |
+| Usar `beforeEach` para seed quando há apenas um teste                                      | Coloque o seed inline dentro do `it` — fica mais explícito e elimina o bloco `beforeEach`                                                                                                        |
+| Usar `getByText` para verificar resultado de filtro                                        | Conte elementos por `testID` com `getAllByTestId(...).length` — robusto a mudanças de copy                                                                                                       |
+| Testar filtro de uma seção ignorando outras seções                                         | Verifique todas as seções filtráveis (ex: default + custom) no mesmo teste para garantir isolamento correto                                                                                      |
+| Separar em testes distintos: aplicar filtro / remover filtro                               | Teste o toggle do filtro em sequência no mesmo `it` — aplicar → verificar → remover → verificar restauração                                                                                      |
+| Usar `{ timeout: 2000 }` em `waitFor` para compensar debounce                              | Mock `useDebounceValue` como passthrough em `jest.setup.ts` — elimina delays artificiais e torna os testes determinísticos                                                                       |
+| Repetir mocks de infraestrutura (`useDebounceValue`, `useRouter`) em cada arquivo de teste | Configure-os uma única vez em `jest.setup.ts` — aplica globalmente sem duplicação                                                                                                                |
+| Ter múltiplos filtros na tela sem testar a combinação deles                                | Adicione um `it` que aplica todos os filtros simultaneamente — cada filtro pode funcionar isolado mas falhar em conjunto (AND silencioso)                                                        |
+| Criar objetos de entidade literais dentro dos `it`s                                        | Defina todos os dados em `__mocks__`; para campos dinâmicos (ex: `userId`) exporte uma lista base (`userEntitiesBase`) e faça spread inline: `{ ...mocks.userEntitiesBase[0], userId: user.id }` |

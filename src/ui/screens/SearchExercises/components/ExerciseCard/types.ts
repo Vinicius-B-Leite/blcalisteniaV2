@@ -1,10 +1,14 @@
+import { MuscleGroup } from "@/constants"
+import { ExerciseModel } from "@/domains/Exercise"
+
 export namespace ExerciseCard {
 	export type Props = {
-		title: string
-		category: string
-		imageUrl?: string
-		showImage?: boolean
+		id: ExerciseModel["id"]
+		name: ExerciseModel["name"]
+		musclesGroups: ExerciseModel["musclesGroups"]
+		bannerUrl?: ExerciseModel["bannerUrl"]
 		isSelected?: boolean
 		onAdd?: () => void
+		isCustom?: boolean
 	}
 }

@@ -1,11 +1,12 @@
 import { IWorkoutRepo } from "@/domains/Workout"
 import { WorkoutModel } from "@/domains/Workout/WorkoutModel"
+import { ITestableRepository } from "@/tests"
 
 const store: WorkoutModel[] = []
 
 let idCounter = 1
 
-export const InMemoryWorkoutRepo: IWorkoutRepo = {
+export const InMemoryWorkoutRepo: IWorkoutRepo & ITestableRepository = {
 	getAllWorkouts: async () => {
 		return await new Promise<WorkoutModel[]>((resolve) => {
 			setTimeout(() => {
@@ -39,6 +40,15 @@ export const InMemoryWorkoutRepo: IWorkoutRepo = {
 		}
 		store[index] = { ...workout }
 		return store[index]
+	},
+
+	seed: async (data) => {
+		for (const workout of data) {
+			store.push({
+				...workout,
+				id: workout.id || String(idCounter++),
+			})
+		}
 	},
 
 	clear: async () => {

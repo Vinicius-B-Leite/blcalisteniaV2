@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from "@/tests"
+import { act, asTestableRepository, fireEvent, render, screen, waitFor } from "@/tests"
 import { WorkoutList } from "../WorkoutList"
 import { WORKOUT_LIST_SCREEN_TEST_IDS } from "../constants"
 import { WorkoutRepo } from "@/repos/Workout"
@@ -13,8 +13,8 @@ jest.mocked(useRouter).mockReturnValue({
 } as unknown as Router)
 
 describe("Workout List Screen (Integration)", () => {
-	beforeEach(() => {
-		WorkoutRepo?.clear?.()
+	beforeEach(async () => {
+		await asTestableRepository(WorkoutRepo).clear()
 		queryClient.clear()
 		jest.clearAllMocks()
 	})

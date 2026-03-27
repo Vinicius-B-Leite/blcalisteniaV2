@@ -1,12 +1,13 @@
+import { MuscleGroup } from "@/constants"
+
 export namespace CategoryFilter {
 	export type Props = {
-		categories: string[]
-		selectedCategory: string
-		onSelectCategory: (category: string) => void
+		selectedCategory: MuscleGroup | null
+		onSelectCategory: (category: MuscleGroup) => void
 	}
 
 	export type ChipProps = {
-		label: string
+		muscleGroup: MuscleGroup
 		isSelected: boolean
 		onPress: () => void
 	}

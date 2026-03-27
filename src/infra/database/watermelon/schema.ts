@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from "@nozbe/watermelondb"
 
 export default appSchema({
-	version: 2,
+	version: 3,
 	tables: [
 		tableSchema({
 			name: "users",
@@ -17,8 +17,19 @@ export default appSchema({
 				{ name: "title", type: "string" },
 				{ name: "description", type: "string" },
 				{ name: "category", type: "string" },
-				{ name: "image_url", type: "string", isOptional: true },
+				{ name: "image_url", type: "string" },
 				{ name: "week_days_frequency", type: "string" }, // JSON string
+				{ name: "created_at", type: "number" },
+				{ name: "updated_at", type: "number" },
+			],
+		}),
+		tableSchema({
+			name: "exercises",
+			columns: [
+				{ name: "name", type: "string" },
+				{ name: "user_id", type: "string", isOptional: true },
+				{ name: "banner_url", type: "string", isOptional: true },
+				{ name: "muscles_groups", type: "string" }, // JSON string
 				{ name: "created_at", type: "number" },
 				{ name: "updated_at", type: "number" },
 			],

@@ -3,9 +3,9 @@ import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { CategoryFilter as CategoryFilterTypes } from "./types"
 import { CategoryChip } from "./CategoryChip"
+import { MUSCLES_GROUPS_ARRAY } from "@/constants"
 
 export function CategoryFilter({
-	categories,
 	selectedCategory,
 	onSelectCategory,
 }: CategoryFilterTypes.Props) {
@@ -13,10 +13,10 @@ export function CategoryFilter({
 
 	return (
 		<FlatList
-			data={categories}
+			data={MUSCLES_GROUPS_ARRAY}
 			renderItem={({ item }) => (
 				<CategoryChip
-					label={item}
+					muscleGroup={item}
 					isSelected={item === selectedCategory}
 					onPress={() => onSelectCategory(item)}
 				/>

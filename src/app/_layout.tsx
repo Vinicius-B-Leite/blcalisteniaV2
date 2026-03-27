@@ -10,23 +10,31 @@ import {
 	QueryCacheService,
 } from "@/infra/services"
 import * as SplashScreen from "expo-splash-screen"
+import { useEffect } from "react"
+import { useDatabaseSeed } from "@/infra/database"
 
 if (__DEV__) {
 	import("../../ReactotronConfig").then(() => {
 		console.tron("Reactotron Configured")
 	})
 }
-SplashScreen.preventAutoHideAsync()
 
 const Routes = () => {
 	const { auth, isLoadingAuth } = useAuth()
+	const { execute, isSeeding } = useDatabaseSeed()
 
-	if (isLoadingAuth) {
+	useEffect(() => {
+		SplashScreen.preventAutoHideAsync()
+	}, [])
+
+	useEffect(() => {
+		if (!isLoadingAuth && !isSeeding) {
+			SplashScreen.hide()
+		}
+	}, [isLoadingAuth, isSeeding])
+
+	if (isLoadingAuth || isSeeding) {
 		return null
-	}
-
-	if (!isLoadingAuth) {
-		SplashScreen.hide()
 	}
 
 	return (

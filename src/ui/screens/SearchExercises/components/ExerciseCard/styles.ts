@@ -5,6 +5,11 @@ import { spacings, radius } from "@/themes"
 //TODO: REVISAR TODOS OS TOKENS AQUI
 export const stylesTheme = (theme: ThemeType) => {
 	return StyleSheet.create({
+		loadingItem: {
+			width: "100%",
+			height: 70,
+			borderRadius: radius[16],
+		},
 		container: {
 			flexDirection: "row",
 			justifyContent: "space-between",

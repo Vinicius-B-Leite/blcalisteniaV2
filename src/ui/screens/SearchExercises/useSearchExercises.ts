@@ -1,56 +1,39 @@
-import { useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { useRouter } from "expo-router"
-
-const CATEGORIES = ["Bíceps", "Pernas", "Peitoral", "Costas", "Core", "Ombros"]
-
-const MOCK_EXERCISES = [
-	{
-		id: "1",
-		title: "Knee Push Ups",
-		category: "Peitoral",
-		imageUrl:
-			"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=100&fit=crop",
-	},
-	{
-		id: "2",
-		title: "Flexão Padrão",
-		category: "Peitoral",
-		imageUrl:
-			"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=100&fit=crop",
-	},
-	{
-		id: "3",
-		title: "Ring Push Ups",
-		category: "Peitoral",
-		imageUrl:
-			"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=100&fit=crop",
-	},
-]
-
-const CUSTOM_EXERCISES = [
-	{
-		id: "4",
-		title: "Flexão",
-		category: "Peitoral",
-	},
-]
+import { useForm } from "react-hook-form"
+import { MuscleGroup } from "@/constants"
+import { ExerciseModel, useGetExercises } from "@/domains/Exercise"
+import { useDebounceValue } from "@/hooks"
 
 export const useSearchExercises = () => {
 	const router = useRouter()
-	const [searchText, setSearchText] = useState("")
-	const [selectedCategory, setSelectedCategory] = useState("Bíceps")
+
+	const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<null | MuscleGroup>(
+		null,
+	)
 	const [selectedExercises, setSelectedExercises] = useState<string[]>([])
 
-	const handleSearchChange = (text: string) => {
-		setSearchText(text)
-	}
+	const form = useForm({
+		defaultValues: {
+			searchText: "",
+		},
+	})
+
+	const searchText = form.watch("searchText")
+	const debouncedSearchText = useDebounceValue(searchText)
+
+	const { defaultExercises, userExercises, isLoading } = useGetExercises()
 
 	const handleGoBack = () => {
 		router.back()
 	}
 
-	const handleCategorySelect = (category: string) => {
-		setSelectedCategory(category)
+	const handleMuscleGroupSelect = (muscleGroup: MuscleGroup) => {
+		const alreadySelected = selectedMuscleGroup === muscleGroup
+		if (alreadySelected) {
+			return setSelectedMuscleGroup(null)
+		}
+		setSelectedMuscleGroup(muscleGroup)
 	}
 
 	const handleExercisePress = (id: string) => {
@@ -75,22 +58,48 @@ export const useSearchExercises = () => {
 		// Implementar lógica de adicionar exercícios
 	}
 
-	const isCustomExercisesEmpty = CUSTOM_EXERCISES.length === 0
+	const filterList = useCallback(
+		(exercises: ExerciseModel[]) => {
+			return exercises.filter((exercise) => {
+				const matchesMuscleGroup = selectedMuscleGroup
+					? exercise.musclesGroups.includes(selectedMuscleGroup)
+					: true
+
+				const searchText = debouncedSearchText.toLowerCase()
+				const matchesSearchText = searchText?.trim()?.length
+					? exercise.name.toLowerCase().includes(searchText)
+					: true
+
+				return matchesMuscleGroup && matchesSearchText
+			})
+		},
+		[selectedMuscleGroup, debouncedSearchText],
+	)
+
+	const filteredExercises = useMemo(() => {
+		return filterList(defaultExercises)
+	}, [defaultExercises, filterList])
+
+	const filteredCustomExercises = useMemo(() => {
+		return filterList(userExercises)
+	}, [userExercises, filterList])
+
+	const isCustomExercisesEmpty = filteredCustomExercises.length === 0
 
 	return {
+		form,
 		states: {
 			searchText,
-			categories: CATEGORIES,
-			selectedCategory,
-			exercises: MOCK_EXERCISES,
-			customExercises: CUSTOM_EXERCISES,
+			selectedMuscleGroup,
+			exercises: filteredExercises,
+			customExercises: filteredCustomExercises,
 			isCustomExercisesEmpty,
 			selectedExercises,
+			isLoading,
 		},
 		actions: {
-			handleSearchChange,
 			handleGoBack,
-			handleCategorySelect,
+			handleMuscleGroupSelect,
 			handleExercisePress,
 			handleFavoritePress,
 			handleToggleExercise,

@@ -20,4 +20,8 @@ export const stylesTheme = (theme: ThemeType) =>
 		addButtonContainer: {
 			paddingTop: spacings.padding[16],
 		},
+		loadingItem: {
+			height: 64,
+			borderRadius: 8,
+		},
 	})

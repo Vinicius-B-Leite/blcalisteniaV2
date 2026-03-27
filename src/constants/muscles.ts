@@ -8,6 +8,7 @@ export const MUSCLES_GROUPS = {
 	triceps: "triceps",
 }
 
+export const MUSCLES_GROUPS_ARRAY = Object.keys(MUSCLES_GROUPS) as MuscleGroup[]
 export type MuscleGroup = keyof typeof MUSCLES_GROUPS
 
 export const MUSCLES_GROUP_LABELS: Record<MuscleGroup, string> = {
