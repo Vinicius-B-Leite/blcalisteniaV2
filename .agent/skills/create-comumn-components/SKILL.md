@@ -435,42 +435,56 @@ import { Icon } from "../../../../components/core/Icon"
 
 ## 🔧 Hooks Customizados
 
-### Quando Criar um Hook
+### Regra obrigatória
 
-Crie um hook customizado quando o componente tiver:
+**Todo componente que possui qualquer lógica** (estado, handlers, refs, cálculos, efeitos) **deve extrair essa lógica para um hook dedicado** `useComponentName.ts`. O componente `.tsx` fica responsável apenas pela renderização.
 
-- Lógica de estado complexa
-- Múltiplas funções auxiliares
-- Cálculos ou transformações de dados
-- Regras de negócio específicas
+### Assinatura de retorno
+
+O hook **sempre** retorna um objeto com as chaves organizadas:
+
+```typescript
+return {
+	states: { /* valores reativos, dados computados */ },
+	actions: { /* funções e handlers */ },
+	refs: { /* refs de elementos — apenas se aplicável */ },
+}
+```
+
+- **`states`** — `useState`, `useMemo`, valores derivados, flags booleanas
+- **`actions`** — `handleXxx`, funções de callback, side effects disparados pelo usuário
+- **`refs`** — `useRef` (ex: referência a ScrollView, TextInput), omitir a chave se não houver nenhuma ref
 
 ### Estrutura do Hook
 
 ```typescript
 // useComponentName.ts
-import { useState } from "react"
-import { Icon } from "../../../../components/core/Icon/IconTypes"
+import { useState, useRef } from "react"
+import { ScrollView } from "react-native"
 
 export const useComponentName = () => {
 	// Estados
-	const [state, setState] = useState(initialValue)
+	const [isVisible, setIsVisible] = useState(false)
+	const computedValue = isVisible ? "visível" : "oculto"
 
-	// Cálculos
-	const computedValue = calculateSomething()
+	// Refs (apenas se necessário)
+	const scrollRef = useRef<ScrollView>(null)
 
-	// Funções auxiliares
-	const handleAction = () => {
-		// lógica
-	}
+	// Handlers
+	const handleToggle = () => setIsVisible((prev) => !prev)
+	const handleScrollToTop = () => scrollRef.current?.scrollTo({ y: 0 })
 
-	// Retorna states e actions organizados
 	return {
 		states: {
-			state,
+			isVisible,
 			computedValue,
 		},
 		actions: {
-			handleAction,
+			handleToggle,
+			handleScrollToTop,
+		},
+		refs: {
+			scrollRef,
 		},
 	}
 }
@@ -836,7 +850,9 @@ Ao criar um novo componente comum, verifique:
 - [ ] **Hooks**
     - [ ] Usa `useStyles(stylesTheme)` para estilos
     - [ ] Usa `useAppTheme()` se precisar acessar theme diretamente
-    - [ ] Hook customizado se lógica for complexa
+    - [ ] Qualquer lógica extraída para `useComponentName.ts`
+    - [ ] Hook retorna `{ states, actions, refs? }` — nunca variáveis soltas
+    - [ ] Componente `.tsx` usa `const { states, actions } = useComponentName()`
 
 ---
 

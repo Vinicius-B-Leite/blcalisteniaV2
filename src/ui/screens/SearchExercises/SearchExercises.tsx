@@ -3,7 +3,12 @@ import { Screen, Header, Text, Button, Skeleton } from "@/components/core"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useSearchExercises } from "./useSearchExercises"
-import { SearchBar, CategoryFilter, ExerciseCard } from "./components"
+import {
+	SearchBar,
+	CategoryFilter,
+	ExerciseCard,
+	CreateExerciseModal,
+} from "./components"
 import { SEARCH_EXERCISES_SCREEN_TEST_IDS } from "./constants"
 
 export const SearchExercises = () => {
@@ -81,6 +86,7 @@ export const SearchExercises = () => {
 											actions.handleToggleExercise(item.id)
 										}
 										isCustom
+										onEdit={() => actions.handleOpenEditModal(item)}
 									/>
 								)}
 								keyExtractor={(item) => item.id}
@@ -102,7 +108,22 @@ export const SearchExercises = () => {
 						{selectedCount === 1 ? "exercício" : "exercícios"}
 					</Button.Content>
 				</Button.Root>
+
+				<Button.Root
+					variant="ghost"
+					onPress={actions.handleOpenCreateModal}
+					testID={SEARCH_EXERCISES_SCREEN_TEST_IDS.CREATE_EXERCISE_BUTTON}>
+					<Button.Content>Criar novo exercício</Button.Content>
+				</Button.Root>
 			</View>
+
+			<CreateExerciseModal
+				visible={states.isCreateModalVisible}
+				onClose={actions.handleCloseModal}
+				initialValues={
+					states.editingExercise ? states.editingExercise : undefined
+				}
+			/>
 		</Screen>
 	)
 }

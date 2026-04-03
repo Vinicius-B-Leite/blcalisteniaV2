@@ -47,5 +47,10 @@ export const stylesTheme = (theme: ThemeType) => {
 			alignItems: "center",
 			borderRadius: radius.full,
 		},
+		actionsContainer: {
+			flexDirection: "row",
+			gap: spacings.gap[12],
+			alignItems: "center",
+		},
 	})
 }

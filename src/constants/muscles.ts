@@ -1,5 +1,5 @@
 export const MUSCLES_GROUPS = {
-	biceps: "Biceps",
+	biceps: "biceps",
 	legs: "legs",
 	chest: "chest",
 	back: "back",

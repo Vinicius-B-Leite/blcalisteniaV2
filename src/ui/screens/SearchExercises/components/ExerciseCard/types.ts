@@ -10,5 +10,6 @@ export namespace ExerciseCard {
 		isSelected?: boolean
 		onAdd?: () => void
 		isCustom?: boolean
+		onEdit?: () => void
 	}
 }

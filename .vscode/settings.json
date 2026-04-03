@@ -1,0 +1,7 @@
+{
+	// read AGENTS.md default instructions for code generation
+	"github.copilot.chat.codeGeneration.instructions": [{ "file": "AGENTS.md" }],
+
+	// location of agent files, relative to the workspace root
+	"chat.agentFilesLocations": [".agent/agents"]
+}

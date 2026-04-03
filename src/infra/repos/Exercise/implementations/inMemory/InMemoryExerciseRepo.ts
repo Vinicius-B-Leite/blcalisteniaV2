@@ -23,6 +23,18 @@ export const InMemoryExerciseRepo: IExerciseRepo & ITestableRepository = {
 		return newExercise
 	},
 
+	updateExercise: async (id, params) => {
+		const index = store.findIndex((e) => e.id === id)
+		if (index === -1) {
+			throw new Error(`Exercise with id ${id} not found`)
+		}
+		const definedParams = Object.fromEntries(
+			Object.entries(params).filter(([, v]) => v !== undefined),
+		) as Partial<Omit<ExerciseModel, "id">>
+		store[index] = { ...store[index], ...definedParams }
+		return store[index]
+	},
+
 	seed: async (data) => {
 		for (const exercise of data) {
 			store.push({

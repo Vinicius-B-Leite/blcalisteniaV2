@@ -11,4 +11,11 @@ export const SEARCH_EXERCISES_SCREEN_TEST_IDS = {
 	ADD_BUTTON: `${prefix}-add-button`,
 	TOGGLE_EXERCISE_BUTTON: ({ id }: { id: string }) =>
 		`${prefix}-toggle-exercise-button-${id}`,
+	CREATE_EXERCISE_BUTTON: `${prefix}-create-exercise-button`,
+	EDIT_EXERCISE_BUTTON: ({ id }: { id: string }) =>
+		`${prefix}-edit-exercise-button-${id}`,
+	CUSTOM_EXERCISE_ITEM_NAME: ({ id }: { id: string }) =>
+		`${prefix}-custom-exercise-item-name-${id}`,
+	CUSTOM_EXERCISE_ITEM_MUSCLES: ({ id }: { id: string }) =>
+		`${prefix}-custom-exercise-item-muscles-${id}`,
 }

@@ -3,6 +3,7 @@ import { useRouter } from "expo-router"
 import { useForm } from "react-hook-form"
 import { MuscleGroup } from "@/constants"
 import { ExerciseModel, useGetExercises } from "@/domains/Exercise"
+
 import { useDebounceValue } from "@/hooks"
 
 export const useSearchExercises = () => {
@@ -12,6 +13,8 @@ export const useSearchExercises = () => {
 		null,
 	)
 	const [selectedExercises, setSelectedExercises] = useState<string[]>([])
+	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false)
+	const [editingExercise, setEditingExercise] = useState<ExerciseModel | null>(null)
 
 	const form = useForm({
 		defaultValues: {
@@ -58,6 +61,21 @@ export const useSearchExercises = () => {
 		// Implementar lógica de adicionar exercícios
 	}
 
+	const handleOpenCreateModal = () => {
+		setEditingExercise(null)
+		setIsCreateModalVisible(true)
+	}
+
+	const handleOpenEditModal = (exercise: ExerciseModel) => {
+		setEditingExercise(exercise)
+		setIsCreateModalVisible(true)
+	}
+
+	const handleCloseModal = () => {
+		setIsCreateModalVisible(false)
+		setEditingExercise(null)
+	}
+
 	const filterList = useCallback(
 		(exercises: ExerciseModel[]) => {
 			return exercises.filter((exercise) => {
@@ -96,6 +114,8 @@ export const useSearchExercises = () => {
 			isCustomExercisesEmpty,
 			selectedExercises,
 			isLoading,
+			isCreateModalVisible,
+			editingExercise,
 		},
 		actions: {
 			handleGoBack,
@@ -104,6 +124,9 @@ export const useSearchExercises = () => {
 			handleFavoritePress,
 			handleToggleExercise,
 			handleAddExercises,
+			handleOpenCreateModal,
+			handleOpenEditModal,
+			handleCloseModal,
 		},
 	}
 }

@@ -45,4 +45,29 @@ export const WatermelonExerciseRepo: IExerciseRepo = {
 			throw new Error("Error creating exercise: " + error)
 		}
 	},
+
+	updateExercise: async (id, params) => {
+		try {
+			const record = await database.collections
+				.get<ExercisesModel>("exercises")
+				.find(id)
+
+			if (!record) {
+				throw new Error("Exercise not found")
+			}
+
+			await database.write(async () => {
+				await record.update((r) => {
+					if (params.name !== undefined) r.name = params.name
+					if (params.musclesGroups !== undefined)
+						r.musclesGroups = params.musclesGroups
+					if (params.bannerUrl !== undefined) r.bannerUrl = params.bannerUrl
+				})
+			})
+
+			return exerciseAdapters.toDomain(record)
+		} catch (error) {
+			throw new Error("Error updating exercise: " + error)
+		}
+	},
 }

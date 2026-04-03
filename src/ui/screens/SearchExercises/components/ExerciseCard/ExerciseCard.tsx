@@ -16,6 +16,7 @@ export function ExerciseCard({
 	onAdd,
 	isSelected = false,
 	isCustom = false,
+	onEdit,
 }: ExerciseCardTypes.Props) {
 	const [imageError, setImageError] = useState(false)
 	const [isLoading, setIsLoading] = useState(!!bannerUrl)
@@ -61,30 +62,59 @@ export function ExerciseCard({
 					/>
 				)}
 				<View style={styles.textContainer}>
-					<Text variant="body-small-bold" numberOfLines={1}>
+					<Text
+						variant="body-small-bold"
+						numberOfLines={1}
+						testID={
+							isCustom
+								? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM_NAME(
+										{ id },
+									)
+								: undefined
+						}>
 						{name}
 					</Text>
-					<Text variant="body-small-reg" numberOfLines={1}>
+					<Text
+						variant="body-small-reg"
+						numberOfLines={1}
+						testID={
+							isCustom
+								? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM_MUSCLES(
+										{ id },
+									)
+								: undefined
+						}>
 						{musclesGroupsLabels}
 					</Text>
 				</View>
 			</View>
-			<Pressable.Root onPress={onAdd} testID={toggleTestID}>
-				<Animated.View
-					style={[
-						styles.iconButton,
-						{
-							backgroundColor: states.backgroundColor,
-							transform: [{ rotate: states.rotation }],
-						},
-					]}>
-					<Icon
-						name={"plus"}
-						size={20}
-						variant={isSelected ? "brand" : "default"}
-					/>
-				</Animated.View>
-			</Pressable.Root>
+			<View style={styles.actionsContainer}>
+				{isCustom && onEdit && (
+					<Pressable.Root
+						onPress={onEdit}
+						testID={SEARCH_EXERCISES_SCREEN_TEST_IDS.EDIT_EXERCISE_BUTTON({
+							id,
+						})}>
+						<Icon name="edit" size={20} variant="default" />
+					</Pressable.Root>
+				)}
+				<Pressable.Root onPress={onAdd} testID={toggleTestID}>
+					<Animated.View
+						style={[
+							styles.iconButton,
+							{
+								backgroundColor: states.backgroundColor,
+								transform: [{ rotate: states.rotation }],
+							},
+						]}>
+						<Icon
+							name={"plus"}
+							size={20}
+							variant={isSelected ? "brand" : "default"}
+						/>
+					</Animated.View>
+				</Pressable.Root>
+			</View>
 		</View>
 	)
 }

@@ -519,6 +519,76 @@ Garante: sem ruído de retry, cache com vida útil infinita, comportamento assí
 - [ ] `describe`s filhos criados para cada contexto funcional com 2+ casos de teste
 - [ ] Coverage da tela >= 80% (statements, branches, functions, lines)
 
+## Pitfalls Conhecidos
+
+### 1. Nunca inspecione o store para verificar mutações — assert na UI
+
+Assertions com `repo.getAll()` dentro de `waitFor` testam detalhe de implementação. O usuário não vê o store — ele vê a lista atualizada na tela.
+
+```typescript
+// ❌ errado — detalhe de implementação
+await waitFor(async () => {
+	const all = await EntityRepo.getAllEntities()
+	const updated = all.find((e) => e.id === created.id)
+	expect(updated?.name).toBe("Nome Atualizado")
+})
+
+// ✅ correto — comportamento visível ao usuário
+await waitFor(() => {
+	expect(
+		screen.getByTestId(SCREEN_TEST_IDS.ENTITY_ITEM_NAME({ id: created.id })).props
+			.children,
+	).toBe("Nome Atualizado")
+})
+```
+
+Para viabilizar o assert correto, exponha `testID` nos nós de texto dos itens da lista com escopo de ID:
+
+```typescript
+// constants.ts
+ENTITY_ITEM_NAME: ({ id }: { id: string }) => `${prefix}-entity-item-name-${id}`,
+
+// componente
+<Text testID={SCREEN_TEST_IDS.ENTITY_ITEM_NAME({ id })}>{name}</Text>
+```
+
+---
+
+### 2. `formState.isValid` com `zodResolver` é assíncrono — use `waitFor`
+
+`zodResolver` retorna uma `Promise` internamente. Mesmo com Zod síncrono, `isValid` só atualiza após uma microtask. Assertions síncronas após `fireEvent` sempre encontram `isValid=false`.
+
+**Padrão correto para "botão deve estar habilitado":**
+
+```typescript
+// após preencher os campos...
+await waitFor(() => {
+	expect(
+		screen.getByTestId(FORM_TEST_IDS.SUBMIT_BUTTON).props.accessibilityState
+			?.disabled,
+	).toBeFalsy()
+})
+```
+
+**"Botão deve estar desabilitado quando inválido"** pode ser síncrono — `isValid=false` é o estado inicial estável, não precisa de `waitFor`.
+
+**Sempre aguarde o botão ficar habilitado antes de pressioná-lo em testes de submit:**
+
+```typescript
+await waitFor(() => {
+	expect(
+		screen.getByTestId(FORM_TEST_IDS.SUBMIT_BUTTON).props.accessibilityState
+			?.disabled,
+	).toBeFalsy()
+})
+
+await act(async () => {
+	fireEvent.press(screen.getByTestId(FORM_TEST_IDS.SUBMIT_BUTTON))
+})
+```
+
+---
+
 ## Cobertura Mínima (Coverage)
 
 Todo arquivo de tela testado deve atingir **no mínimo 80% de cobertura** em todas as métricas: statements, branches, functions e lines.
@@ -527,6 +597,94 @@ Para verificar a cobertura de um arquivo específico:
 
 ```bash
 yarn test --coverage --collectCoverageFrom="src/ui/screens/NomeDaTela/**/*.{ts,tsx}"
+```
+
+---
+
+## Helpers de Teste — DRY
+
+Quando um arquivo de teste repete a mesma sequência de ações em múltiplos `it`s, extraia-a para uma função nomeada. **Coloque os helpers no final do arquivo** — `function` declarations são hoisted, portanto ficam disponíveis em todo o arquivo mesmo declaradas depois do `describe`.
+
+### Candidatos típicos a helper
+
+| Padrão repetido | Helper sugerido |
+|---|---|
+| `fireEvent.press(OPEN_BUTTON)` + `findByTestId(MODAL)` | `openModal()` |
+| `fireEvent.press(EDIT_BUTTON({ id }))` + `findByTestId(MODAL)` | `openEditModal(id)` |
+| `signInAnonymous` + `repo.create(...)` | `createUserEntity()` |
+| `waitFor(() => expect(queryByTestId(MODAL)).toBeFalsy())` | `expectModalClosed()` |
+| `expect(SUBMIT.props.accessibilityState?.disabled).toBeTruthy()` | `expectSubmitDisabled()` |
+| `waitFor(() => expect(SUBMIT...disabled).toBeFalsy())` | `expectSubmitEnabled()` |
+| `findAllByTestId(ITEM)` + preenchimento de campos + submit | `createEntity(name, ...)` |
+
+### Regras
+
+- **Sync vs async**: helpers que só contêm `fireEvent` são `function` simples; helpers com `await` (ex: `findByTestId`, `waitFor`) são `async function`
+- **Não abstraia prematuramente**: só extraia quando o bloco aparecer 2+ vezes
+- **Nomes descritivos de ação**: `openCreateModal`, `expectModalClosed`, `createUserExercise` — leem como prose no corpo do teste
+
+### Exemplo
+
+```typescript
+describe("Entity Modal (Integration)", () => {
+	it("should create entity and show in list", async () => {
+		render(<Screen />)
+		await screen.findAllByTestId(SCREEN_TEST_IDS.ITEM)
+		await openCreateModal()
+		await createEntity("Nome", ["chest"])
+		await expectModalClosed()
+	})
+
+	it("should clear form after creation", async () => {
+		render(<Screen />)
+		await screen.findAllByTestId(SCREEN_TEST_IDS.ITEM)
+		await openCreateModal()
+		await createEntity("Nome", ["chest"])
+		await expectModalClosed()
+
+		await openCreateModal()
+		expect(screen.getByTestId(MODAL_TEST_IDS.NAME_INPUT).props.value).toBe("")
+		expectSubmitDisabled()
+	})
+})
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+async function openCreateModal() {
+	fireEvent.press(screen.getByTestId(SCREEN_TEST_IDS.CREATE_BUTTON))
+	await screen.findByTestId(MODAL_TEST_IDS.MODAL)
+}
+
+async function expectModalClosed() {
+	await waitFor(() => {
+		expect(screen.queryByTestId(MODAL_TEST_IDS.MODAL)).toBeFalsy()
+	})
+}
+
+function expectSubmitDisabled() {
+	expect(
+		screen.getByTestId(MODAL_TEST_IDS.SUBMIT_BUTTON).props.accessibilityState?.disabled,
+	).toBeTruthy()
+}
+
+async function expectSubmitEnabled() {
+	await waitFor(() => {
+		expect(
+			screen.getByTestId(MODAL_TEST_IDS.SUBMIT_BUTTON).props.accessibilityState?.disabled,
+		).toBeFalsy()
+	})
+}
+
+async function createEntity(name: string, muscleGroups: string[]) {
+	fireEvent.changeText(screen.getByTestId(MODAL_TEST_IDS.NAME_INPUT), name)
+	for (const g of muscleGroups) {
+		fireEvent.press(screen.getByTestId(MODAL_TEST_IDS.CHIP({ muscleGroup: g })))
+	}
+	await expectSubmitEnabled()
+	await act(async () => {
+		fireEvent.press(screen.getByTestId(MODAL_TEST_IDS.SUBMIT_BUTTON))
+	})
+}
 ```
 
 **O que cobrir obrigatoriamente:**
