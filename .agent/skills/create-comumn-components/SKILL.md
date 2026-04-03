@@ -445,9 +445,15 @@ O hook **sempre** retorna um objeto com as chaves organizadas:
 
 ```typescript
 return {
-	states: { /* valores reativos, dados computados */ },
-	actions: { /* funções e handlers */ },
-	refs: { /* refs de elementos — apenas se aplicável */ },
+	states: {
+		/* valores reativos, dados computados */
+	},
+	actions: {
+		/* funções e handlers */
+	},
+	refs: {
+		/* refs de elementos — apenas se aplicável */
+	},
 }
 ```
 

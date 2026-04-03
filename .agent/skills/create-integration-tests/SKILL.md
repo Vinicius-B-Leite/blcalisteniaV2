@@ -607,15 +607,15 @@ Quando um arquivo de teste repete a mesma sequência de ações em múltiplos `i
 
 ### Candidatos típicos a helper
 
-| Padrão repetido | Helper sugerido |
-|---|---|
-| `fireEvent.press(OPEN_BUTTON)` + `findByTestId(MODAL)` | `openModal()` |
-| `fireEvent.press(EDIT_BUTTON({ id }))` + `findByTestId(MODAL)` | `openEditModal(id)` |
-| `signInAnonymous` + `repo.create(...)` | `createUserEntity()` |
-| `waitFor(() => expect(queryByTestId(MODAL)).toBeFalsy())` | `expectModalClosed()` |
-| `expect(SUBMIT.props.accessibilityState?.disabled).toBeTruthy()` | `expectSubmitDisabled()` |
-| `waitFor(() => expect(SUBMIT...disabled).toBeFalsy())` | `expectSubmitEnabled()` |
-| `findAllByTestId(ITEM)` + preenchimento de campos + submit | `createEntity(name, ...)` |
+| Padrão repetido                                                  | Helper sugerido           |
+| ---------------------------------------------------------------- | ------------------------- |
+| `fireEvent.press(OPEN_BUTTON)` + `findByTestId(MODAL)`           | `openModal()`             |
+| `fireEvent.press(EDIT_BUTTON({ id }))` + `findByTestId(MODAL)`   | `openEditModal(id)`       |
+| `signInAnonymous` + `repo.create(...)`                           | `createUserEntity()`      |
+| `waitFor(() => expect(queryByTestId(MODAL)).toBeFalsy())`        | `expectModalClosed()`     |
+| `expect(SUBMIT.props.accessibilityState?.disabled).toBeTruthy()` | `expectSubmitDisabled()`  |
+| `waitFor(() => expect(SUBMIT...disabled).toBeFalsy())`           | `expectSubmitEnabled()`   |
+| `findAllByTestId(ITEM)` + preenchimento de campos + submit       | `createEntity(name, ...)` |
 
 ### Regras
 
