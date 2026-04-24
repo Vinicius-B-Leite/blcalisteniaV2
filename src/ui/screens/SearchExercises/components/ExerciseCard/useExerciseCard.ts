@@ -21,7 +21,7 @@ export const useExerciseCard = (isSelected: boolean) => {
 
 	const backgroundColor = animatedValue.interpolate({
 		inputRange: [0, 1],
-		outputRange: ["transparent", theme.surface["brand-opacity-20"]],
+		outputRange: [theme.surface.background, theme.surface["brand-opacity-20"]],
 	})
 
 	return {

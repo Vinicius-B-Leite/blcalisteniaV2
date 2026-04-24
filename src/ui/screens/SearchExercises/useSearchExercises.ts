@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react"
 import { useRouter } from "expo-router"
 import { useForm } from "react-hook-form"
 import { MuscleGroup } from "@/constants"
-import { ExerciseModel, useGetExercises } from "@/domains/Exercise"
+import { ExerciseModel, useGetExercises, useDeleteExercise } from "@/domains/Exercise"
 
 import { useDebounceValue } from "@/hooks"
 
@@ -15,6 +15,8 @@ export const useSearchExercises = () => {
 	const [selectedExercises, setSelectedExercises] = useState<string[]>([])
 	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false)
 	const [editingExercise, setEditingExercise] = useState<ExerciseModel | null>(null)
+	const [selectedExerciseToDelete, setSelectedExerciseToDelete] =
+		useState<ExerciseModel | null>(null)
 
 	const form = useForm({
 		defaultValues: {
@@ -26,6 +28,8 @@ export const useSearchExercises = () => {
 	const debouncedSearchText = useDebounceValue(searchText)
 
 	const { defaultExercises, userExercises, isLoading } = useGetExercises()
+
+	const { execute: deleteExercise, isLoading: isDeletingExercise } = useDeleteExercise()
 
 	const handleGoBack = () => {
 		router.back()
@@ -76,6 +80,26 @@ export const useSearchExercises = () => {
 		setEditingExercise(null)
 	}
 
+	const handleOpenDeleteModal = (exercise: ExerciseModel) => {
+		setSelectedExerciseToDelete(exercise)
+	}
+
+	const handleCloseDeleteModal = () => {
+		setSelectedExerciseToDelete(null)
+	}
+
+	const handleConfirmDelete = async () => {
+		if (!selectedExerciseToDelete || isDeletingExercise) return
+		const exerciseId = selectedExerciseToDelete.id
+		try {
+			await deleteExercise(exerciseId)
+			handleCloseDeleteModal()
+			setSelectedExercises((prev) => prev.filter((id) => id !== exerciseId))
+		} catch {
+			handleCloseDeleteModal()
+		}
+	}
+
 	const filterList = useCallback(
 		(exercises: ExerciseModel[]) => {
 			return exercises.filter((exercise) => {
@@ -116,6 +140,8 @@ export const useSearchExercises = () => {
 			isLoading,
 			isCreateModalVisible,
 			editingExercise,
+			selectedExerciseToDelete,
+			isDeletingExercise,
 		},
 		actions: {
 			handleGoBack,
@@ -127,6 +153,9 @@ export const useSearchExercises = () => {
 			handleOpenCreateModal,
 			handleOpenEditModal,
 			handleCloseModal,
+			handleOpenDeleteModal,
+			handleCloseDeleteModal,
+			handleConfirmDelete,
 		},
 	}
 }

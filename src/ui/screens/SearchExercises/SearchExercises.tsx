@@ -9,6 +9,7 @@ import {
 	ExerciseCard,
 	CreateExerciseModal,
 } from "./components"
+import { DeleteExerciseModal } from "./components/ExerciseCard/components/DeleteExerciseModal"
 import { SEARCH_EXERCISES_SCREEN_TEST_IDS } from "./constants"
 
 export const SearchExercises = () => {
@@ -87,6 +88,9 @@ export const SearchExercises = () => {
 										}
 										isCustom
 										onEdit={() => actions.handleOpenEditModal(item)}
+										onDelete={() =>
+											actions.handleOpenDeleteModal(item)
+										}
 									/>
 								)}
 								keyExtractor={(item) => item.id}
@@ -123,6 +127,14 @@ export const SearchExercises = () => {
 				initialValues={
 					states.editingExercise ? states.editingExercise : undefined
 				}
+			/>
+
+			<DeleteExerciseModal
+				visible={states.selectedExerciseToDelete !== null}
+				exerciseName={states.selectedExerciseToDelete?.name ?? null}
+				onClose={actions.handleCloseDeleteModal}
+				onConfirm={actions.handleConfirmDelete}
+				isLoading={states.isDeletingExercise}
 			/>
 		</Screen>
 	)

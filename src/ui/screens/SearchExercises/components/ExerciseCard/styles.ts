@@ -46,10 +46,11 @@ export const stylesTheme = (theme: ThemeType) => {
 			justifyContent: "center",
 			alignItems: "center",
 			borderRadius: radius.full,
+			backgroundColor: theme.surface.background,
 		},
 		actionsContainer: {
 			flexDirection: "row",
-			gap: spacings.gap[12],
+			gap: spacings.gap[8],
 			alignItems: "center",
 		},
 	})

@@ -7,4 +7,5 @@ export interface IExerciseRepo {
 		id: string,
 		params: Partial<Omit<ExerciseModel, "id">>,
 	): Promise<ExerciseModel>
+	deleteExercise(id: string): Promise<void>
 }

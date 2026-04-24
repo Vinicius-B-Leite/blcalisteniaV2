@@ -1,0 +1,1 @@
+export { DeleteExerciseModal } from "./DeleteExerciseModal"

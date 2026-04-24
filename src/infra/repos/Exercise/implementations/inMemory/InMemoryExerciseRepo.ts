@@ -44,6 +44,14 @@ export const InMemoryExerciseRepo: IExerciseRepo & ITestableRepository = {
 		}
 	},
 
+	deleteExercise: async (id) => {
+		const index = store.findIndex((e) => e.id === id)
+		if (index === -1) {
+			throw new Error(`Exercise with id ${id} not found`)
+		}
+		store.splice(index, 1)
+	},
+
 	clear: async () => {
 		store.length = 0
 		idCounter = 1

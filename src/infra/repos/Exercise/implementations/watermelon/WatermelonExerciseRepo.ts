@@ -70,4 +70,22 @@ export const WatermelonExerciseRepo: IExerciseRepo = {
 			throw new Error("Error updating exercise: " + error)
 		}
 	},
+
+	deleteExercise: async (id) => {
+		try {
+			const record = await database.collections
+				.get<ExercisesModel>("exercises")
+				.find(id)
+
+			if (!record) {
+				throw new Error("Exercise not found")
+			}
+
+			await database.write(async () => {
+				await record.markAsDeleted()
+			})
+		} catch (error) {
+			throw new Error("Error deleting exercise: " + error)
+		}
+	},
 }

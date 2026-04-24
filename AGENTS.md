@@ -153,13 +153,14 @@ spec.md
 
 Skills disponíveis em `.agent/skills/`. **Leia o `SKILL.md` correspondente antes de executar a tarefa.**
 
-| Skill                      | Arquivo                                                     | Quando usar                                                       |
-| -------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------- |
-| `create-core-components`   | [SKILL.md](.agent/skills/create-core-components/SKILL.md)   | Criar componentes core (Compound Pattern, Context API, variantes) |
-| `create-comumn-components` | [SKILL.md](.agent/skills/create-comumn-components/SKILL.md) | Criar componentes comuns de tela (hook, styles, types)            |
-| `create-integration-tests` | [SKILL.md](.agent/skills/create-integration-tests/SKILL.md) | Criar testes de integração para telas                             |
-| `create-repos`             | [SKILL.md](.agent/skills/create-repos/SKILL.md)             | Criar repositório (inMemory + Watermelon)                         |
-| `create-use-cases`         | [SKILL.md](.agent/skills/create-use-cases/SKILL.md)         | Criar use cases com React Query                                   |
-| `create-form`              | [SKILL.md](.agent/skills/create-form/SKILL.md)              | Criar formulários (React Hook Form + Zod ou estado local)         |
-| `tdd`                      | [SKILL.md](.agent/skills/tdd-red/SKILL.md)                  | Fase Red do TDD — escrever testes que falham                      |
-| `tdd-green`                | [SKILL.md](.agent/skills/tdd-green/SKILL.md)                | Fase Green do TDD — implementar o mínimo para os testes passarem  |
+| Skill                      | Arquivo                                                     | Quando usar                                                                                                |
+| -------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `create-core-components`   | [SKILL.md](.agent/skills/create-core-components/SKILL.md)   | Criar componentes core (Compound Pattern, Context API, variantes)                                          |
+| `create-comumn-components` | [SKILL.md](.agent/skills/create-comumn-components/SKILL.md) | Criar componentes comuns de tela (hook, styles, types)                                                     |
+| `create-integration-tests` | [SKILL.md](.agent/skills/create-integration-tests/SKILL.md) | Criar testes de integração para telas                                                                      |
+| `create-repos`             | [SKILL.md](.agent/skills/create-repos/SKILL.md)             | Criar repositório (inMemory + Watermelon)                                                                  |
+| `create-use-cases`         | [SKILL.md](.agent/skills/create-use-cases/SKILL.md)         | Criar use cases com React Query                                                                            |
+| `create-form`              | [SKILL.md](.agent/skills/create-form/SKILL.md)              | Criar formulários (React Hook Form + Zod ou estado local)                                                  |
+| `tdd`                      | [SKILL.md](.agent/skills/tdd-red/SKILL.md)                  | Fase Red do TDD — escrever testes que falham                                                               |
+| `tdd-green`                | [SKILL.md](.agent/skills/tdd-green/SKILL.md)                | Fase Green do TDD — implementar o mínimo para os testes passarem                                           |
+| `refine-spec`              | [SKILL.md](.agent/skills/refine-spec/SKILL.md)              | Refinar spec inicial — entrevista estruturada para fechar requisitos, edge cases e decisões de arquitetura |

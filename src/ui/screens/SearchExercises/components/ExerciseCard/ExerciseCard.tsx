@@ -17,6 +17,7 @@ export function ExerciseCard({
 	isSelected = false,
 	isCustom = false,
 	onEdit,
+	onDelete,
 }: ExerciseCardTypes.Props) {
 	const [imageError, setImageError] = useState(false)
 	const [isLoading, setIsLoading] = useState(!!bannerUrl)
@@ -89,14 +90,30 @@ export function ExerciseCard({
 				</View>
 			</View>
 			<View style={styles.actionsContainer}>
-				{isCustom && onEdit && (
-					<Pressable.Root
-						onPress={onEdit}
-						testID={SEARCH_EXERCISES_SCREEN_TEST_IDS.EDIT_EXERCISE_BUTTON({
-							id,
-						})}>
-						<Icon name="edit" size={20} variant="default" />
-					</Pressable.Root>
+				{isCustom && (
+					<>
+						<Pressable.Root
+							onPress={onDelete}
+							style={styles.iconButton}
+							testID={SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_BUTTON(
+								{ id },
+							)}>
+							<Icon name="trash" size={20} variant="error" />
+						</Pressable.Root>
+
+						{onEdit && (
+							<Pressable.Root
+								onPress={onEdit}
+								style={styles.iconButton}
+								testID={SEARCH_EXERCISES_SCREEN_TEST_IDS.EDIT_EXERCISE_BUTTON(
+									{
+										id,
+									},
+								)}>
+								<Icon name="edit" size={20} variant="default" />
+							</Pressable.Root>
+						)}
+					</>
 				)}
 				<Pressable.Root onPress={onAdd} testID={toggleTestID}>
 					<Animated.View

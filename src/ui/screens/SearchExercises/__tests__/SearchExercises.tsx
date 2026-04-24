@@ -333,4 +333,288 @@ describe("Search Exercises Screen (Integration)", () => {
 			),
 		).toBeTruthy()
 	})
+
+	describe("deletion", () => {
+		async function seedCustomExercise() {
+			const user = await AuthRepo.signInAnonymous({ name: "Test User" })
+			const created = await ExerciseRepo.createExercise({
+				...searchExercisesMocks.userExercisesBase[0],
+				userId: user.id,
+			})
+			return { user, created }
+		}
+
+		it("should open delete modal with the exercise name when trash button is pressed", async () => {
+			const { created } = await seedCustomExercise()
+			render(<SearchExercises />)
+
+			await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+			)
+
+			fireEvent.press(
+				screen.getByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_BUTTON({
+						id: created.id,
+					}),
+				),
+			)
+
+			expect(
+				await screen.findByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+				),
+			).toBeTruthy()
+			expect(
+				screen.getByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CANCEL,
+				),
+			).toBeTruthy()
+		})
+
+		it("should remove exercise from list and close modal on confirm", async () => {
+			const { created } = await seedCustomExercise()
+			render(<SearchExercises />)
+
+			await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+			)
+
+			fireEvent.press(
+				screen.getByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_BUTTON({
+						id: created.id,
+					}),
+				),
+			)
+
+			const confirmBtn = await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+			)
+
+			await act(async () => {
+				fireEvent.press(confirmBtn)
+			})
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(
+						SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+					).length,
+				).toBe(0)
+				expect(
+					screen.queryByTestId(
+						SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+					),
+				).toBeFalsy()
+			})
+		})
+
+		it("should close modal without deleting exercise on cancel", async () => {
+			const { created } = await seedCustomExercise()
+			render(<SearchExercises />)
+
+			await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+			)
+
+			fireEvent.press(
+				screen.getByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_BUTTON({
+						id: created.id,
+					}),
+				),
+			)
+
+			const cancelBtn = await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CANCEL,
+			)
+
+			fireEvent.press(cancelBtn)
+
+			await waitFor(() => {
+				expect(
+					screen.queryByTestId(
+						SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+					),
+				).toBeFalsy()
+			})
+
+			expect(
+				screen.queryAllByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+				).length,
+			).toBeGreaterThan(0)
+		})
+
+		it("should close modal and call console.error on delete failure", async () => {
+			const { created } = await seedCustomExercise()
+			const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {})
+			jest.spyOn(ExerciseRepo as never, "deleteExercise").mockRejectedValueOnce(
+				new Error("Delete failed"),
+			)
+
+			render(<SearchExercises />)
+
+			await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+			)
+
+			fireEvent.press(
+				screen.getByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_BUTTON({
+						id: created.id,
+					}),
+				),
+			)
+
+			const confirmBtn = await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+			)
+
+			await act(async () => {
+				fireEvent.press(confirmBtn)
+			})
+
+			await waitFor(() => {
+				expect(consoleSpy).toHaveBeenCalled()
+				expect(
+					screen.queryByTestId(
+						SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+					),
+				).toBeFalsy()
+			})
+
+			consoleSpy.mockRestore()
+		})
+
+		it("should update list in background after closing modal during loading (success)", async () => {
+			const { created } = await seedCustomExercise()
+
+			const originalDeleteExercise = ExerciseRepo.deleteExercise
+			let resolveDelete!: () => void
+			const pendingDelete = new Promise<void>((resolve) => {
+				resolveDelete = resolve
+			})
+			jest.spyOn(ExerciseRepo as never, "deleteExercise").mockImplementationOnce(
+				async (id: string) => {
+					await pendingDelete
+					return originalDeleteExercise.call(ExerciseRepo, id)
+				},
+			)
+
+			render(<SearchExercises />)
+
+			await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+			)
+
+			fireEvent.press(
+				screen.getByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_BUTTON({
+						id: created.id,
+					}),
+				),
+			)
+
+			const confirmBtn = await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+			)
+
+			fireEvent.press(confirmBtn)
+
+			// Close modal while loading is in progress
+			const cancelBtn = screen.getByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CANCEL,
+			)
+			fireEvent.press(cancelBtn)
+
+			await waitFor(() => {
+				expect(
+					screen.queryByTestId(
+						SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+					),
+				).toBeFalsy()
+			})
+
+			// Exercise still in list (operation still pending)
+			expect(
+				screen.queryAllByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+				).length,
+			).toBeGreaterThan(0)
+
+			// Resolve background operation
+			await act(async () => {
+				resolveDelete()
+			})
+
+			// List should update without the deleted exercise
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(
+						SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+					).length,
+				).toBe(0)
+			})
+		})
+
+		it("should call console.error in background after closing modal during loading (error)", async () => {
+			const { created } = await seedCustomExercise()
+			const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {})
+
+			let rejectDelete!: (err: Error) => void
+			const pendingDelete = new Promise<void>((_, reject) => {
+				rejectDelete = reject
+			})
+			jest.spyOn(ExerciseRepo as never, "deleteExercise").mockReturnValueOnce(
+				pendingDelete,
+			)
+
+			render(<SearchExercises />)
+
+			await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+			)
+
+			fireEvent.press(
+				screen.getByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_BUTTON({
+						id: created.id,
+					}),
+				),
+			)
+
+			const confirmBtn = await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+			)
+
+			fireEvent.press(confirmBtn)
+
+			// Close modal while loading is in progress
+			const cancelBtn = screen.getByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CANCEL,
+			)
+			fireEvent.press(cancelBtn)
+
+			await waitFor(() => {
+				expect(
+					screen.queryByTestId(
+						SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+					),
+				).toBeFalsy()
+			})
+
+			// Reject background operation
+			await act(async () => {
+				rejectDelete(new Error("Delete failed in background"))
+			})
+
+			await waitFor(() => {
+				expect(consoleSpy).toHaveBeenCalled()
+			})
+
+			consoleSpy.mockRestore()
+		})
+	})
 })
