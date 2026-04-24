@@ -450,7 +450,7 @@ describe("Search Exercises Screen (Integration)", () => {
 		it("should close modal and call console.error on delete failure", async () => {
 			const { created } = await seedCustomExercise()
 			const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {})
-			jest.spyOn(ExerciseRepo as never, "deleteExercise").mockRejectedValueOnce(
+			jest.spyOn(ExerciseRepo, "deleteExercise").mockRejectedValueOnce(
 				new Error("Delete failed"),
 			)
 
@@ -496,7 +496,7 @@ describe("Search Exercises Screen (Integration)", () => {
 			const pendingDelete = new Promise<void>((resolve) => {
 				resolveDelete = resolve
 			})
-			jest.spyOn(ExerciseRepo as never, "deleteExercise").mockImplementationOnce(
+			jest.spyOn(ExerciseRepo, "deleteExercise").mockImplementationOnce(
 				async (id: string) => {
 					await pendingDelete
 					return originalDeleteExercise.call(ExerciseRepo, id)
@@ -567,9 +567,7 @@ describe("Search Exercises Screen (Integration)", () => {
 			const pendingDelete = new Promise<void>((_, reject) => {
 				rejectDelete = reject
 			})
-			jest.spyOn(ExerciseRepo as never, "deleteExercise").mockReturnValueOnce(
-				pendingDelete,
-			)
+			jest.spyOn(ExerciseRepo, "deleteExercise").mockReturnValueOnce(pendingDelete)
 
 			render(<SearchExercises />)
 
