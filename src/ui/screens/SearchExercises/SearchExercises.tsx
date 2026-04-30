@@ -16,8 +16,6 @@ export const SearchExercises = () => {
 	const { states, actions, form } = useSearchExercises()
 	const styles = useStyles(stylesTheme)
 
-	const selectedCount = states.selectedExercises.length
-
 	return (
 		<Screen>
 			<Header.Root>
@@ -55,8 +53,8 @@ export const SearchExercises = () => {
 								name={item.name}
 								musclesGroups={item.musclesGroups}
 								bannerUrl={item.bannerUrl}
-								isSelected={states.selectedExercises.includes(item.id)}
-								onAdd={() => actions.handleToggleExercise(item.id)}
+								isSelected={states.selectedExercise?.id === item.id}
+								onAdd={() => actions.handleToggleExercise(item)}
 							/>
 						)}
 						keyExtractor={(item) => item.id}
@@ -80,12 +78,10 @@ export const SearchExercises = () => {
 										id={item.id}
 										name={item.name}
 										musclesGroups={item.musclesGroups}
-										isSelected={states.selectedExercises.includes(
-											item.id,
-										)}
-										onAdd={() =>
-											actions.handleToggleExercise(item.id)
+										isSelected={
+											states.selectedExercise?.id === item.id
 										}
+										onAdd={() => actions.handleToggleExercise(item)}
 										isCustom
 										onEdit={() => actions.handleOpenEditModal(item)}
 										onDelete={() =>
@@ -103,14 +99,11 @@ export const SearchExercises = () => {
 			)}
 			<View style={styles.addButtonContainer}>
 				<Button.Root
-					disabled={selectedCount === 0}
+					disabled={states.selectedExercise === null}
 					variant="primary"
 					onPress={actions.handleAddExercises}
 					testID={SEARCH_EXERCISES_SCREEN_TEST_IDS.ADD_BUTTON}>
-					<Button.Content>
-						Adicionar {selectedCount > 0 ? selectedCount : ""}{" "}
-						{selectedCount === 1 ? "exercício" : "exercícios"}
-					</Button.Content>
+					<Button.Content>Adicionar exercício</Button.Content>
 				</Button.Root>
 
 				<Button.Root

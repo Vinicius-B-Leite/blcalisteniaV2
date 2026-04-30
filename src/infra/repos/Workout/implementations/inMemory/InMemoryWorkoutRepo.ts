@@ -8,11 +8,7 @@ let idCounter = 1
 
 export const InMemoryWorkoutRepo: IWorkoutRepo & ITestableRepository = {
 	getAllWorkouts: async () => {
-		return await new Promise<WorkoutModel[]>((resolve) => {
-			setTimeout(() => {
-				resolve([...store])
-			}, 500)
-		})
+		return [...store]
 	},
 
 	getWorkoutById: async (id) => {

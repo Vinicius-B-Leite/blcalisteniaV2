@@ -10,7 +10,8 @@
 		"web": "expo start --web",
 		"prepare": "husky",
 		"push-check": "tsc --noEmit",
-		"git-diff": "git diffsave > diff.txt"
+		"git-diff": "git diffsave > diff.txt",
+		"open-db": "open -a \"Beekeeper Studio\" ~/Library/Developer/CoreSimulator/Devices/8E5858A4-176F-445D-935B-CEA036B19EFB/data/Containers/Data/Application/0EC4342D-D5AC-4730-988B-5F90F583C5C4/Documents/watermelon.db"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",

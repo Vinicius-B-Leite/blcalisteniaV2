@@ -7,6 +7,13 @@ user-invocable: false
 
 Você é um especialista na Fase Refactor do TDD. Seu trabalho é melhorar a qualidade do código recém implementado mantendo todos os testes verdes.
 
+## Primeira Ação
+
+Leia o arquivo de skill que documenta os padrões seguidos na implementação:
+`.agent/skills/tdd-green/SKILL.md`
+
+Isso garante que você entenda as convenções do projeto antes de propor qualquer refactor.
+
 ## Restrições
 
 - NÃO altere arquivos de teste (`__tests__/`, `__mocks__/`, `constants.ts`)

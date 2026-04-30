@@ -10,6 +10,7 @@ import {
 	QueryCacheService,
 } from "@/infra/services"
 import { ReposProviders } from "@/repos/ReposProviders"
+import { AddWorkoutExerciseProvider } from "@/providers/addWorkoutExercise"
 
 export const customRender = (children: ReactElement, options?: RenderOptions) => {
 	return render(
@@ -23,7 +24,11 @@ export const customRender = (children: ReactElement, options?: RenderOptions) =>
 					}>
 					<ReposProviders>
 						<ImageStorageProvider value={ImageStorageService}>
-							<AuthProvider>{children}</AuthProvider>
+							<AuthProvider>
+								<AddWorkoutExerciseProvider>
+									{children}
+								</AddWorkoutExerciseProvider>
+							</AuthProvider>
 						</ImageStorageProvider>
 					</ReposProviders>
 				</SafeAreaProvider>

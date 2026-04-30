@@ -1,34 +1,85 @@
-import { useState } from "react"
+import {
+	useAddWorkoutExercise,
+	useGetExercisesWithSetsByWorkout,
+	useUpdateWorkoutExerciseSets,
+} from "@/domains/WorkoutExercise"
 import { useRouter } from "expo-router"
-import { MuscleGroup } from "@/constants"
+import { useAddWorkoutExerciseContext } from "@/providers/addWorkoutExercise"
+import { FormSchema, schema } from "./schema"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useCallback, useEffect } from "react"
+import { useForm } from "react-hook-form"
 
-export const useAddExerciseModal = ({ workoutId }: { workoutId: string }) => {
+export const useAddExerciseModal = ({
+	workoutId,
+	onClose,
+	workoutExerciseId,
+}: {
+	workoutId: string
+	onClose: VoidFunction
+	workoutExerciseId?: string
+}) => {
 	const router = useRouter()
-	const [exerciseName, setExerciseName] = useState("")
-	const [series, setSeries] = useState("0")
-	const [reps, setReps] = useState("0")
-	const [rest, setRest] = useState("0")
-	const [selectedGroup, setSelectedGroup] = useState<MuscleGroup | null>(null)
+	const isEditMode = !!workoutExerciseId
 
-	const handleExerciseNameChange = (value: string) => {
-		setExerciseName(value)
-	}
+	const { currentWorkoutExercises, resetCurrentWorkoutExercise } =
+		useAddWorkoutExerciseContext()
+	const { execute: addExercise } = useAddWorkoutExercise()
+	const { execute: updateSets, isLoading: isUpdateLoading } =
+		useUpdateWorkoutExerciseSets()
 
-	const handleSeriesChange = (value: string) => {
-		setSeries(value)
-	}
+	const { exercisesWithSets } = useGetExercisesWithSetsByWorkout(workoutId)
+	const editExercise = isEditMode
+		? exercisesWithSets.find(
+				(e) =>
+					e.workoutExerciseId === workoutExerciseId ||
+					e.id === workoutExerciseId,
+			)
+		: undefined
 
-	const handleRepsChange = (value: string) => {
-		setReps(value)
+	const seriesRepsRest = {
+		series: "",
+		reps: "",
+		rest: "",
 	}
+	const form = useForm<FormSchema>({
+		resolver: zodResolver(schema),
+		mode: "onChange",
+		defaultValues: {
+			exerciseName: "",
+			...seriesRepsRest,
+		},
+	})
 
-	const handleRestChange = (value: string) => {
-		setRest(value)
-	}
+	const handleAdd = form.handleSubmit(async (formValues) => {
+		if (!currentWorkoutExercises?.id) return
 
-	const handleGroupChange = (group: MuscleGroup | null) => {
-		setSelectedGroup(group)
-	}
+		const seriesCount = Number(formValues.series) ?? 1
+		const sets = Array.from({ length: seriesCount }, () => ({
+			reps: Number(formValues.reps),
+			rest: Number(formValues.rest),
+		}))
+		await addExercise({
+			exerciseId: currentWorkoutExercises?.id,
+			workoutId: workoutId,
+			sets: sets,
+		})
+		form.reset()
+		onClose()
+	})
+
+	const handleSave = form.handleSubmit(async (formValues) => {
+		if (!workoutExerciseId) return
+
+		const seriesCount = Number(formValues.series) ?? 1
+		const sets = Array.from({ length: seriesCount }, () => ({
+			reps: Number(formValues.reps),
+			rest: Number(formValues.rest),
+		}))
+		await updateSets({ workoutExerciseId, sets })
+		form.reset()
+		onClose()
+	})
 
 	const handleSearchExercises = (onClose: () => void) => {
 		onClose()
@@ -38,33 +89,61 @@ export const useAddExerciseModal = ({ workoutId }: { workoutId: string }) => {
 		})
 	}
 
-	const handleAdd = (onClose: () => void) => {
-		console.log({
-			exerciseName,
-			series,
-			reps,
-			rest,
-			muscleGroup: selectedGroup,
-		})
+	const handleClose = () => {
+		form.reset()
+		resetCurrentWorkoutExercise()
 		onClose()
 	}
 
+	const applyInitialValuesOnCreateMode = useCallback(() => {
+		if (isEditMode) return
+		if (currentWorkoutExercises) {
+			form.reset({
+				exerciseName: currentWorkoutExercises.name,
+				...seriesRepsRest,
+			})
+			return
+		}
+
+		form.reset({
+			exerciseName: "",
+			...seriesRepsRest,
+		})
+	}, [currentWorkoutExercises])
+
+	const applyInitialValuesOnEditMode = useCallback(() => {
+		if (!isEditMode || !editExercise) return
+		const sets = editExercise.sets
+		form.reset({
+			exerciseName: editExercise.name,
+			series: sets.length > 0 ? String(sets.length) : "",
+			reps: sets.length > 0 ? String(sets[0].reps) : "",
+			rest: sets.length > 0 ? String(sets[0].rest) : "",
+		})
+	}, [editExercise?.workoutExerciseId ?? editExercise?.id])
+
+	useEffect(() => {
+		applyInitialValuesOnCreateMode()
+	}, [applyInitialValuesOnCreateMode])
+	useEffect(() => {
+		applyInitialValuesOnEditMode()
+	}, [applyInitialValuesOnEditMode])
+
+	const isFormValid = form.formState.isValid
+
 	return {
+		form,
+
 		states: {
-			exerciseName,
-			series,
-			reps,
-			rest,
-			selectedGroup,
+			isFormValid,
+			isUpdateLoading,
+			isEditMode,
 		},
 		actions: {
-			handleExerciseNameChange,
-			handleSeriesChange,
-			handleRepsChange,
-			handleRestChange,
-			handleGroupChange,
 			handleSearchExercises,
 			handleAdd,
+			handleSave,
+			handleClose,
 		},
 	}
 }

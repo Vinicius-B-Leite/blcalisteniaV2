@@ -8,4 +8,6 @@ export interface IExerciseRepo {
 		params: Partial<Omit<ExerciseModel, "id">>,
 	): Promise<ExerciseModel>
 	deleteExercise(id: string): Promise<void>
+	getManyByIds(ids: string[]): Promise<ExerciseModel[]>
+	getById(id: string): Promise<ExerciseModel | null>
 }

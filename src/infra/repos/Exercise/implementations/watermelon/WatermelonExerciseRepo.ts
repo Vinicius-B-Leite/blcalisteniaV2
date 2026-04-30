@@ -2,6 +2,7 @@ import { IExerciseRepo } from "@/domains/Exercise"
 import { database } from "@/infra/database"
 import ExercisesModel from "@/infra/database/watermelon/models/ExercisesModel"
 import { exerciseAdapters } from "../../ExerciseAdapter"
+import { Q } from "@nozbe/watermelondb"
 
 export const WatermelonExerciseRepo: IExerciseRepo = {
 	getAllExercises: async () => {
@@ -86,6 +87,31 @@ export const WatermelonExerciseRepo: IExerciseRepo = {
 			})
 		} catch (error) {
 			throw new Error("Error deleting exercise: " + error)
+		}
+	},
+
+	getManyByIds: async (ids) => {
+		try {
+			const exercises = await database.collections
+				.get<ExercisesModel>("exercises")
+				.query(Q.where("id", Q.oneOf(ids)))
+				.fetch()
+
+			return exercises.map(exerciseAdapters.toDomain)
+		} catch (error) {
+			throw new Error("Error fetching exercises by ids: " + error)
+		}
+	},
+
+	getById: async (id) => {
+		try {
+			const records = await database.collections
+				.get<ExercisesModel>("exercises")
+				.query(Q.where("id", id))
+				.fetch()
+			return records.length > 0 ? exerciseAdapters.toDomain(records[0]) : null
+		} catch (error) {
+			throw new Error("Error fetching exercise by id: " + error)
 		}
 	},
 }

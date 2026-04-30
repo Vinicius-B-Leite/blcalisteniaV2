@@ -7,8 +7,10 @@ import { searchExercisesMocks } from "../__mocks__/searchExercisesMocks"
 import { queryClient } from "@/infra/services/queryCache/implementations/reactQuery/ReactQueryProvider"
 import { useRouter } from "expo-router"
 
+const mockBack = jest.fn()
+
 jest.mocked(useRouter).mockReturnValue({
-	back: jest.fn(),
+	back: mockBack,
 } as unknown as ReturnType<typeof useRouter>)
 
 describe("Search Exercises Screen (Integration)", () => {
@@ -260,55 +262,6 @@ describe("Search Exercises Screen (Integration)", () => {
 		})
 
 		fireEvent.press(toggleBtn)
-
-		await waitFor(() => {
-			expect(
-				screen.getByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.ADD_BUTTON).props
-					.accessibilityState?.disabled,
-			).toBeTruthy()
-		})
-	})
-
-	it("should disable the Add button only when all selected exercises are deselected", async () => {
-		await asTestableRepository(ExerciseRepo).seed(
-			searchExercisesMocks.defaultExercises,
-		)
-
-		render(<SearchExercises />)
-
-		await screen.findAllByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM)
-
-		const toggleBtn0 = screen.getByTestId(
-			SEARCH_EXERCISES_SCREEN_TEST_IDS.TOGGLE_EXERCISE_BUTTON({
-				id: searchExercisesMocks.defaultExercises[0].id,
-			}),
-		)
-		const toggleBtn1 = screen.getByTestId(
-			SEARCH_EXERCISES_SCREEN_TEST_IDS.TOGGLE_EXERCISE_BUTTON({
-				id: searchExercisesMocks.defaultExercises[1].id,
-			}),
-		)
-
-		fireEvent.press(toggleBtn0)
-		fireEvent.press(toggleBtn1)
-
-		await waitFor(() => {
-			expect(
-				screen.getByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.ADD_BUTTON).props
-					.accessibilityState?.disabled,
-			).toBeFalsy()
-		})
-
-		fireEvent.press(toggleBtn0)
-
-		await waitFor(() => {
-			expect(
-				screen.getByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.ADD_BUTTON).props
-					.accessibilityState?.disabled,
-			).toBeFalsy()
-		})
-
-		fireEvent.press(toggleBtn1)
 
 		await waitFor(() => {
 			expect(
@@ -614,5 +567,34 @@ describe("Search Exercises Screen (Integration)", () => {
 
 			consoleSpy.mockRestore()
 		})
+	})
+
+	it("should call back navigation when Add button is pressed with a selected exercise", async () => {
+		await asTestableRepository(ExerciseRepo).seed(
+			searchExercisesMocks.defaultExercises,
+		)
+
+		render(<SearchExercises />)
+
+		await screen.findAllByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM)
+
+		fireEvent.press(
+			screen.getByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.TOGGLE_EXERCISE_BUTTON({
+					id: searchExercisesMocks.defaultExercises[0].id,
+				}),
+			),
+		)
+
+		await waitFor(() => {
+			expect(
+				screen.getByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.ADD_BUTTON).props
+					.accessibilityState?.disabled,
+			).toBeFalsy()
+		})
+
+		fireEvent.press(screen.getByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.ADD_BUTTON))
+
+		expect(mockBack).toHaveBeenCalled()
 	})
 })

@@ -12,6 +12,7 @@ import {
 import * as SplashScreen from "expo-splash-screen"
 import { useEffect } from "react"
 import { useDatabaseSeed } from "@/infra/database"
+import { AddWorkoutExerciseProvider } from "src/providers/addWorkoutExercise"
 
 if (__DEV__) {
 	import("../../ReactotronConfig").then(() => {
@@ -55,7 +56,9 @@ const RootLayout = () => {
 					<ReposProviders>
 						<ImageStorageProvider value={ImageStorageService}>
 							<AuthProvider>
-								<Routes />
+								<AddWorkoutExerciseProvider>
+									<Routes />
+								</AddWorkoutExerciseProvider>
 							</AuthProvider>
 						</ImageStorageProvider>
 					</ReposProviders>

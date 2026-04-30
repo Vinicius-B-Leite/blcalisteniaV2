@@ -8,7 +8,7 @@ export type WorkoutModel = {
 	title: string
 	description: string
 	category: Category
-	imageUrl: string
+	imageUrl: string | null
 	weekDaysFrequency: WeekDaysFrequency[]
 	// exercises: Exercise[]
 }

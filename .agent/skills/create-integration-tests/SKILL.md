@@ -59,6 +59,21 @@ export const ENTITY_LIST_SCREEN_TEST_IDS = {
 - Prefixo em `kebab-case` correspondendo ao nome da tela
 - Botões parametrizados recebem `{ id: string }` e retornam string
 - IDs são sempre importados de `constants.ts`, nunca hardcodados nos arquivos de teste
+- **Sub-componentes de tela importam o `TEST_IDS` da tela diretamente, não recebem `testID` via props.** Passar `testID` como prop expõe detalhe de teste na API do componente — o componente usa a constante internamente:
+
+```typescript
+// ✅ correto — componente importa o ID diretamente
+import { ENTITY_LIST_SCREEN_TEST_IDS } from "../../constants"
+
+export const EmptyState = () => (
+  <View testID={ENTITY_LIST_SCREEN_TEST_IDS.EMPTY_STATE}>...</View>
+)
+
+// ❌ errado — testID na API do componente
+export const EmptyState = ({ testID }: { testID?: string }) => (
+  <View testID={testID}>...</View>
+)
+```
 
 ### 2. Criar Fixtures de Mock (`__mocks__/nomeDaTelaMocks.ts`)
 

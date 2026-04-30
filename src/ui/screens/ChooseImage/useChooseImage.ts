@@ -14,7 +14,7 @@ export const useChooseImage = () => {
 	})
 
 	const [selectedImage, setSelectedImage] = useState<string | undefined>(
-		workout?.imageUrl,
+		workout?.imageUrl ?? undefined,
 	)
 	const [isAddingImage, setIsAddingImage] = useState(false)
 

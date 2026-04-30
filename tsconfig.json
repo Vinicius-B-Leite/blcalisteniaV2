@@ -20,7 +20,9 @@
 			"@/types/*": ["src/types/*"],
 			"@/repos/*": ["src/infra/repos/*"],
 			"@/constants": ["src/constants"],
-			"@/infra/*": ["src/infra/*"]
+			"@/infra/*": ["src/infra/*"],
+			"@/providers/*": ["src/providers/*"],
+			"@/providers": ["src/providers"]
 		}
 	},
 	"include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]

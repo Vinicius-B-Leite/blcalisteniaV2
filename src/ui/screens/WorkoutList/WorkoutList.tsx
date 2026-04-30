@@ -56,7 +56,7 @@ export const WorkoutList = () => {
 						title={item.title}
 						exerciseCount={5}
 						category={item.category}
-						imageUrl={item.imageUrl}
+						imageUrl={item.imageUrl ?? undefined}
 						onRedirect={() => actions.onOpenWorkout(item.id)}
 						onDelete={() => actions.onDeleteWorkout(item.id)}
 					/>

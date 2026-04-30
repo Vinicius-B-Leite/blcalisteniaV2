@@ -1,44 +1,32 @@
 import { FlatList, View } from "react-native"
 import { Screen, Header, Button } from "@/components/core"
-import { ExerciseCard, EmptyState, AddExerciseModal, LoadingState } from "./components"
+import {
+	ExerciseCard,
+	EmptyState,
+	AddExerciseModal,
+	LoadingState,
+	DeleteExerciseModal,
+} from "./components"
 import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useWorkoutDetail } from "./useWorkoutDetail"
 import { WorkoutBannerCard, WorkoutFormModal } from "@/components/molecules"
 import { workoutUtils, workoutBannerUtils } from "@/utils"
-
-const MOCK_EXERCISES = [
-	{
-		id: "1",
-		title: "Flexão Padrão",
-		muscleGroup: "Peitoral",
-		imageUrl: require("@/assets/imgs/workout-banner-1.png"),
-	},
-	{
-		id: "2",
-		title: "Ring Push Ups",
-		muscleGroup: "Peitoral",
-		imageUrl: require("@/assets/imgs/workout-banner-1.png"),
-	},
-	{
-		id: "3",
-		title: "Ring Push Ups",
-		muscleGroup: "Peitoral",
-		imageUrl: undefined,
-	},
-]
+import { WORKOUT_DETAIL_SCREEN_TEST_IDS } from "./constants"
 
 export const WorkoutDetail = () => {
 	const { theme } = useAppTheme()
 	const styles = stylesTheme(theme)
 	const { actions, state } = useWorkoutDetail()
 
-	const hasExercises = MOCK_EXERCISES.length > 0
+	const hasExercises = state.exercises.length > 0
 	const weekDayLabels = state.workout?.weekDaysFrequency
 		? workoutUtils.getWeekDayLabels(state.workout.weekDaysFrequency)
 		: []
 
-	const imageUrl = workoutBannerUtils.resolveWorkoutBanner(state.workout?.imageUrl)
+	const imageUrl = workoutBannerUtils.resolveWorkoutBanner(
+		state.workout?.imageUrl ?? undefined,
+	)
 
 	if (state.isLoading) {
 		return <LoadingState />
@@ -58,7 +46,8 @@ export const WorkoutDetail = () => {
 			</Header.Root>
 
 			<FlatList
-				data={MOCK_EXERCISES}
+				testID={WORKOUT_DETAIL_SCREEN_TEST_IDS.EXERCISE_LIST}
+				data={state.exercises}
 				keyExtractor={(item) => item.id}
 				showsVerticalScrollIndicator={false}
 				ListHeaderComponentStyle={styles.listHeader}
@@ -92,12 +81,20 @@ export const WorkoutDetail = () => {
 				ItemSeparatorComponent={() => <View style={styles.separator} />}
 				renderItem={({ item }) => (
 					<ExerciseCard
-						title={item.title}
-						muscleGroup={item.muscleGroup}
-						imageUrl={item.imageUrl}
+						id={item.workoutExerciseId}
+						title={item.name}
+						muscleGroup={item.musclesGroups}
+						imageUrl={item.bannerUrl}
 						onPress={() => actions.handleExercisePress(item.id)}
-						onEditPress={() => actions.handleExerciseEditPress(item.id)}
-						onDeletePress={() => actions.handleExerciseDeletePress(item.id)}
+						onEditPress={() =>
+							actions.handleExerciseEditPress(item.workoutExerciseId)
+						}
+						onDeletePress={() =>
+							actions.handleExerciseDeletePress(
+								item.workoutExerciseId,
+								item.name,
+							)
+						}
 					/>
 				)}
 				ListEmptyComponent={<EmptyState />}
@@ -105,14 +102,17 @@ export const WorkoutDetail = () => {
 
 			<View style={styles.buttonsContainer}>
 				{hasExercises && (
-					<Button.Root onPress={actions.handleStartWorkout}>
+					<Button.Root
+						onPress={actions.handleStartWorkout}
+						testID={WORKOUT_DETAIL_SCREEN_TEST_IDS.START_WORKOUT_BUTTON}>
 						<Button.Content>Começar treino</Button.Content>
 					</Button.Root>
 				)}
 
 				<Button.Root
 					variant={hasExercises ? "ghost" : "primary"}
-					onPress={actions.handleAddExercise}>
+					onPress={actions.handleAddExercise}
+					testID={WORKOUT_DETAIL_SCREEN_TEST_IDS.ADD_EXERCISE_BUTTON}>
 					<Button.Content>Adicionar exercícios</Button.Content>
 				</Button.Root>
 			</View>
@@ -121,6 +121,15 @@ export const WorkoutDetail = () => {
 				visible={state.isAddExerciseModalVisible}
 				onClose={actions.handleCloseAddExerciseModal}
 				workoutId={state.workout?.id || ""}
+				workoutExerciseId={state.editModalWorkoutExerciseId ?? undefined}
+			/>
+
+			<DeleteExerciseModal
+				visible={state.deleteModal !== null}
+				exerciseName={state.deleteModal?.exerciseName ?? ""}
+				onClose={actions.handleCloseDeleteModal}
+				onConfirm={actions.handleConfirmDeleteExercise}
+				isLoading={state.isRemoveLoading}
 			/>
 
 			<WorkoutFormModal

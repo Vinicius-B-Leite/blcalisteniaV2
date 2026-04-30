@@ -1,18 +1,23 @@
 import { useCallback, useMemo, useState } from "react"
-import { useRouter } from "expo-router"
+import { useLocalSearchParams, useRouter } from "expo-router"
 import { useForm } from "react-hook-form"
 import { MuscleGroup } from "@/constants"
 import { ExerciseModel, useGetExercises, useDeleteExercise } from "@/domains/Exercise"
 
 import { useDebounceValue } from "@/hooks"
+import { useAddWorkoutExercise } from "@/domains/WorkoutExercise"
+import { useAddWorkoutExerciseContext } from "@/providers/addWorkoutExercise"
 
 export const useSearchExercises = () => {
 	const router = useRouter()
 
+	const params = useLocalSearchParams<{ workoutId: string }>()
+	const workoutId = params?.workoutId
+
 	const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<null | MuscleGroup>(
 		null,
 	)
-	const [selectedExercises, setSelectedExercises] = useState<string[]>([])
+	const [selectedExercise, setSelectedExercise] = useState<ExerciseModel | null>(null)
 	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false)
 	const [editingExercise, setEditingExercise] = useState<ExerciseModel | null>(null)
 	const [selectedExerciseToDelete, setSelectedExerciseToDelete] =
@@ -27,6 +32,7 @@ export const useSearchExercises = () => {
 	const searchText = form.watch("searchText")
 	const debouncedSearchText = useDebounceValue(searchText)
 
+	const { addWorkoutExercise } = useAddWorkoutExerciseContext()
 	const { defaultExercises, userExercises, isLoading } = useGetExercises()
 
 	const { execute: deleteExercise, isLoading: isDeletingExercise } = useDeleteExercise()
@@ -51,18 +57,19 @@ export const useSearchExercises = () => {
 		console.log("Favorite pressed:", id)
 	}
 
-	const handleToggleExercise = (id: string) => {
-		setSelectedExercises((prev) => {
-			if (prev.includes(id)) {
-				return prev.filter((exerciseId) => exerciseId !== id)
+	const handleToggleExercise = (exercise: ExerciseModel | null) => {
+		setSelectedExercise((prev) => {
+			if (prev?.id === exercise?.id) {
+				return null
 			}
-			return [...prev, id]
+			return exercise
 		})
 	}
 
 	const handleAddExercises = () => {
-		console.log("Adding exercises:", selectedExercises)
-		// Implementar lógica de adicionar exercícios
+		if (!selectedExercise) return
+		addWorkoutExercise(selectedExercise)
+		handleGoBack()
 	}
 
 	const handleOpenCreateModal = () => {
@@ -94,7 +101,7 @@ export const useSearchExercises = () => {
 		try {
 			await deleteExercise(exerciseId)
 			handleCloseDeleteModal()
-			setSelectedExercises((prev) => prev.filter((id) => id !== exerciseId))
+			setSelectedExercise((prev) => (prev?.id === exerciseId ? null : prev))
 		} catch {
 			handleCloseDeleteModal()
 		}
@@ -136,7 +143,7 @@ export const useSearchExercises = () => {
 			exercises: filteredExercises,
 			customExercises: filteredCustomExercises,
 			isCustomExercisesEmpty,
-			selectedExercises,
+			selectedExercise,
 			isLoading,
 			isCreateModalVisible,
 			editingExercise,

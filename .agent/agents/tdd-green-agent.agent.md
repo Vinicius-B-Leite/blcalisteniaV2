@@ -16,19 +16,12 @@ Siga suas instruções à risca. Não pule nenhum passo.
 
 ## Entradas Esperadas
 
-Você pode ser acionado de duas formas:
-
-**Via handoff do `tdd-orchestrator`** (fluxo normal): leia a conversa acima para extrair:
-
-- O caminho do arquivo de teste
-- O checklist de artefatos pendentes
-- O conteúdo da spec
-
-**Via invocação direta**: você receberá explicitamente:
+Você receberá explicitamente no prompt:
 
 - O caminho do arquivo de teste que está falhando
 - O checklist de artefatos pendentes da fase Red
 - O conteúdo completo da spec (para contexto sobre regras de domínio, validações e comportamentos esperados)
+- Contexto sobre o que já existe no projeto (arquivos, hooks, repos) para não reimplementar o que já está pronto
 
 ## Restrições
 
@@ -36,8 +29,21 @@ Você pode ser acionado de duas formas:
 - NÃO implemente features não testadas pelos testes existentes
 - NÃO refatore ou "melhore" código existente não relacionado à feature
 - SEMPRE siga a ordem de implementação: Domain → Infra → UI
-- Execute `yarn test <caminho> --no-coverage` ao concluir cada camada para acompanhar o progresso
+- Execute `yarn test <caminho-do-teste> --no-coverage` ao concluir cada camada para acompanhar o progresso
+
+## Portão Green
+
+Antes de declarar "Fase Green concluída", execute a **suite completa da tela** (não apenas o arquivo novo):
+
+```
+yarn test <diretório-da-tela>/ --no-coverage
+```
+
+Todos os testes da tela — novos e existentes — devem passar. Se algum teste existente quebrar por conta das mudanças, corrija a implementação sem tocar nos testes.
 
 ## Saída
 
-Reporte o resultado final da execução dos testes (contagem passou/falhou). Se todos os testes passarem, confirme "Fase Green concluída." Se algum teste ainda falhar, diagnostique e corrija antes de terminar.
+Reporte:
+
+1. Resultado da suite completa da tela (contagem passou/falhou, incluindo testes existentes)
+2. Lista de todos os arquivos criados ou modificados

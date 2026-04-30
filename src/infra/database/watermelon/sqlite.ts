@@ -6,6 +6,8 @@ import migrations from "./migrations"
 import UsersModel from "./models/UsersModel"
 import WorkoutsModel from "./models/WorkoutsModel"
 import ExercisesModel from "./models/ExercisesModel"
+import WorkoutExercisesModel from "./models/WorkoutExercisesModel"
+import WorkoutExerciseSetsModel from "./models/WorkoutExerciseSetsModel"
 
 const adapter = new SQLiteAdapter({
 	schema,
@@ -16,5 +18,11 @@ const adapter = new SQLiteAdapter({
 
 export const database = new Database({
 	adapter,
-	modelClasses: [UsersModel, WorkoutsModel, ExercisesModel],
+	modelClasses: [
+		UsersModel,
+		WorkoutsModel,
+		ExercisesModel,
+		WorkoutExercisesModel,
+		WorkoutExerciseSetsModel,
+	],
 })

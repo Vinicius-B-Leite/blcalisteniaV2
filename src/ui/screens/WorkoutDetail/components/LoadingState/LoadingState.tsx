@@ -2,13 +2,14 @@ import { View } from "react-native"
 import { Screen, Header, Skeleton } from "@/components/core"
 import { useAppTheme } from "@/themes"
 import { stylesTheme } from "./styles"
+import { WORKOUT_DETAIL_SCREEN_TEST_IDS } from "../../constants"
 
 export const LoadingState = () => {
 	const { theme } = useAppTheme()
 	const styles = stylesTheme(theme)
 
 	return (
-		<Screen>
+		<Screen testID={WORKOUT_DETAIL_SCREEN_TEST_IDS.LOADING_STATE}>
 			<Header.Root>
 				<Header.GoBack />
 				<Header.VerticalCenterTitle>

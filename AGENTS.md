@@ -7,6 +7,7 @@ App de calistenia em React Native (Expo) com Clean Architecture + DDD, Watermelo
 ```bash
 yarn test                        # roda todos os testes (jest-expo)
 yarn test <path> --no-coverage   # roda um arquivo de teste específico
+yarn test <dir>/ --no-coverage   # roda a suite completa de uma tela
 yarn push-check                  # type-check TypeScript (sem emit)
 yarn start                       # servidor de desenvolvimento Expo
 ```
@@ -62,8 +63,36 @@ ScreenName/
 
 - **Nunca use `any`** — sempre tipar explicitamente
 - Nunca pule camadas da arquitetura (UI não acessa repo diretamente, etc.)
+- **Ordem de implementação de features: Domain → Infra → UI** — nunca comece pela UI
 - Estilos são sempre factories temáticas: `export const stylesTheme = (theme: ThemeType) => StyleSheet.create({...})`
 - Tokens de espaçamento: `spacings.gap[N]`, `spacings.padding[N]`, `spacings.margin[N]`, `radius[N]`
+
+## Componentes Core Disponíveis
+
+Antes de criar um componente, verifique se ele já existe em `src/ui/components/`:
+
+| Componente  | Padrão de uso                                                    | Notas                                       |
+| ----------- | ---------------------------------------------------------------- | ------------------------------------------- |
+| `Button`    | `<Button.Root> <Button.Content /></Button.Root>`                 | Compound Pattern                            |
+| `Icon`      | `<Icon name="edit" size={20} variant="default" />`               | Ver nomes válidos abaixo                    |
+| `Input`     | `<Input.Root> <Input.Label /> <Input.Field /></Input.Root>`      | Compound Pattern; `Input.Error` para erros  |
+| `Modal`     | `<Modal.Root> <Modal.Header /> <Modal.Content /></Modal.Root>`   | Compound Pattern                            |
+| `Pressable` | `<Pressable.Root onPress={...}> ... </Pressable.Root>`           | Use no lugar de `TouchableOpacity`          |
+| `Screen`    | `<Screen> ... </Screen>`                                         | Wrapper de tela com SafeArea e scroll       |
+| `Text`      | `<Text variant="..."> ... </Text>`                               | Nunca use `<Text>` nativo do RN diretamente |
+| `Header`    | `<Header.Root> <Header.GoBack /> <Header.Title /></Header.Root>` | Compound Pattern                            |
+| `Skeleton`  | `<Skeleton width={...} height={...} />`                          | Estado de carregamento                      |
+
+### Ícones disponíveis
+
+Nomes válidos para `<Icon name="..." />` — **não invente nomes fora desta lista**:
+
+```
+notification  clock        dumbbells  play       return
+notes         arrowRightTop heart      eye        home
+calendar      user          leftArrow  x          trash
+search        edit          plus       attach
+```
 
 ## Testes
 
@@ -79,8 +108,8 @@ Os testes são de **integração vertical** (UI → use cases → InMemory repo 
 
 ```typescript
 beforeEach(async () => {
-	await asTestableRepository(ExerciseRepo).clear()
-	await AuthRepo.logout()
+	await asTestableRepository(EntityRepo).clear() // limpa o repo da feature sendo testada
+	await AuthRepo.logout() // só incluir se a feature depende de auth
 	queryClient.clear()
 	jest.clearAllMocks()
 })
@@ -113,20 +142,18 @@ export const WORKOUT_LIST_SCREEN_TEST_IDS = {
 
 Agentes disponíveis em `.agent/agents/`. Use o `tdd-orchestrator` para implementar uma feature completa a partir de uma spec.
 
-| Agente               | Arquivo                                            | Quando usar                                                    |
-| -------------------- | -------------------------------------------------- | -------------------------------------------------------------- |
-| `tdd-orchestrator`   | [agent](.agent/agents/tdd-orchestrator.agent.md)   | Implementar uma feature do zero via TDD (Red → Green)          |
-| `tdd-red-agent`      | [agent](.agent/agents/tdd-red-agent.agent.md)      | Subagente — escreve apenas os testes (não invocar diretamente) |
-| `tdd-green-agent`    | [agent](.agent/agents/tdd-green-agent.agent.md)    | Subagente — implementa para os testes passarem                 |
-| `tdd-refactor-agent` | [agent](.agent/agents/tdd-refactor-agent.agent.md) | Subagente — refatora sem quebrar testes                        |
+| Agente               | Arquivo                                            | Quando usar                                                                      |
+| -------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `tdd-orchestrator`   | [agent](.agent/agents/tdd-orchestrator.agent.md)   | Implementar uma feature do zero via TDD (Red → Green)                            |
+| `tdd-red-agent`      | [agent](.agent/agents/tdd-red-agent.agent.md)      | Subagente interno — escreve apenas os testes (não invocar diretamente)           |
+| `tdd-green-agent`    | [agent](.agent/agents/tdd-green-agent.agent.md)    | Subagente interno — implementa para os testes passarem (não invocar diretamente) |
+| `tdd-refactor-agent` | [agent](.agent/agents/tdd-refactor-agent.agent.md) | Invocar após a fase Green para limpar o código sem quebrar testes                |
 
-**Uso:** selecione `tdd-orchestrator` no seletor de agentes do chat e passe o caminho da spec:
-
-```
-spec.md
-```
+**Uso:** selecione `tdd-orchestrator` no seletor de agentes do chat e passe o caminho da spec.
 
 ### Workflow completo
+
+> Se a spec ainda não está clara, use a skill `refine-spec` antes de iniciar.
 
 ```
 1. Escreva a spec da feature (spec.md ou arquivo separado)
@@ -147,6 +174,10 @@ spec.md
    → executa yarn test (gate: testes devem PASSAR)
       ↓
 7. Relatório final: arquivos criados por camada + contagem de testes
+      ↓
+8. (Opcional) Invoque `tdd-refactor-agent` para limpar o código
+   → refatora sem alterar comportamento
+   → executa yarn test (gate: todos devem continuar verdes)
 ```
 
 ## Skills
@@ -156,11 +187,11 @@ Skills disponíveis em `.agent/skills/`. **Leia o `SKILL.md` correspondente ante
 | Skill                      | Arquivo                                                     | Quando usar                                                                                                |
 | -------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `create-core-components`   | [SKILL.md](.agent/skills/create-core-components/SKILL.md)   | Criar componentes core (Compound Pattern, Context API, variantes)                                          |
-| `create-comumn-components` | [SKILL.md](.agent/skills/create-comumn-components/SKILL.md) | Criar componentes comuns de tela (hook, styles, types)                                                     |
+| `create-common-components` | [SKILL.md](.agent/skills/create-common-components/SKILL.md) | Criar componentes comuns de tela (hook, styles, types)                                                     |
 | `create-integration-tests` | [SKILL.md](.agent/skills/create-integration-tests/SKILL.md) | Criar testes de integração para telas                                                                      |
 | `create-repos`             | [SKILL.md](.agent/skills/create-repos/SKILL.md)             | Criar repositório (inMemory + Watermelon)                                                                  |
 | `create-use-cases`         | [SKILL.md](.agent/skills/create-use-cases/SKILL.md)         | Criar use cases com React Query                                                                            |
 | `create-form`              | [SKILL.md](.agent/skills/create-form/SKILL.md)              | Criar formulários (React Hook Form + Zod ou estado local)                                                  |
-| `tdd`                      | [SKILL.md](.agent/skills/tdd-red/SKILL.md)                  | Fase Red do TDD — escrever testes que falham                                                               |
+| `tdd-red`                  | [SKILL.md](.agent/skills/tdd-red/SKILL.md)                  | Fase Red do TDD — escrever testes que falham                                                               |
 | `tdd-green`                | [SKILL.md](.agent/skills/tdd-green/SKILL.md)                | Fase Green do TDD — implementar o mínimo para os testes passarem                                           |
 | `refine-spec`              | [SKILL.md](.agent/skills/refine-spec/SKILL.md)              | Refinar spec inicial — entrevista estruturada para fechar requisitos, edge cases e decisões de arquitetura |

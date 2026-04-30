@@ -13,10 +13,10 @@ export const useUpdateWorkout = () => {
 		updatedWorkout: WorkoutModel,
 	) => {
 		const isSameImage = oldWorkout.imageUrl === updatedWorkout.imageUrl
-		const isLocalImage = imageStorage.isLocalImage(updatedWorkout.imageUrl)
+		const isLocalImage = imageStorage.isLocalImage(updatedWorkout.imageUrl ?? "")
 		if (!isSameImage && !isLocalImage) {
 			return await imageStorage.saveImageToAppDirectory(
-				updatedWorkout.imageUrl,
+				updatedWorkout.imageUrl ?? "",
 				updatedWorkout.id,
 			)
 		}

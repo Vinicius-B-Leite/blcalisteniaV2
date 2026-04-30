@@ -17,7 +17,7 @@ export const workoutAdapters = {
 	toDTO: (data: WorkoutModel): Partial<WorkoutsModel> => ({
 		title: data.title,
 		category: data.category,
-		imageUrl: data.imageUrl,
+		imageUrl: data.imageUrl ?? undefined,
 		weekDaysFrequency: data.weekDaysFrequency,
 		description: data.description,
 	}),

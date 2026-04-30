@@ -52,6 +52,14 @@ export const InMemoryExerciseRepo: IExerciseRepo & ITestableRepository = {
 		store.splice(index, 1)
 	},
 
+	getById: async (id) => {
+		return store.find((e) => e.id === id) ?? null
+	},
+
+	getManyByIds: async (ids) => {
+		return store.filter((e) => ids.includes(e.id))
+	},
+
 	clear: async () => {
 		store.length = 0
 		idCounter = 1
