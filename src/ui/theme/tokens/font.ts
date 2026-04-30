@@ -33,8 +33,31 @@ const letterSpacing = {
 	"-0.11": -0.11,
 }
 
+export const interFontFamilyNames = {
+	"Inter-Black": "Inter-Black",
+	"Inter-BlackItalic": "Inter-BlackItalic",
+	"Inter-Bold": "Inter-Bold",
+	"Inter-BoldItalic": "Inter-BoldItalic",
+	"Inter-ExtraBold": "Inter-ExtraBold",
+	"Inter-ExtraBoldItalic": "Inter-ExtraBoldItalic",
+	"Inter-ExtraLight": "Inter-ExtraLight",
+	"Inter-ExtraLightItalic": "Inter-ExtraLightItalic",
+	"Inter-Italic": "Inter-Italic",
+	"Inter-Light": "Inter-Light",
+	"Inter-LightItalic": "Inter-LightItalic",
+	"Inter-Medium": "Inter-Medium",
+	"Inter-MediumItalic": "Inter-MediumItalic",
+	"Inter-Regular": "Inter-Regular",
+	"Inter-SemiBold": "Inter-SemiBold",
+	"Inter-SemiBoldItalic": "Inter-SemiBoldItalic",
+	"Inter-Thin": "Inter-Thin",
+	"Inter-ThinItalic": "Inter-ThinItalic",
+}
+
 const fontFamily = {
 	default: "System",
+	inter: "Inter-Regular",
+	...interFontFamilyNames,
 }
 
 export const font = {

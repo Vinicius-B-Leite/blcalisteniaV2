@@ -32,7 +32,9 @@ export const inputVariants = (
 			},
 			input: {
 				flex: 1,
-				..._textVariants["body-large-regular"],
+				fontFamily: _textVariants["body-large-regular"].fontFamily,
+				fontSize: _textVariants["body-large-regular"].fontSize,
+				letterSpacing: _textVariants["body-large-regular"].letterSpacing,
 			},
 		},
 	}
