@@ -157,6 +157,7 @@ import { IEntityNameRepo } from "src/domain/EntityName/IEntityNameRepo"
 import { database } from "src/infra/database"
 import EntityNamesModel from "src/infra/database/watermelon/models/EntityNamesModel"
 import { entityNameAdapters } from "./EntityNameAdapters"
+import { AppError } from "@/errors"
 
 export const EntityNameRepo: IEntityNameRepo = {
 	getAll: async () => {
@@ -166,13 +167,14 @@ export const EntityNameRepo: IEntityNameRepo = {
 				.query()
 				.fetch()
 
-			if (items.length === 0) {
-				throw new Error("No items found")
-			}
-
 			return items.map(entityNameAdapters.toDomain)
 		} catch (error) {
-			throw new Error("Error fetching items: " + error)
+			if (error instanceof AppError) throw error
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar as entidades",
+				property: "entity",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -184,8 +186,12 @@ export const EntityNameRepo: IEntityNameRepo = {
 
 			return entityNameAdapters.toDomain(item)
 		} catch (error) {
-			// Return null if not found (instead of throwing)
-			return null
+			if (error instanceof AppError) throw error
+			throw new AppError({
+				message: "Entidade não encontrada",
+				property: "entity",
+				statusCode: 404,
+			})
 		}
 	},
 
@@ -209,7 +215,12 @@ export const EntityNameRepo: IEntityNameRepo = {
 
 			return entityNameAdapters.toDomain(createdItem!)
 		} catch (error) {
-			throw new Error("Error creating item: " + error)
+			if (error instanceof AppError) throw error
+			throw new AppError({
+				message: "Ocorreu um erro ao criar a entidade",
+				property: "entity",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -225,7 +236,7 @@ export const EntityNameRepo: IEntityNameRepo = {
 						record,
 						entityNameAdapters.toDTO({
 							...params,
-							id, // Keep existing id
+							id,
 						} as EntityNameModel),
 					)
 				})
@@ -233,7 +244,12 @@ export const EntityNameRepo: IEntityNameRepo = {
 
 			return entityNameAdapters.toDomain(updatedItem!)
 		} catch (error) {
-			throw new Error("Error updating item: " + error)
+			if (error instanceof AppError) throw error
+			throw new AppError({
+				message: "Ocorreu um erro ao atualizar a entidade",
+				property: "entity",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -245,7 +261,12 @@ export const EntityNameRepo: IEntityNameRepo = {
 				await item.destroyPermanently()
 			})
 		} catch (error) {
-			throw new Error("Error deleting item: " + error)
+			if (error instanceof AppError) throw error
+			throw new AppError({
+				message: "Ocorreu um erro ao deletar a entidade",
+				property: "entity",
+				statusCode: 500,
+			})
 		}
 	},
 }
@@ -255,7 +276,6 @@ export const EntityNameRepo: IEntityNameRepo = {
 
 - Export as constant: `export const EntityNameRepo: IEntityNameRepo`
 - Each method implements the interface method signature
-- Use try-catch for error handling with descriptive messages
 - Import `database` from `src/infra/database`
 - Use `database.collections.get<Model>("table_name")` to access collections
 - Table name is plural and snake_case: `"entity_names"`
@@ -311,12 +331,14 @@ await database.write(async () => {
 - For single items: `adapters.toDomain(item)`
 - When creating/updating: use `adapters.toDTO(domainModel)`
 
-**Error handling:**
+**Error handling (Watermelon + InMemory):**
 
-- Wrap all operations in try-catch
-- Provide descriptive error messages: `"Error [operation] [entity]: " + error`
-- For `getById`: return `null` if not found (don't throw)
-- For `getAll`: throw if empty array (or return empty array based on use case)
+- Sempre importe `AppError` de `@/errors`
+- Use `AppError` em vez de `throw new Error(...)` — assim a mensagem chega corretamente até o toast via `handleError`
+- **Re-throw obrigatório**: `if (error instanceof AppError) throw error` antes do fallback genérico. Sem isso, um `AppError` 404 ("não encontrado") é substituído pelo genérico 500
+- Operações de **leitura** que não encontram o item: lançar `AppError` com `statusCode: 404`
+- Operações de **escrita** com falha inesperada: lançar `AppError` com `statusCode: 500`
+- **Nunca use operação silenciosa** (`if (index !== -1) splice`) sem throw no else — isso impede testes de erro sem mock
 
 ### 4. Query Keys
 

@@ -185,14 +185,18 @@ export const useGetWorkouts = () => {
 import { useAppMutation } from "src/hooks"
 import { use[EntityName]Repo } from "src/infra/repos"
 import { [EntityName]Model } from "../[EntityName]Model"
+import { handleError } from "@/utils"
 
 export const use[ActionName] = () => {
 	const [entityName]Repo = use[EntityName]Repo()
 
 	const { execute, isLoading } = useAppMutation<[ReturnType], [VariablesType]>({
 		mutationFn: (variables) => [entityName]Repo.[methodName](variables),
+		onSuccess: () => {
+			// invalidar cache, fechar modal, etc.
+		},
 		onError: (err) => {
-			console.log("Error [action description] :(", err)
+			handleError(err, "Ocorreu um erro ao [ação da entidade]")
 		},
 	})
 
@@ -206,6 +210,7 @@ export const use[ActionName] = () => {
 import { useAppMutation } from "src/hooks"
 import { useAuthRepo } from "src/infra/repos"
 import { AuthModel } from "../AuthModel"
+import { handleError } from "@/utils"
 
 export const useSignIn = () => {
 	const authRepo = useAuthRepo()
@@ -213,7 +218,7 @@ export const useSignIn = () => {
 	const { execute, isLoading } = useAppMutation<AuthModel, { name: string }>({
 		mutationFn: (variables) => authRepo.signInAnonymous({ name: variables.name }),
 		onError: (err) => {
-			console.log("Error signing in :(", err)
+			handleError(err, "Ocorreu um erro ao fazer login")
 		},
 	})
 
@@ -226,6 +231,7 @@ export const useSignIn = () => {
 ```typescript
 import { useAppMutation } from "src/hooks"
 import { useAuthRepo } from "src/infra/repos"
+import { handleError } from "@/utils"
 
 export const useLogout = () => {
 	const authRepo = useAuthRepo()
@@ -233,7 +239,7 @@ export const useLogout = () => {
 	const { execute, isLoading } = useAppMutation<void, void>({
 		mutationFn: authRepo.logout,
 		onError: (err) => {
-			console.log("Error logging out :(", err)
+			handleError(err, "Ocorreu um erro ao sair")
 		},
 	})
 
@@ -316,13 +322,57 @@ useAppMutation<EntityModel, CreateEntityVariables>
 
 ### 1. Error Handling
 
-Always include error handling in mutations:
+**Sempre use `handleError` de `@/utils` no `onError` de mutations** — nunca use `console.log`.
 
 ```typescript
+import { handleError } from "@/utils"
+
 onError: (err) => {
-	console.log("Error [descriptive action] :(", err)
+	handleError(err, "Ocorreu um erro ao deletar o treino")
 }
 ```
+
+`handleError` exibe um toast de erro com a mensagem correta:
+- Se `err` é `AppError`, usa `err.message` (mensagem específica do repositório, ex: `"Treino não encontrado"`)
+- Se é outro tipo de erro, usa o `defaultMessage` fornecido
+
+```typescript
+// src/utils/handleError.ts
+export const handleError = (error: unknown, defaultMessage: string) => {
+	Toast.show({
+		variant: "error",
+		message: error instanceof AppError ? error.message : defaultMessage,
+	})
+}
+```
+
+**Padrão completo de mutation com tratamento de erro:**
+
+```typescript
+import { useAppMutation } from "@/hooks"
+import { useEntityRepo, entityQueryKeys } from "@/repos/Entity"
+import { useQueryCache } from "@/infra/services"
+import { handleError } from "@/utils"
+
+export const useDeleteEntity = () => {
+	const entityRepo = useEntityRepo()
+	const queryCacheService = useQueryCache()
+
+	const { execute, isLoading } = useAppMutation<void, string>({
+		mutationFn: (id) => entityRepo.deleteEntity(id),
+		onSuccess: () => {
+			queryCacheService.invalidateCacheSingle([entityQueryKeys.all])
+		},
+		onError: (err) => {
+			handleError(err, "Ocorreu um erro ao deletar a entidade")
+		},
+	})
+
+	return { execute, isLoading }
+}
+```
+
+**Mensagem padrão (`defaultMessage`):** deve ser descritiva e no mesmo formato das outras mensagens do app. Será exibida ao usuário somente quando o erro não for um `AppError` — ou seja, erros inesperados. Para `AppError`s lançados pelo repositório (ex: 404 "não encontrado"), a mensagem do `AppError` prevalece.
 
 ### 2. Data Transformation
 
@@ -401,7 +451,7 @@ mutationFn: async (variables) => {
 2. [ ] Import `useAppMutation`, repo hook, model (if needed)
 3. [ ] Get repo instance
 4. [ ] Configure `useAppMutation` with generic types
-5. [ ] Add error handler with descriptive message
+5. [ ] Adicionar `onError` com `handleError(err, "Ocorreu um erro ao [ação]")`
 6. [ ] Return `{ execute, isLoading }`
 7. [ ] Export use case
 

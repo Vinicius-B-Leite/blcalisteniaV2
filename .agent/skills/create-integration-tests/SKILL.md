@@ -717,6 +717,79 @@ async function createEntity(name: string, muscleGroups: string[]) {
 - Tratamento de erro de mutation — simule falha no repo e verifique feedback ao usuário
 - Itens com e sem campos opcionais (ex: `imageUrl` nulo vs preenchido)
 
+### Testes de tratamento de erro (toast de erro)
+
+Quando uma mutation falha, o usuário deve ver uma mensagem de erro no toast. Sempre assert tanto a **presença** do toast quanto o **texto da mensagem** — só verificar a presença não é suficiente.
+
+```typescript
+import { TOAST_ROOT_TEST_ID, TOAST_MESSAGE_TEST_ID } from "@/components/core/Toast"
+
+// ✅ correto — verifica presença + mensagem
+await screen.findByTestId(TOAST_ROOT_TEST_ID)
+expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
+	"Mensagem esperada",
+)
+
+// ❌ insuficiente — só verifica que o toast existe
+expect(await screen.findByTestId(TOAST_ROOT_TEST_ID)).toBeTruthy()
+```
+
+**Prefira disparar o erro naturalmente via store — sem mock**, quando possível:
+
+```typescript
+// Estratégia: seed → render → abrir modal → clear() → confirmar
+// O item sumiu do store durante o fluxo → repo lança 404 AppError naturalmente
+it("should show error toast when deleting fails", async () => {
+	await asTestableRepository(EntityRepo).seed([entityMocks.entities[0]])
+
+	render(<ScreenComponent />)
+
+	const deleteButton = await screen.findByTestId(
+		SCREEN_TEST_IDS.DELETE_BUTTON({ id: entityMocks.entities[0].id }),
+	)
+	fireEvent.press(deleteButton)
+
+	const confirmButton = await screen.findByTestId(
+		SCREEN_TEST_IDS.DELETE_BUTTON({ id: "confirm" }),
+	)
+
+	await asTestableRepository(EntityRepo).clear() // item desaparece antes da confirmação
+
+	await act(async () => {
+		fireEvent.press(confirmButton)
+	})
+
+	await screen.findByTestId(TOAST_ROOT_TEST_ID)
+	expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
+		"Entidade não encontrada",
+	)
+})
+```
+
+Esse padrão simula concorrência real: o item foi deletado por outro usuário enquanto o modal estava aberto.
+
+**Use mock apenas quando o InMemory não pode falhar naturalmente** (ex: `createEntity` nunca lança em InMemory):
+
+```typescript
+jest.spyOn(EntityRepo, "createEntity").mockRejectedValueOnce(
+	new AppError({ message: "Ocorreu um erro ao criar a entidade", property: "entity", statusCode: 500 }),
+)
+```
+
+**Atenção — `findByTestId` dentro de `waitFor` é sempre truthy (retorna Promise):**
+
+```typescript
+// ❌ errado — findByTestId retorna Promise, nunca é falsy
+await waitFor(() => {
+	expect(screen.findByTestId(TOAST_ROOT_TEST_ID)).toBeTruthy()
+})
+
+// ✅ correto — getByTestId é síncrono, lança se não encontrar
+await waitFor(() => {
+	expect(screen.getByTestId(TOAST_ROOT_TEST_ID)).toBeTruthy()
+})
+```
+
 ## Armadilhas Comuns
 
 | Armadilha                                                                                  | Solução                                                                                                                                                                                          |
@@ -740,3 +813,6 @@ async function createEntity(name: string, muscleGroups: string[]) {
 | Repetir mocks de infraestrutura (`useDebounceValue`, `useRouter`) em cada arquivo de teste | Configure-os uma única vez em `jest.setup.ts` — aplica globalmente sem duplicação                                                                                                                |
 | Ter múltiplos filtros na tela sem testar a combinação deles                                | Adicione um `it` que aplica todos os filtros simultaneamente — cada filtro pode funcionar isolado mas falhar em conjunto (AND silencioso)                                                        |
 | Criar objetos de entidade literais dentro dos `it`s                                        | Defina todos os dados em `__mocks__`; para campos dinâmicos (ex: `userId`) exporte uma lista base (`userEntitiesBase`) e faça spread inline: `{ ...mocks.userEntitiesBase[0], userId: user.id }` |
+| Assertar apenas presença do toast de erro (`toBeTruthy()`)                                 | Sempre assertar também o texto da mensagem via `TOAST_MESSAGE_TEST_ID` — a presença sem o conteúdo não valida o contrato de erro                                                                 |
+| Usar mock para erro de delete/update quando o InMemory já lança 404                        | Use `asTestableRepository(Repo).clear()` entre abrir o modal e confirmar — dispara o erro naturalmente sem mock, simulando concorrência real                                                     |
+| Usar `screen.findByTestId` dentro de `waitFor`                                             | `findByTestId` retorna Promise (sempre truthy) — use `screen.getByTestId` (síncrono, lança se ausente) dentro de `waitFor`                                                                       |

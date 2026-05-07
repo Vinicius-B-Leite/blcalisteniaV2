@@ -154,6 +154,7 @@ Implementa a interface do domínio + `ITestableRepository`. Deve ter delay assí
 ```typescript
 import { EntityModel, IEntityRepo } from "@/domains/Entity"
 import { ITestableRepository } from "@/tests"
+import { AppError } from "@/errors"
 
 const store: EntityModel[] = []
 let idCounter = 1
@@ -166,9 +167,63 @@ export const InMemoryEntityRepo: IEntityRepo & ITestableRepository = {
 	},
 
 	createEntity: async (params) => {
-		const entity: EntityModel = { ...params, id: String(idCounter++) }
-		store.push(entity)
-		return entity
+		try {
+			const entity: EntityModel = { ...params, id: String(idCounter++) }
+			store.push(entity)
+			return entity
+		} catch (error) {
+			throw new AppError({
+				message: "Ocorreu um erro ao criar a entidade",
+				property: "entity",
+				statusCode: 500,
+			})
+		}
+	},
+
+	updateEntity: async (id, params) => {
+		try {
+			const index = store.findIndex((e) => e.id === id)
+			if (index === -1) {
+				throw new AppError({
+					message: "Entidade não encontrada",
+					property: "entity",
+					statusCode: 404,
+				})
+			}
+			const definedParams = Object.fromEntries(
+				Object.entries(params).filter(([, v]) => v !== undefined),
+			) as Partial<Omit<EntityModel, "id">>
+			store[index] = { ...store[index], ...definedParams }
+			return store[index]
+		} catch (error) {
+			if (error instanceof AppError) throw error
+			throw new AppError({
+				message: "Ocorreu um erro ao atualizar a entidade",
+				property: "entity",
+				statusCode: 500,
+			})
+		}
+	},
+
+	deleteEntity: async (id) => {
+		try {
+			const index = store.findIndex((e) => e.id === id)
+			if (index === -1) {
+				throw new AppError({
+					message: "Entidade não encontrada",
+					property: "entity",
+					statusCode: 404,
+				})
+			}
+			store.splice(index, 1)
+		} catch (error) {
+			if (error instanceof AppError) throw error
+			throw new AppError({
+				message: "Ocorreu um erro ao deletar a entidade",
+				property: "entity",
+				statusCode: 500,
+			})
+		}
 	},
 
 	// ITestableRepository
@@ -185,7 +240,12 @@ export const InMemoryEntityRepo: IEntityRepo & ITestableRepository = {
 }
 ```
 
-**Regra:** implemente somente os métodos que existem na interface do domínio + `seed` e `clear`. Para métodos de update, verifique se o teste chama `EntityRepo.updateEntity()` — se não chama, não implemente.
+**Regras de erro no InMemory:**
+
+- Implemente somente os métodos que existem na interface do domínio + `seed` e `clear`
+- **Nunca use operações silenciosas** (`if (index !== -1) splice`) sem `else throw` — lançar `AppError` 404 quando o item não existe é obrigatório para viabilizar testes de erro sem mock
+- **Sempre re-throw `AppError`** no catch: `if (error instanceof AppError) throw error` antes do fallback genérico
+- **Spread de params — filtre `undefined`**: use `Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined))` para não sobrescrever campos opcionais
 
 ### Seleção via `select.env` (`src/infra/repos/Entity/implementations/index.ts`)
 
@@ -314,16 +374,19 @@ Após implementar tudo:
 
 ## Armadilhas Comuns
 
-| Armadilha                                         | Solução                                                                         |
-| ------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Adicionar features além do que os testes pedem    | Implemente SOMENTE o que o teste exerce — nada a mais                           |
-| Modificar testes para facilitar a implementação   | Os testes são imutáveis na Green phase                                          |
-| Esquecer de invalidar cache após mutation         | `queryCacheService.invalidateCacheSingle([queryKeys.all])` no `onSuccess`       |
-| Esquecer `setTimeout` no InMemory repo de leitura | Sem delay, o loading state não aparece e os testes de loading falham            |
-| Criar componente sem `testID`                     | Todo elemento verificado no teste precisa de `testID` — consulte `constants.ts` |
-| Prop `disabled` não propaga `accessibilityState`  | Verificar implementação do componente base (`Button.Root`)                      |
-| Input não controlado (sem `value` prop)           | Se o teste verifica `.props.value`, o input deve ser controlado                 |
-| Não registrar o repo no `ReposProviders`          | O hook `useEntityRepo()` vai retornar `{}` e os métodos vão falhar              |
+| Armadilha                                                                          | Solução                                                                                                                          |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Adicionar features além do que os testes pedem                                    | Implemente SOMENTE o que o teste exerce — nada a mais                                                                           |
+| Modificar testes para facilitar a implementação                                   | Os testes são imutáveis na Green phase                                                                                          |
+| Esquecer de invalidar cache após mutation                                         | `queryCacheService.invalidateCacheSingle([queryKeys.all])` no `onSuccess`                                                       |
+| Esquecer `setTimeout` no InMemory repo de leitura                                 | Sem delay, o loading state não aparece e os testes de loading falham                                                             |
+| Criar componente sem `testID`                                                      | Todo elemento verificado no teste precisa de `testID` — consulte `constants.ts`                                                 |
+| Prop `disabled` não propaga `accessibilityState`                                  | Verificar implementação do componente base (`Button.Root`)                                                                      |
+| Input não controlado (sem `value` prop)                                           | Se o teste verifica `.props.value`, o input deve ser controlado                                                                 |
+| Não registrar o repo no `ReposProviders`                                          | O hook `useEntityRepo()` vai retornar `{}` e os métodos vão falhar                                                               |
+| Operação silenciosa no InMemory (`if (index !== -1)` sem throw)                   | Lançar `AppError` 404 quando item não existe — sem isso, testes de erro exigem mock desnecessário                               |
+| Esquecer `if (error instanceof AppError) throw error` no catch do InMemory         | Sem re-throw, mensagens específicas (404) são substituídas pelo fallback genérico                                                |
+| Spreading direto de `params` no update do InMemory                                 | Filtre `undefined`: `Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined))` para preservar campos opcionais |
 
 ## Skills
 
