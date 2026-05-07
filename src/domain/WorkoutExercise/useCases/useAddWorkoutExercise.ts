@@ -3,6 +3,7 @@ import { useWorkoutExerciseRepo, workoutExerciseQueryKeys } from "@/repos/Workou
 import { useQueryCache } from "@/infra/services"
 import { WorkoutExerciseSetModel } from "@/domains/WorkoutExerciseSet"
 import { WorkoutExerciseModel } from "../WorkoutExerciseModel"
+import { handleError } from "@/utils"
 
 type AddWorkoutExerciseParams = {
 	exerciseId: string
@@ -27,7 +28,7 @@ export const useAddWorkoutExercise = () => {
 			])
 		},
 		onError: (err) => {
-			console.error("Error adding workout exercise:", err)
+			handleError(err, "Ocorreu um erro ao adicionar o exercício ao treino")
 		},
 	})
 

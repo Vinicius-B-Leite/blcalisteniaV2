@@ -2,6 +2,7 @@ import * as ImagePicker from "expo-image-picker"
 import { IImageStorage, ImagePickerResult } from "../../IImageStorage"
 import { FileSystemService, IFileSystemService } from "../../../fileSystem"
 import { WORKOUT_BANNER_PATHS } from "@/utils"
+import { AppError } from "@/errors"
 
 const fileSystemService: IFileSystemService = FileSystemService
 
@@ -81,12 +82,24 @@ export const ExpoImageService: IImageStorage = {
 			const isSaveInAppDirectory = ExpoImageService.isAppDirectoryImage(imageUrl)
 			if (isSaveInAppDirectory) {
 				const fileInfo = await fileSystemService.getInfoAsync(imageUrl)
-				if (fileInfo.exists) {
-					await fileSystemService.delete(imageUrl)
+				if (!fileInfo.exists) {
+					throw new AppError({
+						message: "Imagem não encontrada para exclusão",
+						property: "imageUrl",
+						statusCode: 404,
+					})
 				}
+				await fileSystemService.delete(imageUrl)
 			}
 		} catch (error) {
-			console.error("Error deleting image:", error)
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao deletar a imagem",
+				property: "imageUrl",
+				statusCode: 500,
+			})
 		}
 	},
 

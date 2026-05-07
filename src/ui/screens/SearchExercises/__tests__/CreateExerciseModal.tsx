@@ -8,6 +8,8 @@ import { AuthRepo } from "@/repos/Auth"
 import { searchExercisesMocks } from "../__mocks__/searchExercisesMocks"
 import { queryClient } from "@/infra/services/queryCache/implementations/reactQuery/ReactQueryProvider"
 import { useRouter } from "expo-router"
+import { AppError } from "@/errors"
+import { TOAST_ROOT_TEST_ID, TOAST_MESSAGE_TEST_ID } from "@/components/core/Toast"
 
 jest.mocked(useRouter).mockReturnValue({
 	back: jest.fn(),
@@ -241,6 +243,63 @@ describe("Create Exercise Modal (Integration)", () => {
 			).toBe("")
 
 			expectSubmitDisabled()
+		})
+	})
+
+	describe("error handling", () => {
+		it("should show error toast when creating an exercise fails", async () => {
+			await AuthRepo.signInAnonymous({ name: "Test User" })
+			await asTestableRepository(ExerciseRepo).seed(
+				searchExercisesMocks.defaultExercises,
+			)
+
+			jest.spyOn(ExerciseRepo, "createExercise").mockRejectedValueOnce(
+				new AppError({
+					message: "Ocorreu um erro ao criar o exercício",
+					property: "exercise",
+					statusCode: 500,
+				}),
+			)
+
+			render(<SearchExercises />)
+
+			await screen.findAllByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM)
+			await openCreateModal()
+			await createExercise("Supino Reto", ["chest"])
+
+			await screen.findByTestId(TOAST_ROOT_TEST_ID)
+			expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
+				"Ocorreu um erro ao criar o exercício",
+			)
+		})
+
+		it("should show error toast when updating an exercise fails", async () => {
+			const created = await createUserExercise()
+
+			render(<SearchExercises />)
+
+			await screen.findAllByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+			)
+			await openEditModal(created.id)
+
+			await asTestableRepository(ExerciseRepo).clear()
+
+			fireEvent.changeText(
+				screen.getByTestId(CREATE_EXERCISE_MODAL_TEST_IDS.NAME_INPUT),
+				"Nome Atualizado",
+			)
+
+			await expectSubmitEnabled()
+
+			await act(async () => {
+				pressSubmit()
+			})
+
+			await screen.findByTestId(TOAST_ROOT_TEST_ID)
+			expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
+				"Exercício não encontrado",
+			)
 		})
 	})
 })

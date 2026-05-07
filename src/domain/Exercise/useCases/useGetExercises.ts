@@ -3,6 +3,7 @@ import { exerciseQueryKeys, useExerciseRepo } from "@/repos/Exercise"
 import { ExerciseModel } from "../ExerciseModel"
 import { useMemo } from "react"
 import { useAuth } from "@/domains/Auth"
+import { handleError } from "@/utils"
 
 export const useGetExercises = () => {
 	const exerciseRepo = useExerciseRepo()
@@ -12,7 +13,7 @@ export const useGetExercises = () => {
 		queryKey: [exerciseQueryKeys.all],
 		queryFn: () => exerciseRepo.getAllExercises(),
 		onError: (err) => {
-			console.log("Error fetching exercises :(", err)
+			handleError(err, "Ocorreu um erro ao buscar os exercícios")
 		},
 	})
 

@@ -1,6 +1,7 @@
 import { useAppMutation } from "@/hooks"
 import { useWorkoutExerciseRepo, workoutExerciseQueryKeys } from "@/repos/WorkoutExercise"
 import { useQueryCache } from "@/infra/services"
+import { handleError } from "@/utils"
 
 export const useRemoveWorkoutExercise = () => {
 	const workoutExerciseRepo = useWorkoutExerciseRepo()
@@ -16,7 +17,7 @@ export const useRemoveWorkoutExercise = () => {
 			])
 		},
 		onError: (err) => {
-			console.error("Error removing workout exercise:", err)
+			handleError(err, "Ocorreu um erro ao remover o exercício do treino")
 		},
 	})
 

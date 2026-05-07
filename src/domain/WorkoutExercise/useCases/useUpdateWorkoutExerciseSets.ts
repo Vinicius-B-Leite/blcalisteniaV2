@@ -2,6 +2,7 @@ import { useAppMutation } from "@/hooks"
 import { useWorkoutExerciseRepo, workoutExerciseQueryKeys } from "@/repos/WorkoutExercise"
 import { useQueryCache } from "@/infra/services"
 import { WorkoutExerciseSetModel } from "@/domains/WorkoutExerciseSet"
+import { handleError } from "@/utils"
 
 type UpdateWorkoutExerciseSetsParams = {
 	workoutExerciseId: string
@@ -21,7 +22,10 @@ export const useUpdateWorkoutExerciseSets = () => {
 			])
 		},
 		onError: (err) => {
-			console.error("Error updating workout exercise sets:", err)
+			handleError(
+				err,
+				"Ocorreu um erro ao atualizar as séries do exercício do treino",
+			)
 		},
 	})
 

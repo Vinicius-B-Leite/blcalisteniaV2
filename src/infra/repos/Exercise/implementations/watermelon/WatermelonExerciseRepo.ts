@@ -3,6 +3,7 @@ import { database } from "@/infra/database"
 import ExercisesModel from "@/infra/database/watermelon/models/ExercisesModel"
 import { exerciseAdapters } from "../../ExerciseAdapter"
 import { Q } from "@nozbe/watermelondb"
+import { AppError } from "@/errors"
 
 export const WatermelonExerciseRepo: IExerciseRepo = {
 	getAllExercises: async () => {
@@ -12,15 +13,38 @@ export const WatermelonExerciseRepo: IExerciseRepo = {
 				.query()
 				.fetch()
 
+			if (!exercises || exercises.length === 0) {
+				return []
+			}
+
 			return exercises.map(exerciseAdapters.toDomain)
 		} catch (error) {
-			throw new Error("Error fetching exercises: " + error)
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar os exercícios",
+				property: "exercise",
+				statusCode: 500,
+			})
 		}
 	},
 
 	createExercise: async (params) => {
 		try {
 			let createdExercise: ExercisesModel
+
+			if (params.userId) {
+				const hasUser = await database.collections
+					.get("users")
+					.query(Q.where("id", params.userId))
+					.fetch()
+
+				if (hasUser.length === 0) {
+					throw new AppError({
+						message: "Usuário não encontrado",
+						property: "exercise",
+						statusCode: 404,
+					})
+				}
+			}
 
 			await database.write(async () => {
 				createdExercise = await database.collections
@@ -43,7 +67,11 @@ export const WatermelonExerciseRepo: IExerciseRepo = {
 
 			return exerciseAdapters.toDomain(createdExercise!)
 		} catch (error) {
-			throw new Error("Error creating exercise: " + error)
+			throw new AppError({
+				message: "Ocorreu um erro ao criar o exercício",
+				property: "exercise",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -54,7 +82,11 @@ export const WatermelonExerciseRepo: IExerciseRepo = {
 				.find(id)
 
 			if (!record) {
-				throw new Error("Exercise not found")
+				throw new AppError({
+					message: "Exercício não encontrado",
+					property: "exercise",
+					statusCode: 404,
+				})
 			}
 
 			await database.write(async () => {
@@ -68,7 +100,11 @@ export const WatermelonExerciseRepo: IExerciseRepo = {
 
 			return exerciseAdapters.toDomain(record)
 		} catch (error) {
-			throw new Error("Error updating exercise: " + error)
+			throw new AppError({
+				message: "Ocorreu um erro ao atualizar o exercício",
+				property: "exercise",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -79,14 +115,22 @@ export const WatermelonExerciseRepo: IExerciseRepo = {
 				.find(id)
 
 			if (!record) {
-				throw new Error("Exercise not found")
+				throw new AppError({
+					message: "Exercício não encontrado",
+					property: "exercise",
+					statusCode: 404,
+				})
 			}
 
 			await database.write(async () => {
 				await record.markAsDeleted()
 			})
 		} catch (error) {
-			throw new Error("Error deleting exercise: " + error)
+			throw new AppError({
+				message: "Ocorreu um erro ao deletar o exercício",
+				property: "exercise",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -97,9 +141,17 @@ export const WatermelonExerciseRepo: IExerciseRepo = {
 				.query(Q.where("id", Q.oneOf(ids)))
 				.fetch()
 
+			if (!exercises || exercises.length === 0) {
+				return []
+			}
+
 			return exercises.map(exerciseAdapters.toDomain)
 		} catch (error) {
-			throw new Error("Error fetching exercises by ids: " + error)
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar os exercícios",
+				property: "exercise",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -109,9 +161,22 @@ export const WatermelonExerciseRepo: IExerciseRepo = {
 				.get<ExercisesModel>("exercises")
 				.query(Q.where("id", id))
 				.fetch()
-			return records.length > 0 ? exerciseAdapters.toDomain(records[0]) : null
+
+			if (!records || records.length === 0) {
+				throw new AppError({
+					message: "Exercício não encontrado",
+					property: "exercise",
+					statusCode: 404,
+				})
+			}
+
+			return exerciseAdapters.toDomain(records[0])
 		} catch (error) {
-			throw new Error("Error fetching exercise by id: " + error)
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar o exercício",
+				property: "exercise",
+				statusCode: 500,
+			})
 		}
 	},
 }

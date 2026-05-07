@@ -22,7 +22,8 @@
 			"@/constants": ["src/constants"],
 			"@/infra/*": ["src/infra/*"],
 			"@/providers/*": ["src/providers/*"],
-			"@/providers": ["src/providers"]
+			"@/providers": ["src/providers"],
+			"@/errors": ["src/errors"]
 		}
 	},
 	"include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]

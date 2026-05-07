@@ -45,23 +45,26 @@ export const useCreateExerciseModal = ({
 		!form.formState.isValid || isLoading || form.formState.isSubmitting
 
 	const handleSubmit = form.handleSubmit(async (values) => {
-		if (isEditMode) {
-			await updateExercise.execute({
-				id: exerciseId,
-				name: values.name,
-				musclesGroups: values.musclesGroups,
-			})
-		} else {
-			await createExercise.execute({
-				name: values.name,
-				musclesGroups: values.musclesGroups,
-				bannerUrl: null,
-				userId: auth?.id ?? null,
-			})
+		try {
+			if (isEditMode) {
+				await updateExercise.execute({
+					id: exerciseId,
+					name: values.name,
+					musclesGroups: values.musclesGroups,
+				})
+			} else {
+				await createExercise.execute({
+					name: values.name,
+					musclesGroups: values.musclesGroups,
+					bannerUrl: null,
+					userId: auth?.id ?? null,
+				})
+			}
+			form.reset()
+			onClose()
+		} catch {
+			// Error handled via useCreateExercise/useUpdateExercise onError callbacks
 		}
-
-		form.reset()
-		onClose()
 	})
 
 	const handleCancel = () => {

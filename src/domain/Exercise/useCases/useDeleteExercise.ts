@@ -1,6 +1,7 @@
 import { useAppMutation } from "@/hooks"
 import { useExerciseRepo, exerciseQueryKeys } from "@/repos/Exercise"
 import { useQueryCache } from "@/infra/services"
+import { handleError } from "@/utils"
 
 export const useDeleteExercise = () => {
 	const exerciseRepo = useExerciseRepo()
@@ -12,7 +13,7 @@ export const useDeleteExercise = () => {
 			queryCacheService.invalidateCacheSingle([exerciseQueryKeys.all])
 		},
 		onError: (err) => {
-			console.error(err)
+			handleError(err, "Ocorreu um erro ao deletar o exercício")
 		},
 	})
 

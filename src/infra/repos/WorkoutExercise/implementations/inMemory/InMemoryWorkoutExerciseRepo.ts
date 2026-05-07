@@ -7,6 +7,7 @@ import {
 import { ExerciseModel } from "@/domains/Exercise"
 import { WorkoutExerciseSetModel } from "@/domains/WorkoutExerciseSet"
 import { ITestableRepository } from "@/tests"
+import { AppError } from "../../../../../errors/AppError"
 
 const store: WorkoutExerciseWithSets[] = []
 let idCounter = 1
@@ -14,40 +15,75 @@ let setIdCounter = 1
 
 export const InMemoryWorkoutExerciseRepo: IWorkoutExerciseRepo & ITestableRepository = {
 	addExercise: async (params, sets) => {
-		const id = String(idCounter++)
-		const createdSets: WorkoutExerciseSetModel[] = sets.map((set) => ({
-			...set,
-			id: String(setIdCounter++),
-			workoutExerciseId: id,
-		}))
-		const newEntry: WorkoutExerciseWithSets = { ...params, id, sets: createdSets }
-		store.push(newEntry)
-		return newEntry
+		try {
+			const id = String(idCounter++)
+			const createdSets: WorkoutExerciseSetModel[] = sets.map((set) => ({
+				...set,
+				id: String(setIdCounter++),
+				workoutExerciseId: id,
+			}))
+			const newEntry: WorkoutExerciseWithSets = { ...params, id, sets: createdSets }
+			store.push(newEntry)
+			return newEntry
+		} catch (error) {
+			throw new AppError({
+				message: "Ocorreu um erro ao criar o exercício do treino",
+				property: "workoutExercise",
+				statusCode: 500,
+			})
+		}
 	},
 
 	getExercisesByWorkout: async (workoutId) => {
-		return store.filter(
-			(e) => e.workoutId === workoutId,
-		) as unknown as ExerciseModel[]
+		try {
+			return store.filter(
+				(e) => e.workoutId === workoutId,
+			) as unknown as ExerciseModel[]
+		} catch (error) {
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar os exercícios do treino",
+				property: "workoutExercise",
+				statusCode: 500,
+			})
+		}
 	},
 
 	getExercisesWithSetsByWorkout: async (workoutId) => {
-		const entries = store.filter((e) => e.workoutId === workoutId)
-		return entries.map((entry) => ({
-			...(entry as unknown as ExerciseWithWorkoutSetsModel),
-			workoutExerciseId: entry.id,
-		}))
+		try {
+			const entries = store.filter((e) => e.workoutId === workoutId)
+			return entries.map((entry) => ({
+				...(entry as unknown as ExerciseWithWorkoutSetsModel),
+				workoutExerciseId: entry.id,
+			}))
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar os exercícios do treino com sets",
+				property: "workoutExercise",
+				statusCode: 500,
+			})
+		}
 	},
 
 	updateExerciseSets: async (workoutExerciseId, newSets) => {
-		const index = store.findIndex((e) => e.id === workoutExerciseId)
-		if (index !== -1) {
-			const updatedSets: WorkoutExerciseSetModel[] = newSets.map((set) => ({
-				...set,
-				id: String(setIdCounter++),
-				workoutExerciseId,
-			}))
-			store[index] = { ...store[index], sets: updatedSets }
+		try {
+			const index = store.findIndex((e) => e.id === workoutExerciseId)
+			if (index !== -1) {
+				const updatedSets: WorkoutExerciseSetModel[] = newSets.map((set) => ({
+					...set,
+					id: String(setIdCounter++),
+					workoutExerciseId,
+				}))
+				store[index] = { ...store[index], sets: updatedSets }
+			}
+		} catch (error) {
+			throw new AppError({
+				message: "Ocorreu um erro ao atualizar os sets do exercício do treino",
+				property: "workoutExerciseSets",
+				statusCode: 500,
+			})
 		}
 	},
 

@@ -67,9 +67,13 @@ export const useWorkoutDetail = () => {
 	}
 
 	const handleConfirmDeleteExercise = async () => {
-		if (!deleteModal) return
-		await removeExercise(deleteModal.workoutExerciseId)
-		setDeleteModal(null)
+		try {
+			if (!deleteModal) return
+			await removeExercise(deleteModal.workoutExerciseId)
+			setDeleteModal(null)
+		} catch {
+			// Error handled via useRemoveWorkoutExercise onError callback
+		}
 	}
 
 	const handleStartWorkout = () => {

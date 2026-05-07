@@ -1,6 +1,7 @@
 import { useAppQuery } from "@/hooks"
 import { useWorkoutExerciseRepo, workoutExerciseQueryKeys } from "@/repos/WorkoutExercise"
 import { ExerciseWithWorkoutSetsModel } from "../WorkoutExerciseModel"
+import { handleError } from "@/utils"
 
 export const useGetExercisesWithSetsByWorkout = (workoutId: string) => {
 	const workoutExerciseRepo = useWorkoutExerciseRepo()
@@ -9,7 +10,10 @@ export const useGetExercisesWithSetsByWorkout = (workoutId: string) => {
 		queryKey: [workoutExerciseQueryKeys.byWorkoutIdWithSets, { workoutId }],
 		queryFn: () => workoutExerciseRepo.getExercisesWithSetsByWorkout(workoutId),
 		onError: (err) => {
-			console.error("Error fetching workout exercises with sets:", err)
+			handleError(
+				err,
+				"Ocorreu um erro ao buscar os exercícios com séries do treino",
+			)
 		},
 	})
 

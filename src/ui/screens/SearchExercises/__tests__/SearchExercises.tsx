@@ -6,6 +6,8 @@ import { AuthRepo } from "@/repos/Auth"
 import { searchExercisesMocks } from "../__mocks__/searchExercisesMocks"
 import { queryClient } from "@/infra/services/queryCache/implementations/reactQuery/ReactQueryProvider"
 import { useRouter } from "expo-router"
+import { AppError } from "@/errors"
+import { TOAST_ROOT_TEST_ID, TOAST_MESSAGE_TEST_ID } from "@/components/core/Toast"
 
 const mockBack = jest.fn()
 
@@ -400,9 +402,8 @@ describe("Search Exercises Screen (Integration)", () => {
 			).toBeGreaterThan(0)
 		})
 
-		it("should close modal and call console.error on delete failure", async () => {
+		it("should close modal and show error toast on delete failure", async () => {
 			const { created } = await seedCustomExercise()
-			const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {})
 			jest.spyOn(ExerciseRepo, "deleteExercise").mockRejectedValueOnce(
 				new Error("Delete failed"),
 			)
@@ -430,15 +431,16 @@ describe("Search Exercises Screen (Integration)", () => {
 			})
 
 			await waitFor(() => {
-				expect(consoleSpy).toHaveBeenCalled()
+				expect(screen.getByTestId(TOAST_ROOT_TEST_ID)).toBeTruthy()
+				expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
+					"Ocorreu um erro ao deletar o exercício",
+				)
 				expect(
 					screen.queryByTestId(
 						SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
 					),
 				).toBeFalsy()
 			})
-
-			consoleSpy.mockRestore()
 		})
 
 		it("should update list in background after closing modal during loading (success)", async () => {
@@ -512,9 +514,8 @@ describe("Search Exercises Screen (Integration)", () => {
 			})
 		})
 
-		it("should call console.error in background after closing modal during loading (error)", async () => {
+		it("should show error toast in background after closing modal during loading (error)", async () => {
 			const { created } = await seedCustomExercise()
-			const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {})
 
 			let rejectDelete!: (err: Error) => void
 			const pendingDelete = new Promise<void>((_, reject) => {
@@ -562,10 +563,11 @@ describe("Search Exercises Screen (Integration)", () => {
 			})
 
 			await waitFor(() => {
-				expect(consoleSpy).toHaveBeenCalled()
+				expect(screen.getByTestId(TOAST_ROOT_TEST_ID)).toBeTruthy()
+				expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
+					"Ocorreu um erro ao deletar o exercício",
+				)
 			})
-
-			consoleSpy.mockRestore()
 		})
 	})
 
@@ -596,5 +598,44 @@ describe("Search Exercises Screen (Integration)", () => {
 		fireEvent.press(screen.getByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.ADD_BUTTON))
 
 		expect(mockBack).toHaveBeenCalled()
+	})
+
+	describe("error handling", () => {
+		it("should show error toast when deleting an exercise fails", async () => {
+			const user = await AuthRepo.signInAnonymous({ name: "Test User" })
+			const created = await ExerciseRepo.createExercise({
+				...searchExercisesMocks.userExercisesBase[0],
+				userId: user.id,
+			})
+
+			render(<SearchExercises />)
+
+			await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
+			)
+
+			fireEvent.press(
+				screen.getByTestId(
+					SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_BUTTON({
+						id: created.id,
+					}),
+				),
+			)
+
+			const confirmBtn = await screen.findByTestId(
+				SEARCH_EXERCISES_SCREEN_TEST_IDS.DELETE_EXERCISE_MODAL_CONFIRM,
+			)
+
+			await asTestableRepository(ExerciseRepo).clear()
+
+			await act(async () => {
+				fireEvent.press(confirmBtn)
+			})
+
+			await screen.findByTestId(TOAST_ROOT_TEST_ID)
+			expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
+				"Exercício não encontrado",
+			)
+		})
 	})
 })

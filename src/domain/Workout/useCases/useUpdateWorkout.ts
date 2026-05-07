@@ -2,6 +2,7 @@ import { useAppMutation } from "@/hooks"
 import { useWorkoutRepo, workoutQueryKeys } from "@/repos/Workout"
 import { WorkoutModel } from "../WorkoutModel"
 import { useImageStorage, useQueryCache } from "@/infra/services"
+import { handleError } from "@/utils"
 
 export const useUpdateWorkout = () => {
 	const workoutRepo = useWorkoutRepo()
@@ -58,7 +59,7 @@ export const useUpdateWorkout = () => {
 			return updatedWorkout
 		},
 		onError: (err) => {
-			console.log("Error updating workout :(", err)
+			handleError(err, "Ocorreu um erro ao atualizar o treino")
 		},
 		onSuccess: async (updatedWorkout) => {
 			await queryCacheService.invalidateCacheMultiple([

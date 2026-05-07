@@ -1,8 +1,10 @@
 import { useAppMutation } from "@/hooks"
 import { useWorkoutRepo, workoutQueryKeys } from "@/repos/Workout"
 import { useImageStorage, useQueryCache } from "@/infra/services"
+import { handleError } from "@/utils"
+import { ComumParamsUseCase } from "@/types/comumParamsUseCase"
 
-export const useDeleteWorkout = () => {
+export const useDeleteWorkout = ({ onError }: ComumParamsUseCase) => {
 	const workoutRepo = useWorkoutRepo()
 	const queryCacheService = useQueryCache()
 	const imageStorage = useImageStorage()
@@ -21,7 +23,8 @@ export const useDeleteWorkout = () => {
 			}
 		},
 		onError: (err) => {
-			console.log("Error deleting workout :(", err)
+			handleError(err, "Ocorreu um erro ao deletar o treino")
+			onError?.(err)
 		},
 		onSuccess: async () => {
 			await queryCacheService.invalidateCacheSingle([workoutQueryKeys.all])

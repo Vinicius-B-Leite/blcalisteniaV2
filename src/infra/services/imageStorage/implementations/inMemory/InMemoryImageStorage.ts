@@ -1,6 +1,7 @@
 import { IImageStorage, ImagePickerResult } from "../../IImageStorage"
 import { WORKOUT_BANNER_PATHS } from "@/utils"
 import { InMemoryFileSystemService } from "../../../fileSystem/implementations/inMemory/InMemoryFileSystemService"
+import { AppError } from "@/errors"
 
 const BASE_IMAGES_DIR = `${InMemoryFileSystemService.documentDirectory}images/`
 
@@ -44,12 +45,29 @@ export const InMemoryImageStorage: IImageStorage = {
 	},
 
 	deleteImage: async (imageUrl: string) => {
-		const isSavedInAppDirectory = InMemoryImageStorage.isAppDirectoryImage(imageUrl)
-		if (isSavedInAppDirectory) {
-			const fileInfo = await InMemoryFileSystemService.getInfoAsync(imageUrl)
-			if (fileInfo.exists) {
+		try {
+			const isSavedInAppDirectory =
+				InMemoryImageStorage.isAppDirectoryImage(imageUrl)
+			if (isSavedInAppDirectory) {
+				const fileInfo = await InMemoryFileSystemService.getInfoAsync(imageUrl)
+				if (!fileInfo.exists) {
+					throw new AppError({
+						message: "Imagem não encontrada para exclusão",
+						property: "imageUrl",
+						statusCode: 404,
+					})
+				}
 				await InMemoryFileSystemService.delete(imageUrl)
 			}
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao deletar a imagem",
+				property: "imageUrl",
+				statusCode: 500,
+			})
 		}
 	},
 

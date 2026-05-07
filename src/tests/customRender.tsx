@@ -11,6 +11,7 @@ import {
 } from "@/infra/services"
 import { ReposProviders } from "@/repos/ReposProviders"
 import { AddWorkoutExerciseProvider } from "@/providers/addWorkoutExercise"
+import { Toast } from "@/components/core/Toast"
 
 export const customRender = (children: ReactElement, options?: RenderOptions) => {
 	return render(
@@ -27,6 +28,7 @@ export const customRender = (children: ReactElement, options?: RenderOptions) =>
 							<AuthProvider>
 								<AddWorkoutExerciseProvider>
 									{children}
+									<Toast.Root />
 								</AddWorkoutExerciseProvider>
 							</AuthProvider>
 						</ImageStorageProvider>

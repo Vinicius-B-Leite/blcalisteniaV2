@@ -1,5 +1,6 @@
 import * as FileSystem from "expo-file-system"
 import { IFileSystemService, FileInfo } from "../../IFileSystemService"
+import { AppError } from "@/errors"
 
 export const ExpoFileSystemService: IFileSystemService = {
 	documentDirectory: FileSystem.documentDirectory || "",
@@ -32,6 +33,17 @@ export const ExpoFileSystemService: IFileSystemService = {
 	},
 
 	delete: async (fileUri: string) => {
-		await FileSystem.deleteAsync(fileUri)
+		try {
+			await FileSystem.deleteAsync(fileUri)
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao deletar o arquivo",
+				property: "fileUri",
+				statusCode: 500,
+			})
+		}
 	},
 }

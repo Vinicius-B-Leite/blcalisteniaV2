@@ -59,13 +59,17 @@ export const useAddExerciseModal = ({
 			reps: Number(formValues.reps),
 			rest: Number(formValues.rest),
 		}))
-		await addExercise({
-			exerciseId: currentWorkoutExercises?.id,
-			workoutId: workoutId,
-			sets: sets,
-		})
-		form.reset()
-		onClose()
+		try {
+			await addExercise({
+				exerciseId: currentWorkoutExercises?.id,
+				workoutId: workoutId,
+				sets: sets,
+			})
+			form.reset()
+			onClose()
+		} catch {
+			// Error handled via useAddWorkoutExercise onError callback
+		}
 	})
 
 	const handleSave = form.handleSubmit(async (formValues) => {
@@ -76,9 +80,13 @@ export const useAddExerciseModal = ({
 			reps: Number(formValues.reps),
 			rest: Number(formValues.rest),
 		}))
-		await updateSets({ workoutExerciseId, sets })
-		form.reset()
-		onClose()
+		try {
+			await updateSets({ workoutExerciseId, sets })
+			form.reset()
+			onClose()
+		} catch {
+			// Error handled via useUpdateWorkoutExerciseSets onError callback
+		}
 	})
 
 	const handleSearchExercises = (onClose: () => void) => {

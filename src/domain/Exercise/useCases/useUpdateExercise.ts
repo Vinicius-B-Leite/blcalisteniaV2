@@ -3,6 +3,7 @@ import { useExerciseRepo, exerciseQueryKeys } from "@/repos/Exercise"
 import { ExerciseModel } from "../ExerciseModel"
 
 import { useQueryCache } from "@/infra/services"
+import { handleError } from "@/utils"
 
 type UpdateExerciseParams = {
 	id: string
@@ -24,7 +25,7 @@ export const useUpdateExercise = () => {
 			queryCacheService.invalidateCacheSingle([exerciseQueryKeys.all])
 		},
 		onError: (err) => {
-			console.log("Error updating exercise :(", err)
+			handleError(err, "Ocorreu um erro ao atualizar o exercício")
 		},
 	})
 

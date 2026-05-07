@@ -1,5 +1,6 @@
 import { useAppQuery } from "@/hooks"
 import { workoutQueryKeys, useWorkoutRepo } from "@/repos/Workout"
+import { handleError } from "@/utils"
 
 export const useGetWorkouts = () => {
 	const workoutRepo = useWorkoutRepo()
@@ -8,7 +9,7 @@ export const useGetWorkouts = () => {
 		queryKey: [workoutQueryKeys.all],
 		queryFn: () => workoutRepo.getAllWorkouts(),
 		onError: (err) => {
-			console.log({ err })
+			handleError(err, "Ocorreu um erro ao buscar os treinos")
 		},
 	})
 

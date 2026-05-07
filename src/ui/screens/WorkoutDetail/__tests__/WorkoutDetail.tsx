@@ -9,6 +9,8 @@ import { Router, useLocalSearchParams, useRouter } from "expo-router"
 import { useAddWorkoutExerciseContext } from "@/providers/addWorkoutExercise"
 import React, { useEffect } from "react"
 import { ExerciseModel } from "@/domains/Exercise"
+import { AppError } from "@/errors"
+import { TOAST_ROOT_TEST_ID, TOAST_MESSAGE_TEST_ID } from "@/components/core/Toast"
 
 const mockPush = jest.fn()
 const mockBack = jest.fn()
@@ -594,6 +596,107 @@ describe("Workout Detail Screen (Integration)", () => {
 			expect(
 				await screen.findByTestId(WORKOUT_DETAIL_SCREEN_TEST_IDS.EMPTY_STATE),
 			).toBeTruthy()
+		})
+	})
+
+	describe("error handling", () => {
+		it("should show error toast when removing an exercise fails", async () => {
+			await asTestableRepository(WorkoutExerciseRepo).seed([
+				workoutDetailMocks.exercisesWithSets[0],
+			])
+
+			jest.spyOn(WorkoutExerciseRepo, "removeExercise").mockRejectedValueOnce(
+				new AppError({
+					message: "Ocorreu um erro ao remover o exercício do treino",
+					property: "workoutExercise",
+					statusCode: 500,
+				}),
+			)
+
+			render(<WorkoutDetail />)
+			await screen.findByTestId(WORKOUT_DETAIL_SCREEN_TEST_IDS.EXERCISE_ITEM)
+
+			fireEvent.press(
+				screen.getByTestId(
+					WORKOUT_DETAIL_SCREEN_TEST_IDS.DELETE_EXERCISE_BUTTON({ id: "we-1" }),
+				),
+			)
+
+			await screen.findByTestId(
+				WORKOUT_DETAIL_SCREEN_TEST_IDS.DELETE_EXERCISE_CONFIRM_BUTTON,
+			)
+
+			await act(async () => {
+				fireEvent.press(
+					screen.getByTestId(
+						WORKOUT_DETAIL_SCREEN_TEST_IDS.DELETE_EXERCISE_CONFIRM_BUTTON,
+					),
+				)
+			})
+
+			await screen.findByTestId(TOAST_ROOT_TEST_ID)
+			expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
+				"Ocorreu um erro ao remover o exercício do treino",
+			)
+		})
+
+		it("should show error toast when updating exercise sets fails", async () => {
+			await asTestableRepository(WorkoutExerciseRepo).seed([
+				workoutDetailMocks.exercisesWithSets[0],
+			])
+
+			jest.spyOn(WorkoutExerciseRepo, "updateExerciseSets").mockRejectedValueOnce(
+				new AppError({
+					message:
+						"Ocorreu um erro ao atualizar as séries do exercício do treino",
+					property: "workoutExerciseSets",
+					statusCode: 500,
+				}),
+			)
+
+			render(<WorkoutDetail />)
+			await screen.findByTestId(WORKOUT_DETAIL_SCREEN_TEST_IDS.EXERCISE_ITEM)
+
+			fireEvent.press(
+				screen.getByTestId(
+					WORKOUT_DETAIL_SCREEN_TEST_IDS.EDIT_EXERCISE_BUTTON({ id: "we-1" }),
+				),
+			)
+
+			await screen.findByTestId(WORKOUT_DETAIL_SCREEN_TEST_IDS.SAVE_CONFIRM_BUTTON)
+
+			fireEvent.changeText(
+				screen.getByTestId(WORKOUT_DETAIL_SCREEN_TEST_IDS.SERIES_INPUT),
+				"4",
+			)
+			fireEvent.changeText(
+				screen.getByTestId(WORKOUT_DETAIL_SCREEN_TEST_IDS.REPS_INPUT),
+				"12",
+			)
+			fireEvent.changeText(
+				screen.getByTestId(WORKOUT_DETAIL_SCREEN_TEST_IDS.REST_INPUT),
+				"90",
+			)
+
+			await waitFor(() => {
+				expect(
+					screen.getByTestId(WORKOUT_DETAIL_SCREEN_TEST_IDS.SAVE_CONFIRM_BUTTON)
+						.props.accessibilityState?.disabled,
+				).toBeFalsy()
+			})
+
+			await act(async () => {
+				fireEvent.press(
+					screen.getByTestId(
+						WORKOUT_DETAIL_SCREEN_TEST_IDS.SAVE_CONFIRM_BUTTON,
+					),
+				)
+			})
+
+			await screen.findByTestId(TOAST_ROOT_TEST_ID)
+			expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
+				"Ocorreu um erro ao atualizar as séries do exercício do treino",
+			)
 		})
 	})
 })

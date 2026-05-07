@@ -3,6 +3,7 @@ import { useExerciseRepo, exerciseQueryKeys } from "@/repos/Exercise"
 import { ExerciseModel } from "../ExerciseModel"
 
 import { useQueryCache } from "@/infra/services"
+import { handleError } from "@/utils"
 
 export const useCreateExercise = () => {
 	const exerciseRepo = useExerciseRepo()
@@ -17,7 +18,7 @@ export const useCreateExercise = () => {
 			queryCacheService.invalidateCacheSingle([exerciseQueryKeys.all])
 		},
 		onError: (err) => {
-			console.log("Error creating exercise :(", err)
+			handleError(err, "Ocorreu um erro ao criar o exercício")
 		},
 	})
 

@@ -5,6 +5,7 @@ import { WorkoutRepo } from "@/repos/Workout"
 import { workoutListMocks } from "../__mocks__/workoutListMocks"
 import { queryClient } from "@/infra/services/queryCache/implementations/reactQuery/ReactQueryProvider"
 import { Router, useRouter } from "expo-router"
+import { TOAST_ROOT_TEST_ID, TOAST_MESSAGE_TEST_ID } from "@/components/core/Toast"
 
 const mockPush = jest.fn()
 
@@ -213,6 +214,38 @@ describe("Workout List Screen (Integration)", () => {
 				pathname: "/(application)/workout/[workoutId]",
 				params: { workoutId: workoutListMocks.createWorkout[1].id },
 			})
+		})
+	})
+
+	describe("error handling", () => {
+		it("should show error toast when deleting a workout fails", async () => {
+			await asTestableRepository(WorkoutRepo).seed([
+				workoutListMocks.createWorkout[0],
+			])
+
+			render(<WorkoutList />)
+
+			const deleteButton = await screen.findByTestId(
+				WORKOUT_LIST_SCREEN_TEST_IDS.DELETE_BUTTON({
+					id: workoutListMocks.createWorkout[0].id,
+				}),
+			)
+			fireEvent.press(deleteButton)
+
+			const confirmButton = await screen.findByTestId(
+				WORKOUT_LIST_SCREEN_TEST_IDS.DELETE_BUTTON({ id: "confirm" }),
+			)
+
+			await asTestableRepository(WorkoutRepo).clear()
+
+			await act(async () => {
+				fireEvent.press(confirmButton)
+			})
+
+			await screen.findByTestId(TOAST_ROOT_TEST_ID)
+			expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
+				"Treino não encontrado",
+			)
 		})
 	})
 })

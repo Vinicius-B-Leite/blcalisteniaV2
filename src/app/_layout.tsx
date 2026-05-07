@@ -14,6 +14,7 @@ import { useEffect } from "react"
 import { useDatabaseSeed } from "@/infra/database"
 import { AddWorkoutExerciseProvider } from "src/providers/addWorkoutExercise"
 import { useFonts } from "expo-font"
+import { Toast } from "@/components/core/Toast"
 
 if (__DEV__) {
 	import("../../ReactotronConfig").then(() => {
@@ -79,6 +80,7 @@ const RootLayout = () => {
 							<AuthProvider>
 								<AddWorkoutExerciseProvider>
 									<Routes />
+									<Toast.Root />
 								</AddWorkoutExerciseProvider>
 							</AuthProvider>
 						</ImageStorageProvider>

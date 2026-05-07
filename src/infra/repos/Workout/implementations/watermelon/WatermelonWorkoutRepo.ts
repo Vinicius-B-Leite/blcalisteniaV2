@@ -1,35 +1,58 @@
-import { IWorkoutRepo } from "@/domains/Workout"
+import { IWorkoutRepo, WorkoutModel } from "@/domains/Workout"
 import { database } from "src/infra/database"
 import { workoutAdapters } from "../../WorkoutAdapter"
 import WorkoutsModel from "src/infra/database/watermelon/models/WorkoutsModel"
+import { AppError } from "@/errors"
+import { Q } from "@nozbe/watermelondb"
 
 export const WatermelonWorkoutRepo: IWorkoutRepo = {
 	getAllWorkouts: async () => {
-		const workouts = await database.collections
-			.get<WorkoutsModel>("workouts")
-			.query()
-			.fetch()
+		try {
+			const workouts = await database.collections
+				.get<WorkoutsModel>("workouts")
+				.query()
+				.fetch()
 
-		if (workouts.length === 0) {
-			return []
+			if (workouts.length === 0) {
+				return []
+			}
+
+			return workouts.map(workoutAdapters.toDomain)
+		} catch (error) {
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar os treinos",
+				property: "workout",
+				statusCode: 500,
+			})
 		}
-
-		return workouts.map(workoutAdapters.toDomain)
 	},
 
 	getWorkoutById: async (id) => {
 		try {
 			const workout = await database.collections
 				.get<WorkoutsModel>("workouts")
-				.find(id)
+				.query(Q.where("id", id))
+				.fetch()
+				.then((results) => results[0])
 
 			if (!workout) {
-				throw new Error("Workout not found with ID: " + id)
+				throw new AppError({
+					message: "Treino não encontrado",
+					property: "workout",
+					statusCode: 404,
+				})
 			}
 
 			return workoutAdapters.toDomain(workout)
 		} catch (error) {
-			throw new Error("Error fetching workout by ID: " + error)
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar o treino",
+				property: "workout",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -41,33 +64,51 @@ export const WatermelonWorkoutRepo: IWorkoutRepo = {
 				createdWorkout = await database.collections
 					.get<WorkoutsModel>("workouts")
 					.create((record) => {
-						Object.assign(record, workoutAdapters.toDTO(params as any))
+						Object.assign(
+							record,
+							workoutAdapters.toDTO(params as WorkoutModel),
+						)
 					})
 			})
 
 			return workoutAdapters.toDomain(createdWorkout!)
 		} catch (error) {
-			throw new Error("Error creating workout: " + error)
+			throw new AppError({
+				message: "Ocorreu um erro ao criar o treino",
+				property: "workout",
+				statusCode: 500,
+			})
 		}
 	},
 
 	deleteWorkout: async (id) => {
 		try {
-			const hasWorkout = await WatermelonWorkoutRepo.getWorkoutById(id)
-
-			if (!hasWorkout) {
-				throw new Error("Workout not found with ID: " + id)
-			}
-
 			await database.write(async () => {
 				const workout = await database.collections
 					.get<WorkoutsModel>("workouts")
-					.find(id)
+					.query(Q.where("id", id))
+					.fetch()
+					.then((results) => results?.[0])
 
-				await workout.destroyPermanently()
+				if (!workout) {
+					throw new AppError({
+						message: "Treino não encontrado",
+						property: "workout",
+						statusCode: 404,
+					})
+				}
+
+				await workout.markAsDeleted()
 			})
 		} catch (error) {
-			throw new Error("Error deleting workout: " + error)
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao remover o treino",
+				property: "workout",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -76,19 +117,28 @@ export const WatermelonWorkoutRepo: IWorkoutRepo = {
 			const hasWorkout = await WatermelonWorkoutRepo.getWorkoutById(workout.id)
 
 			if (!hasWorkout) {
-				throw new Error("Workout not found with ID: " + workout.id)
+				throw new AppError({
+					message: "Treino não encontrado",
+					property: "workout",
+					statusCode: 404,
+				})
 			}
 
-			let updatedWorkout: WorkoutsModel | undefined
+			let updatedWorkout: WorkoutModel | undefined
 
 			await database.write(async () => {
-				updatedWorkout = await database.collections
-					.get<WorkoutsModel>("workouts")
-					.find(workout.id)
+				updatedWorkout = await WatermelonWorkoutRepo.getWorkoutById(workout.id)
 			})
-			return workoutAdapters.toDomain(updatedWorkout!)
+			return updatedWorkout!
 		} catch (error) {
-			throw new Error("Error updating workout: " + error)
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao atualizar o treino",
+				property: "workout",
+				statusCode: 500,
+			})
 		}
 	},
 }

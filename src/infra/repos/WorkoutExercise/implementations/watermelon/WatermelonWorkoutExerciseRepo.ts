@@ -12,6 +12,8 @@ import {
 } from "../../WorkoutExerciseAdapter"
 import { WorkoutExerciseSetRepo } from "@/repos/WorkoutExerciseSet"
 import { ExerciseRepo } from "@/repos/Exercise"
+import { AppError } from "src/errors/AppError"
+import { WorkoutRepo } from "@/repos/Workout/implementations"
 
 export const WatermelonWorkoutExerciseRepo: IWorkoutExerciseRepo = {
 	addExercise: async (params, sets) => {
@@ -30,14 +32,26 @@ export const WatermelonWorkoutExerciseRepo: IWorkoutExerciseRepo = {
 			})
 
 			if (createdWorkoutExercise.id === undefined) {
-				throw new Error("Failed to create workout exercise")
+				throw new AppError({
+					message: "Ocorreu um erro ao criar o exercício do treino",
+					property: "workoutExercise",
+					statusCode: 500,
+				})
 			}
 
-			for (const set of sets) {
-				await WorkoutExerciseSetRepo.addSet({
-					workoutExerciseId: createdWorkoutExercise.id,
-					reps: set.reps,
-					rest: set.rest,
+			try {
+				for (const set of sets) {
+					await WorkoutExerciseSetRepo.addSet({
+						workoutExerciseId: createdWorkoutExercise.id,
+						reps: set.reps,
+						rest: set.rest,
+					})
+				}
+			} catch (error) {
+				throw new AppError({
+					message: "Ocorreu um erro ao criar os sets do exercício do treino",
+					property: "workoutExerciseSets",
+					statusCode: 500,
 				})
 			}
 
@@ -50,7 +64,11 @@ export const WatermelonWorkoutExerciseRepo: IWorkoutExerciseRepo = {
 				sets: createdSets,
 			}
 		} catch (error) {
-			throw new Error("Error adding workout exercise: " + error)
+			throw new AppError({
+				message: "Ocorreu um erro ao criar o exercício do treino",
+				property: "workoutExercise",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -70,17 +88,34 @@ export const WatermelonWorkoutExerciseRepo: IWorkoutExerciseRepo = {
 
 			return exercises
 		} catch (error) {
-			throw new Error("Error fetching workout exercises: " + error)
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar os exercícios do treino",
+				property: "workoutExercise",
+				statusCode: 500,
+			})
 		}
 	},
 
 	getExercisesWithSetsByWorkout: async (workoutId) => {
 		try {
+			const workoutExists = await WorkoutRepo.getWorkoutById(workoutId)
+
+			if (!workoutExists) {
+				throw new AppError({
+					message: "Treino não encontrado",
+					property: "workout",
+					statusCode: 404,
+				})
+			}
+
 			const workoutExerciseRecords = await database.collections
 				.get<WorkoutExercisesModel>("workout_exercises")
 				.query(Q.where("workout_id", workoutId), Q.where("deleted_at", null))
 				.fetch()
 
+			if (workoutExerciseRecords.length === 0) {
+				return []
+			}
 			const results: ExerciseWithWorkoutSetsModel[] = []
 
 			for (const record of workoutExerciseRecords) {
@@ -101,7 +136,14 @@ export const WatermelonWorkoutExerciseRepo: IWorkoutExerciseRepo = {
 
 			return results
 		} catch (error) {
-			throw new Error("Error fetching workout exercises with sets: " + error)
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar os exercícios do treino com sets",
+				property: "workoutExercise",
+				statusCode: 500,
+			})
 		}
 	},
 
@@ -126,7 +168,11 @@ export const WatermelonWorkoutExerciseRepo: IWorkoutExerciseRepo = {
 				})
 			}
 		} catch (error) {
-			throw new Error("Error updating workout exercise sets: " + error)
+			throw new AppError({
+				message: "Ocorreu um erro ao atualizar os sets do exercício do treino",
+				property: "workoutExerciseSets",
+				statusCode: 500,
+			})
 		}
 	},
 

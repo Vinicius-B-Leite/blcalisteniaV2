@@ -20,7 +20,11 @@ export const useWorkoutList = () => {
 		isRefetching: isRefetchingWorkouts,
 	} = useGetWorkouts()
 	const createWorkout = useCreateWorkout()
-	const deleteWorkout = useDeleteWorkout()
+	const deleteWorkout = useDeleteWorkout({
+		onError: () => {
+			handleCloseDeleteModal()
+		},
+	})
 
 	const [modalCreateWorkout, setModalCreateWorkout] = useState(false)
 
@@ -59,10 +63,14 @@ export const useWorkoutList = () => {
 	}
 
 	const handleConfirmDelete = async () => {
-		if (deleteModal && deleteModal.id) {
-			await deleteWorkout.execute(deleteModal.id)
+		try {
+			if (deleteModal && deleteModal.id) {
+				await deleteWorkout.execute(deleteModal.id)
+			}
+			handleCloseDeleteModal()
+		} catch (err) {
+			// Error handled via useDeleteWorkout onError callback
 		}
-		handleCloseDeleteModal()
 	}
 
 	const handleCloseDeleteModal = () => {

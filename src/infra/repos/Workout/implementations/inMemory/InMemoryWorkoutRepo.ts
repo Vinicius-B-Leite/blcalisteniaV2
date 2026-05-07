@@ -1,6 +1,7 @@
 import { IWorkoutRepo } from "@/domains/Workout"
 import { WorkoutModel } from "@/domains/Workout/WorkoutModel"
 import { ITestableRepository } from "@/tests"
+import { AppError } from "@/errors"
 
 const store: WorkoutModel[] = []
 
@@ -8,34 +9,99 @@ let idCounter = 1
 
 export const InMemoryWorkoutRepo: IWorkoutRepo & ITestableRepository = {
 	getAllWorkouts: async () => {
-		return [...store]
+		try {
+			return [...store]
+		} catch (error) {
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar os treinos",
+				property: "workout",
+				statusCode: 500,
+			})
+		}
 	},
 
 	getWorkoutById: async (id) => {
-		return store.find((w) => w.id === id)
+		try {
+			const workout = store.find((w) => w.id === id)
+			if (!workout) {
+				throw new AppError({
+					message: "Treino não encontrado",
+					property: "workout",
+					statusCode: 404,
+				})
+			}
+			return workout
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao buscar o treino",
+				property: "workout",
+				statusCode: 500,
+			})
+		}
 	},
 
 	createWorkout: async (params) => {
-		const newWorkout: WorkoutModel = { ...params, id: String(idCounter++) }
-		store.push(newWorkout)
-		return newWorkout
+		try {
+			const newWorkout: WorkoutModel = { ...params, id: String(idCounter++) }
+			store.push(newWorkout)
+			return newWorkout
+		} catch (error) {
+			throw new AppError({
+				message: "Ocorreu um erro ao criar o treino",
+				property: "workout",
+				statusCode: 500,
+			})
+		}
 	},
 
 	deleteWorkout: async (id) => {
-		const index = store.findIndex((w) => w.id === id)
-		if (index === -1) {
-			throw new Error("Workout not found with ID: " + id)
+		try {
+			const index = store.findIndex((w) => w.id === id)
+			if (index === -1) {
+				throw new AppError({
+					message: "Treino não encontrado",
+					property: "workout",
+					statusCode: 404,
+				})
+			}
+			store.splice(index, 1)
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao remover o treino",
+				property: "workout",
+				statusCode: 500,
+			})
 		}
-		store.splice(index, 1)
 	},
 
 	updateWorkout: async (workout) => {
-		const index = store.findIndex((w) => w.id === workout.id)
-		if (index === -1) {
-			throw new Error("Workout not found with ID: " + workout.id)
+		try {
+			const index = store.findIndex((w) => w.id === workout.id)
+			if (index === -1) {
+				throw new AppError({
+					message: "Treino não encontrado",
+					property: "workout",
+					statusCode: 404,
+				})
+			}
+			store[index] = { ...workout }
+			return store[index]
+		} catch (error) {
+			if (error instanceof AppError) {
+				throw error
+			}
+			throw new AppError({
+				message: "Ocorreu um erro ao atualizar o treino",
+				property: "workout",
+				statusCode: 500,
+			})
 		}
-		store[index] = { ...workout }
-		return store[index]
 	},
 
 	seed: async (data) => {
