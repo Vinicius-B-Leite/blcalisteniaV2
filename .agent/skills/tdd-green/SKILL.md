@@ -374,19 +374,19 @@ Após implementar tudo:
 
 ## Armadilhas Comuns
 
-| Armadilha                                                                          | Solução                                                                                                                          |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Adicionar features além do que os testes pedem                                    | Implemente SOMENTE o que o teste exerce — nada a mais                                                                           |
-| Modificar testes para facilitar a implementação                                   | Os testes são imutáveis na Green phase                                                                                          |
-| Esquecer de invalidar cache após mutation                                         | `queryCacheService.invalidateCacheSingle([queryKeys.all])` no `onSuccess`                                                       |
-| Esquecer `setTimeout` no InMemory repo de leitura                                 | Sem delay, o loading state não aparece e os testes de loading falham                                                             |
-| Criar componente sem `testID`                                                      | Todo elemento verificado no teste precisa de `testID` — consulte `constants.ts`                                                 |
-| Prop `disabled` não propaga `accessibilityState`                                  | Verificar implementação do componente base (`Button.Root`)                                                                      |
-| Input não controlado (sem `value` prop)                                           | Se o teste verifica `.props.value`, o input deve ser controlado                                                                 |
-| Não registrar o repo no `ReposProviders`                                          | O hook `useEntityRepo()` vai retornar `{}` e os métodos vão falhar                                                               |
-| Operação silenciosa no InMemory (`if (index !== -1)` sem throw)                   | Lançar `AppError` 404 quando item não existe — sem isso, testes de erro exigem mock desnecessário                               |
-| Esquecer `if (error instanceof AppError) throw error` no catch do InMemory         | Sem re-throw, mensagens específicas (404) são substituídas pelo fallback genérico                                                |
-| Spreading direto de `params` no update do InMemory                                 | Filtre `undefined`: `Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined))` para preservar campos opcionais |
+| Armadilha                                                                  | Solução                                                                                                                             |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Adicionar features além do que os testes pedem                             | Implemente SOMENTE o que o teste exerce — nada a mais                                                                               |
+| Modificar testes para facilitar a implementação                            | Os testes são imutáveis na Green phase                                                                                              |
+| Esquecer de invalidar cache após mutation                                  | `queryCacheService.invalidateCacheSingle([queryKeys.all])` no `onSuccess`                                                           |
+| Esquecer `setTimeout` no InMemory repo de leitura                          | Sem delay, o loading state não aparece e os testes de loading falham                                                                |
+| Criar componente sem `testID`                                              | Todo elemento verificado no teste precisa de `testID` — consulte `constants.ts`                                                     |
+| Prop `disabled` não propaga `accessibilityState`                           | Verificar implementação do componente base (`Button.Root`)                                                                          |
+| Input não controlado (sem `value` prop)                                    | Se o teste verifica `.props.value`, o input deve ser controlado                                                                     |
+| Não registrar o repo no `ReposProviders`                                   | O hook `useEntityRepo()` vai retornar `{}` e os métodos vão falhar                                                                  |
+| Operação silenciosa no InMemory (`if (index !== -1)` sem throw)            | Lançar `AppError` 404 quando item não existe — sem isso, testes de erro exigem mock desnecessário                                   |
+| Esquecer `if (error instanceof AppError) throw error` no catch do InMemory | Sem re-throw, mensagens específicas (404) são substituídas pelo fallback genérico                                                   |
+| Spreading direto de `params` no update do InMemory                         | Filtre `undefined`: `Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined))` para preservar campos opcionais |
 
 ## Skills
 

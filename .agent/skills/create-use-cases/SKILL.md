@@ -333,6 +333,7 @@ onError: (err) => {
 ```
 
 `handleError` exibe um toast de erro com a mensagem correta:
+
 - Se `err` é `AppError`, usa `err.message` (mensagem específica do repositório, ex: `"Treino não encontrado"`)
 - Se é outro tipo de erro, usa o `defaultMessage` fornecido
 

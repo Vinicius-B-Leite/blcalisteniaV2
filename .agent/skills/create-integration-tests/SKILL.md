@@ -726,9 +726,7 @@ import { TOAST_ROOT_TEST_ID, TOAST_MESSAGE_TEST_ID } from "@/components/core/Toa
 
 // ✅ correto — verifica presença + mensagem
 await screen.findByTestId(TOAST_ROOT_TEST_ID)
-expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe(
-	"Mensagem esperada",
-)
+expect(screen.getByTestId(TOAST_MESSAGE_TEST_ID).props.children).toBe("Mensagem esperada")
 
 // ❌ insuficiente — só verifica que o toast existe
 expect(await screen.findByTestId(TOAST_ROOT_TEST_ID)).toBeTruthy()
@@ -772,7 +770,11 @@ Esse padrão simula concorrência real: o item foi deletado por outro usuário e
 
 ```typescript
 jest.spyOn(EntityRepo, "createEntity").mockRejectedValueOnce(
-	new AppError({ message: "Ocorreu um erro ao criar a entidade", property: "entity", statusCode: 500 }),
+	new AppError({
+		message: "Ocorreu um erro ao criar a entidade",
+		property: "entity",
+		statusCode: 500,
+	}),
 )
 ```
 
