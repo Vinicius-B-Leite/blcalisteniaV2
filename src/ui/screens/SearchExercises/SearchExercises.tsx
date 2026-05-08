@@ -1,5 +1,5 @@
 import { View, ScrollView, FlatList } from "react-native"
-import { Screen, Header, Text, Button, Skeleton } from "@/components/core"
+import { Screen, Header, Button, Skeleton } from "@/components/core"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useSearchExercises } from "./useSearchExercises"
@@ -55,46 +55,23 @@ export const SearchExercises = () => {
 								bannerUrl={item.bannerUrl}
 								isSelected={states.selectedExercise?.id === item.id}
 								onAdd={() => actions.handleToggleExercise(item)}
+								isCustom={actions.isCustomExercise(item)}
+								onEdit={
+									actions.isCustomExercise(item)
+										? () => actions.handleOpenEditModal(item)
+										: undefined
+								}
+								onDelete={
+									actions.isCustomExercise(item)
+										? () => actions.handleOpenDeleteModal(item)
+										: undefined
+								}
 							/>
 						)}
 						keyExtractor={(item) => item.id}
 						contentContainerStyle={styles.exercisesSection}
 						scrollEnabled={false}
 					/>
-
-					{!states.isCustomExercisesEmpty && (
-						<View
-							style={styles.customExercisesSection}
-							testID={
-								SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISES_SECTION
-							}>
-							<Text variant="body-large-bold">
-								Exercícios que você já criou:
-							</Text>
-							<FlatList
-								data={states.customExercises}
-								renderItem={({ item }) => (
-									<ExerciseCard
-										id={item.id}
-										name={item.name}
-										musclesGroups={item.musclesGroups}
-										isSelected={
-											states.selectedExercise?.id === item.id
-										}
-										onAdd={() => actions.handleToggleExercise(item)}
-										isCustom
-										onEdit={() => actions.handleOpenEditModal(item)}
-										onDelete={() =>
-											actions.handleOpenDeleteModal(item)
-										}
-									/>
-								)}
-								keyExtractor={(item) => item.id}
-								contentContainerStyle={styles.exercisesList}
-								scrollEnabled={false}
-							/>
-						</View>
-					)}
 				</ScrollView>
 			)}
 			<View style={styles.addButtonContainer}>

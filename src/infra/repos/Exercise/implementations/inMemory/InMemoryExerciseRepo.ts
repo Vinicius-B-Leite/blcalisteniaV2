@@ -1,4 +1,4 @@
-import { ExerciseModel, IExerciseRepo } from "@/domains/Exercise"
+import { ExerciseModel, GetAllExercisesParams, IExerciseRepo } from "@/domains/Exercise"
 import { ITestableRepository } from "@/tests"
 import { AppError } from "@/errors"
 
@@ -7,14 +7,20 @@ const store: ExerciseModel[] = []
 let idCounter = 1
 
 export const InMemoryExerciseRepo: IExerciseRepo & ITestableRepository = {
-	getAllExercises: async () => {
+	getAllExercises: async (params: GetAllExercisesParams) => {
 		try {
-			return await new Promise<ExerciseModel[]>((resolve) => {
-				setTimeout(() => {
-					resolve([...store])
-				}, 500)
-			})
+			const { userId, searchText, muscleGroup } = params
+			let results = store.filter((e) => e.userId === null || e.userId === userId)
+			if (muscleGroup) {
+				results = results.filter((e) => e.musclesGroups.includes(muscleGroup))
+			}
+			if (searchText?.trim()) {
+				const lower = searchText.toLowerCase()
+				results = results.filter((e) => e.name.toLowerCase().includes(lower))
+			}
+			return [...results].sort((a, b) => a.name.localeCompare(b.name))
 		} catch (error) {
+			if (error instanceof AppError) throw error
 			throw new AppError({
 				message: "Ocorreu um erro ao buscar os exercícios",
 				property: "exercise",

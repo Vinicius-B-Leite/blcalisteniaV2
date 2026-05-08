@@ -1,30 +1,36 @@
 import { useAppQuery } from "@/hooks"
 import { exerciseQueryKeys, useExerciseRepo } from "@/repos/Exercise"
 import { ExerciseModel } from "../ExerciseModel"
-import { useMemo } from "react"
 import { useAuth } from "@/domains/Auth"
 import { handleError } from "@/utils"
+import { MuscleGroup } from "@/constants"
 
-export const useGetExercises = () => {
+type UseGetExercisesParams = {
+	searchText?: string
+	muscleGroup?: MuscleGroup
+}
+
+export const useGetExercises = ({
+	searchText,
+	muscleGroup,
+}: UseGetExercisesParams = {}) => {
 	const exerciseRepo = useExerciseRepo()
 	const { auth } = useAuth()
 
 	const { data, isLoading } = useAppQuery<ExerciseModel[]>({
-		queryKey: [exerciseQueryKeys.all],
-		queryFn: () => exerciseRepo.getAllExercises(),
+		queryKey: [exerciseQueryKeys.all, { userId: auth?.id, searchText, muscleGroup }],
+		queryFn: () =>
+			exerciseRepo.getAllExercises({
+				userId: auth?.id ?? "",
+				searchText,
+				muscleGroup,
+			}),
 		onError: (err) => {
 			handleError(err, "Ocorreu um erro ao buscar os exercícios")
 		},
 	})
 
-	const defaultExercises = useMemo(() => {
-		return data?.filter((exercise) => exercise.userId === null) || []
-	}, [data])
+	const exercises = data ?? []
 
-	const userExercises = useMemo(() => {
-		if (!auth?.id) return []
-		return data?.filter((exercise) => exercise.userId === auth?.id) || []
-	}, [data, auth?.id])
-
-	return { userExercises, defaultExercises, isLoading }
+	return { exercises, isLoading }
 }

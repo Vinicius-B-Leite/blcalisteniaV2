@@ -1,12 +1,12 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useState } from "react"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useForm } from "react-hook-form"
 import { MuscleGroup } from "@/constants"
 import { ExerciseModel, useGetExercises, useDeleteExercise } from "@/domains/Exercise"
 
 import { useDebounceValue } from "@/hooks"
-import { useAddWorkoutExercise } from "@/domains/WorkoutExercise"
 import { useAddWorkoutExerciseContext } from "@/providers/addWorkoutExercise"
+import { useAuth } from "@/domains/Auth"
 
 export const useSearchExercises = () => {
 	const router = useRouter()
@@ -33,9 +33,13 @@ export const useSearchExercises = () => {
 	const debouncedSearchText = useDebounceValue(searchText)
 
 	const { addWorkoutExercise } = useAddWorkoutExerciseContext()
-	const { defaultExercises, userExercises, isLoading } = useGetExercises()
+	const { auth } = useAuth()
+	const { exercises, isLoading } = useGetExercises()
 
 	const { execute: deleteExercise, isLoading: isDeletingExercise } = useDeleteExercise()
+
+	const isCustomExercise = (exercise: ExerciseModel) =>
+		exercise.userId !== null && exercise.userId === auth?.id
 
 	const handleGoBack = () => {
 		router.back()
@@ -125,15 +129,7 @@ export const useSearchExercises = () => {
 		[selectedMuscleGroup, debouncedSearchText],
 	)
 
-	const filteredExercises = useMemo(() => {
-		return filterList(defaultExercises)
-	}, [defaultExercises, filterList])
-
-	const filteredCustomExercises = useMemo(() => {
-		return filterList(userExercises)
-	}, [userExercises, filterList])
-
-	const isCustomExercisesEmpty = filteredCustomExercises.length === 0
+	const filteredExercises = filterList(exercises)
 
 	return {
 		form,
@@ -141,8 +137,6 @@ export const useSearchExercises = () => {
 			searchText,
 			selectedMuscleGroup,
 			exercises: filteredExercises,
-			customExercises: filteredCustomExercises,
-			isCustomExercisesEmpty,
 			selectedExercise,
 			isLoading,
 			isCreateModalVisible,
@@ -163,6 +157,7 @@ export const useSearchExercises = () => {
 			handleOpenDeleteModal,
 			handleCloseDeleteModal,
 			handleConfirmDelete,
+			isCustomExercise,
 		},
 	}
 }

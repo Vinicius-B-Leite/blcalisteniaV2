@@ -1,7 +1,14 @@
+import { MuscleGroup } from "@/constants"
 import { ExerciseModel } from "./ExerciseModel"
 
+export type GetAllExercisesParams = {
+	userId: string
+	searchText?: string
+	muscleGroup?: MuscleGroup
+}
+
 export interface IExerciseRepo {
-	getAllExercises(): Promise<ExerciseModel[]>
+	getAllExercises(params: GetAllExercisesParams): Promise<ExerciseModel[]>
 	createExercise(params: Omit<ExerciseModel, "id">): Promise<ExerciseModel>
 	updateExercise(
 		id: string,

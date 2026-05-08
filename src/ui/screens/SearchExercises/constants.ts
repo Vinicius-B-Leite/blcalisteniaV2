@@ -3,8 +3,6 @@ const prefix = "search-exercises-screen"
 export const SEARCH_EXERCISES_SCREEN_TEST_IDS = {
 	LOADING_STATE: `${prefix}-loading-state`,
 	EXERCISE_ITEM: `${prefix}-exercise-item`,
-	CUSTOM_EXERCISE_ITEM: `${prefix}-custom-exercise-item`,
-	CUSTOM_EXERCISES_SECTION: `${prefix}-custom-exercises-section`,
 	SEARCH_INPUT: `${prefix}-search-input`,
 	CATEGORY_CHIP: ({ muscleGroup }: { muscleGroup: string }) =>
 		`${prefix}-category-chip-${muscleGroup}`,
@@ -14,10 +12,6 @@ export const SEARCH_EXERCISES_SCREEN_TEST_IDS = {
 	CREATE_EXERCISE_BUTTON: `${prefix}-create-exercise-button`,
 	EDIT_EXERCISE_BUTTON: ({ id }: { id: string }) =>
 		`${prefix}-edit-exercise-button-${id}`,
-	CUSTOM_EXERCISE_ITEM_NAME: ({ id }: { id: string }) =>
-		`${prefix}-custom-exercise-item-name-${id}`,
-	CUSTOM_EXERCISE_ITEM_MUSCLES: ({ id }: { id: string }) =>
-		`${prefix}-custom-exercise-item-muscles-${id}`,
 	DELETE_EXERCISE_BUTTON: ({ id }: { id: string }) =>
 		`${prefix}-delete-exercise-button-${id}`,
 	DELETE_EXERCISE_MODAL_CONFIRM: `${prefix}-delete-exercise-modal-confirm`,

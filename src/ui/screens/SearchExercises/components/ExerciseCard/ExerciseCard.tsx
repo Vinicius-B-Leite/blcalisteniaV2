@@ -47,9 +47,7 @@ export function ExerciseCard({
 		return <Skeleton style={styles.loadingItem} />
 	}
 
-	const containerTestID = isCustom
-		? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM
-		: SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM
+	const containerTestID = SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM
 	const toggleTestID = SEARCH_EXERCISES_SCREEN_TEST_IDS.TOGGLE_EXERCISE_BUTTON({ id })
 
 	return (
@@ -63,28 +61,10 @@ export function ExerciseCard({
 					/>
 				)}
 				<View style={styles.textContainer}>
-					<Text
-						variant="body-small-bold"
-						numberOfLines={1}
-						testID={
-							isCustom
-								? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM_NAME(
-										{ id },
-									)
-								: undefined
-						}>
+					<Text variant="body-small-bold" numberOfLines={1}>
 						{name}
 					</Text>
-					<Text
-						variant="body-small-reg"
-						numberOfLines={1}
-						testID={
-							isCustom
-								? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM_MUSCLES(
-										{ id },
-									)
-								: undefined
-						}>
+					<Text variant="body-small-reg" numberOfLines={1}>
 						{musclesGroupsLabels}
 					</Text>
 				</View>
