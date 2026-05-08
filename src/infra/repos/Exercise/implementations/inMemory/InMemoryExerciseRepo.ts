@@ -7,10 +7,12 @@ const store: ExerciseModel[] = []
 let idCounter = 1
 
 export const InMemoryExerciseRepo: IExerciseRepo & ITestableRepository = {
-	getAllExercises: async (params: GetAllExercisesParams) => {
+	getAllExercises: async (params?: GetAllExercisesParams) => {
 		try {
-			const { userId, searchText, muscleGroup } = params
-			let results = store.filter((e) => e.userId === null || e.userId === userId)
+			const { userId, searchText, muscleGroup } = params ?? {}
+			let results = userId
+				? store.filter((e) => e.userId === null || e.userId === userId)
+				: [...store]
 			if (muscleGroup) {
 				results = results.filter((e) => e.musclesGroups.includes(muscleGroup))
 			}

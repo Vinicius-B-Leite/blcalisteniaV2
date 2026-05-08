@@ -16,4 +16,9 @@ export const SEARCH_EXERCISES_SCREEN_TEST_IDS = {
 		`${prefix}-delete-exercise-button-${id}`,
 	DELETE_EXERCISE_MODAL_CONFIRM: `${prefix}-delete-exercise-modal-confirm`,
 	DELETE_EXERCISE_MODAL_CANCEL: `${prefix}-delete-exercise-modal-cancel`,
+	CUSTOM_EXERCISE_ITEM: `${prefix}-custom-exercise-item`,
+	CUSTOM_EXERCISE_ITEM_NAME: ({ id }: { id: string }) =>
+		`${prefix}-custom-exercise-item-name-${id}`,
+	CUSTOM_EXERCISE_ITEM_MUSCLES: ({ id }: { id: string }) =>
+		`${prefix}-custom-exercise-item-muscles-${id}`,
 }

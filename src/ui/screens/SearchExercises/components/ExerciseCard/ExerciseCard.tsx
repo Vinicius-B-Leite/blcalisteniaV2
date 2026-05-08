@@ -47,12 +47,19 @@ export function ExerciseCard({
 		return <Skeleton style={styles.loadingItem} />
 	}
 
-	const containerTestID = SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM
 	const toggleTestID = SEARCH_EXERCISES_SCREEN_TEST_IDS.TOGGLE_EXERCISE_BUTTON({ id })
 
 	return (
-		<View style={styles.container} testID={containerTestID}>
-			<View style={styles.content}>
+		<View
+			style={styles.container}
+			testID={SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM}>
+			<View
+				style={styles.content}
+				testID={
+					isCustom
+						? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM
+						: undefined
+				}>
 				{bannerUrl && !imageError && !isLoading && (
 					<Image
 						source={{ uri: bannerUrl }}
@@ -61,10 +68,28 @@ export function ExerciseCard({
 					/>
 				)}
 				<View style={styles.textContainer}>
-					<Text variant="body-small-bold" numberOfLines={1}>
+					<Text
+						variant="body-small-bold"
+						numberOfLines={1}
+						testID={
+							isCustom
+								? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM_NAME(
+										{ id },
+									)
+								: undefined
+						}>
 						{name}
 					</Text>
-					<Text variant="body-small-reg" numberOfLines={1}>
+					<Text
+						variant="body-small-reg"
+						numberOfLines={1}
+						testID={
+							isCustom
+								? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM_MUSCLES(
+										{ id },
+									)
+								: undefined
+						}>
 						{musclesGroupsLabels}
 					</Text>
 				</View>

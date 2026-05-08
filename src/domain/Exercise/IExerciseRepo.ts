@@ -8,7 +8,7 @@ export type GetAllExercisesParams = {
 }
 
 export interface IExerciseRepo {
-	getAllExercises(params: GetAllExercisesParams): Promise<ExerciseModel[]>
+	getAllExercises(params?: GetAllExercisesParams): Promise<ExerciseModel[]>
 	createExercise(params: Omit<ExerciseModel, "id">): Promise<ExerciseModel>
 	updateExercise(
 		id: string,
