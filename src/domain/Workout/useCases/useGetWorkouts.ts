@@ -1,17 +1,39 @@
-import { useAppQuery } from "@/hooks"
+import { useAppInfiniteQuery } from "@/hooks"
 import { workoutQueryKeys, useWorkoutRepo } from "@/repos/Workout"
-import { handleError } from "@/utils"
+import { WorkoutModel } from "../WorkoutModel"
 
-export const useGetWorkouts = () => {
+const WORKOUTS_LIMIT = 20
+
+type UseGetWorkoutsParams = {
+	searchText?: string
+}
+
+export const useGetWorkouts = ({ searchText }: UseGetWorkoutsParams = {}) => {
 	const workoutRepo = useWorkoutRepo()
 
-	const { data, isLoading, refetch, isRefetching } = useAppQuery({
-		queryKey: [workoutQueryKeys.all],
-		queryFn: () => workoutRepo.getAllWorkouts(),
-		onError: (err) => {
-			handleError(err, "Ocorreu um erro ao buscar os treinos")
-		},
+	const {
+		data,
+		isLoading,
+		isFetchingNextPage,
+		hasNextPage,
+		fetchNextPage,
+		refetch,
+		isRefetching,
+	} = useAppInfiniteQuery<WorkoutModel>({
+		queryKey: [workoutQueryKeys.all, { searchText }],
+		queryFn: (page) =>
+			workoutRepo.getAllWorkouts({ page, limit: WORKOUTS_LIMIT, searchText }),
 	})
 
-	return { workouts: data ?? [], isLoading, refetch, isRefetching }
+	const workouts = data?.pages.flatMap((page) => page.items) ?? []
+
+	return {
+		workouts,
+		isLoading,
+		isFetchingNextPage: isFetchingNextPage ?? false,
+		hasNextPage: hasNextPage ?? false,
+		fetchNextPage,
+		refetch,
+		isRefetching,
+	}
 }

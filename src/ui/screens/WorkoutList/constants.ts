@@ -8,4 +8,5 @@ export const WORKOUT_LIST_SCREEN_TEST_IDS = {
 	DELETE_BUTTON: ({ id }: { id: string }) => `${prefix}-delete-button-${id}`,
 	WORKOUT_LIST: `${prefix}-workout-list`,
 	TO_DETAILS_BUTTON: ({ id }: { id: string }) => `${prefix}-to-details-button-${id}`,
+	LOADING_NEXT_PAGE: `${prefix}-loading-next-page`,
 }

@@ -1,4 +1,4 @@
-import { View, FlatList, RefreshControl } from "react-native"
+import { View, FlatList, RefreshControl, ActivityIndicator } from "react-native"
 import { Header, Screen, Text, Pressable } from "@/components/core"
 import {
 	EmptyState,
@@ -31,16 +31,28 @@ export const WorkoutList = () => {
 				data={states.workouts}
 				keyExtractor={(item) => item.id}
 				ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+				initialNumToRender={25}
+				onEndReached={actions.onEndReached}
+				onEndReachedThreshold={0.3}
 				ListFooterComponent={
-					!states.isSearching ? (
-						<Pressable.Root
-							onPress={actions.openModal}
-							style={styles.addButton}>
-							<Text variant="body-large-bold" style={styles.addButtonText}>
-								Adicionar treino
-							</Text>
-						</Pressable.Root>
-					) : null
+					<>
+						{states.isFetchingNextPage && (
+							<ActivityIndicator
+								testID={WORKOUT_LIST_SCREEN_TEST_IDS.LOADING_NEXT_PAGE}
+							/>
+						)}
+						{!states.isSearching && (
+							<Pressable.Root
+								onPress={actions.openModal}
+								style={styles.addButton}>
+								<Text
+									variant="body-large-bold"
+									style={styles.addButtonText}>
+									Adicionar treino
+								</Text>
+							</Pressable.Root>
+						)}
+					</>
 				}
 				refreshControl={
 					<RefreshControl

@@ -9,16 +9,29 @@ import {
 import { WorkoutFormValues } from "@/components/molecules"
 import { useForm } from "react-hook-form"
 import { workoutBannerUtils } from "@/utils"
+import { useDebounceValue } from "@/hooks"
 
 export const useWorkoutList = () => {
 	const router = useRouter()
+
+	const form = useForm({
+		defaultValues: {
+			searchText: "",
+		},
+	})
+
+	const currentSearchText = form.watch("searchText")
+	const debouncedSearchText = useDebounceValue(currentSearchText)
 
 	const {
 		workouts,
 		isLoading: isGettingWorkouts,
 		refetch: refetchWorkoutList,
 		isRefetching: isRefetchingWorkouts,
-	} = useGetWorkouts()
+		isFetchingNextPage,
+		hasNextPage,
+		fetchNextPage,
+	} = useGetWorkouts({ searchText: debouncedSearchText })
 	const createWorkout = useCreateWorkout()
 	const deleteWorkout = useDeleteWorkout({
 		onError: () => {
@@ -29,12 +42,6 @@ export const useWorkoutList = () => {
 	const [modalCreateWorkout, setModalCreateWorkout] = useState(false)
 
 	const [deleteModal, setDeleteModal] = useState<WorkoutModel | null>(null)
-
-	const form = useForm({
-		defaultValues: {
-			searchText: "",
-		},
-	})
 
 	const handleOpenWorkout = (id: string) => {
 		router.push({
@@ -87,24 +94,29 @@ export const useWorkoutList = () => {
 		})
 	}
 
-	const searchText = form.watch("searchText")
-	const filteredWorkouts = workouts.filter((workout) =>
-		workout.title.toLowerCase().includes(searchText.toLowerCase()),
-	)
-	const hasWorkouts = filteredWorkouts.length > 0
-	const isSearching = searchText.length > 0
+	const hasWorkouts = workouts.length > 0
+	const isSearching = debouncedSearchText.length > 0
+
+	const onEndReached = () => {
+		if (hasNextPage && !isFetchingNextPage) {
+			fetchNextPage()
+		}
+	}
 
 	return {
 		form,
 		states: {
 			modalCreateWorkout,
-			workouts: filteredWorkouts,
+			workouts,
 			hasWorkouts,
 			deleteModal,
 			isDeleting: deleteWorkout.isLoading,
 			isGettingWorkouts,
 			isRefetchingWorkouts,
 			isSearching,
+			isFetchingNextPage,
+			hasNextPage,
+			debouncedSearchText,
 		},
 		actions: {
 			openModal: handleOpenModalCreateWorkout,
@@ -116,6 +128,7 @@ export const useWorkoutList = () => {
 			onCloseDeleteModal: handleCloseDeleteModal,
 			onConfirmCreateWorkout: handleConfirmCreateWorkout,
 			onRefresh: refetchWorkoutList,
+			onEndReached,
 		},
 	}
 }

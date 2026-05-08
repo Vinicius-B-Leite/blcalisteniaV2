@@ -6,6 +6,7 @@ import { workoutListMocks } from "../__mocks__/workoutListMocks"
 import { queryClient } from "@/infra/services/queryCache/implementations/reactQuery/ReactQueryProvider"
 import { Router, useRouter } from "expo-router"
 import { TOAST_ROOT_TEST_ID, TOAST_MESSAGE_TEST_ID } from "@/components/core/Toast"
+import { WorkoutModel } from "@/domains/Workout"
 
 const mockPush = jest.fn()
 
@@ -217,7 +218,7 @@ describe("Workout List Screen (Integration)", () => {
 		})
 	})
 
-	describe("error handling", () => {
+	describe("Error handling", () => {
 		it("should show error toast when deleting a workout fails", async () => {
 			await asTestableRepository(WorkoutRepo).seed([
 				workoutListMocks.createWorkout[0],
@@ -248,4 +249,203 @@ describe("Workout List Screen (Integration)", () => {
 			)
 		})
 	})
+
+	describe("Pagination", () => {
+		it("should not show loading spinner when list has fewer items than page size", async () => {
+			await asTestableRepository(WorkoutRepo).seed(generateWorkouts(5))
+
+			render(<WorkoutList />)
+
+			await screen.findAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+
+			expect(
+				screen.queryByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.LOADING_NEXT_PAGE),
+			).toBeNull()
+		})
+
+		it("should load next page when end of list is reached (infinite scroll)", async () => {
+			await asTestableRepository(WorkoutRepo).seed(generateWorkouts(21))
+
+			render(<WorkoutList />)
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(20)
+			})
+
+			const flatList = screen.getByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_LIST)
+			await act(async () => {
+				flatList.props.onEndReached()
+			})
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(21)
+			})
+		})
+
+		it("should reset to page 0 when search text changes", async () => {
+			await asTestableRepository(WorkoutRepo).seed([
+				...generateWorkouts(3, "Força", 100),
+				...generateWorkouts(18, "Aeróbico", 200),
+			])
+
+			render(<WorkoutList />)
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(20)
+			})
+
+			const searchInput = screen.getByTestId(
+				WORKOUT_LIST_SCREEN_TEST_IDS.SEARCH_INPUT,
+			)
+			fireEvent.changeText(searchInput, "Força")
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(3)
+			})
+		})
+
+		it("should support pagination combined with search text", async () => {
+			await asTestableRepository(WorkoutRepo).seed(generateWorkouts(25, "Força"))
+
+			render(<WorkoutList />)
+
+			const searchInput = await screen.findByTestId(
+				WORKOUT_LIST_SCREEN_TEST_IDS.SEARCH_INPUT,
+			)
+			fireEvent.changeText(searchInput, "Força")
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(20)
+			})
+
+			const flatList = screen.getByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_LIST)
+			await act(async () => {
+				flatList.props.onEndReached()
+			})
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(25)
+			})
+		})
+
+		it("should show empty state after pull-to-refresh when all items removed", async () => {
+			const workouts = generateWorkouts(21)
+			await asTestableRepository(WorkoutRepo).seed(workouts)
+
+			render(<WorkoutList />)
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(20)
+			})
+
+			await act(async () => {
+				screen
+					.getByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_LIST)
+					.props.onEndReached()
+			})
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(21)
+			})
+
+			await asTestableRepository(WorkoutRepo).clear()
+
+			await act(async () => {
+				screen
+					.getByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_LIST)
+					.props.refreshControl.props.onRefresh()
+			})
+
+			await waitFor(() => {
+				expect(
+					screen.getByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.EMPTY_STATE),
+				).toBeTruthy()
+			})
+		})
+
+		it("should reset pagination after deleting a workout", async () => {
+			const workouts = generateWorkouts(21)
+			await asTestableRepository(WorkoutRepo).seed(workouts)
+
+			render(<WorkoutList />)
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(20)
+			})
+
+			const flatList = screen.getByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_LIST)
+			await act(async () => {
+				flatList.props.onEndReached()
+			})
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(21)
+			})
+
+			fireEvent.press(
+				screen.getByTestId(
+					WORKOUT_LIST_SCREEN_TEST_IDS.DELETE_BUTTON({ id: workouts[0].id }),
+				),
+			)
+
+			const confirmButton = await screen.findByTestId(
+				WORKOUT_LIST_SCREEN_TEST_IDS.DELETE_BUTTON({ id: "confirm" }),
+			)
+			await act(async () => {
+				fireEvent.press(confirmButton)
+			})
+
+			await waitFor(() => {
+				expect(
+					screen.queryAllByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM)
+						.length,
+				).toBe(20)
+			})
+		})
+	})
 })
+
+function generateWorkouts(
+	count: number,
+	titlePrefix = "Treino",
+	startId = 100,
+): WorkoutModel[] {
+	return Array.from({ length: count }, (_, i) => ({
+		id: String(startId + i),
+		title: `${titlePrefix} ${String(i + 1).padStart(3, "0")}`,
+		category: "strength" as const,
+		imageUrl: "strength.jpg",
+		description: "Description",
+		weekDaysFrequency: [1] as WorkoutModel["weekDaysFrequency"],
+	}))
+}

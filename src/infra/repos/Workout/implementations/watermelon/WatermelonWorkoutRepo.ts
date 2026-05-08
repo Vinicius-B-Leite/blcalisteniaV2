@@ -1,23 +1,29 @@
-import { IWorkoutRepo, WorkoutModel } from "@/domains/Workout"
+import { GetWorkoutsParams, IWorkoutRepo, WorkoutModel } from "@/domains/Workout"
 import { database } from "src/infra/database"
 import { workoutAdapters } from "../../WorkoutAdapter"
 import WorkoutsModel from "src/infra/database/watermelon/models/WorkoutsModel"
 import { AppError } from "@/errors"
 import { Q } from "@nozbe/watermelondb"
+import { PaginatedResult } from "@/types/pagination"
 
 export const WatermelonWorkoutRepo: IWorkoutRepo = {
-	getAllWorkouts: async () => {
+	getAllWorkouts: async (params: GetWorkoutsParams): Promise<PaginatedResult<WorkoutModel>> => {
 		try {
+			const { page, limit, searchText } = params
+			const conditions: ReturnType<typeof Q.where>[] = []
+			if (searchText) {
+				conditions.push(
+					Q.where("title", Q.like(`%${Q.sanitizeLikeString(searchText)}%`)),
+				)
+			}
 			const workouts = await database.collections
 				.get<WorkoutsModel>("workouts")
-				.query()
+				.query(...conditions, Q.skip(page * limit), Q.take(limit))
 				.fetch()
-
-			if (workouts.length === 0) {
-				return []
+			return {
+				items: workouts.map(workoutAdapters.toDomain),
+				hasNextPage: workouts.length === limit,
 			}
-
-			return workouts.map(workoutAdapters.toDomain)
 		} catch (error) {
 			throw new AppError({
 				message: "Ocorreu um erro ao buscar os treinos",

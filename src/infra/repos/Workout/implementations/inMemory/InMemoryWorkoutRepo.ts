@@ -1,16 +1,25 @@
-import { IWorkoutRepo } from "@/domains/Workout"
+import { GetWorkoutsParams, IWorkoutRepo } from "@/domains/Workout"
 import { WorkoutModel } from "@/domains/Workout/WorkoutModel"
 import { ITestableRepository } from "@/tests"
 import { AppError } from "@/errors"
+import { PaginatedResult } from "@/types/pagination"
 
 const store: WorkoutModel[] = []
 
 let idCounter = 1
 
 export const InMemoryWorkoutRepo: IWorkoutRepo & ITestableRepository = {
-	getAllWorkouts: async () => {
+	getAllWorkouts: async (params: GetWorkoutsParams): Promise<PaginatedResult<WorkoutModel>> => {
 		try {
-			return [...store]
+			const { page, limit, searchText } = params
+			let filtered = [...store]
+			if (searchText) {
+				const lower = searchText.toLowerCase()
+				filtered = filtered.filter((w) => w.title.toLowerCase().includes(lower))
+			}
+			const start = page * limit
+			const items = filtered.slice(start, start + limit)
+			return { items, hasNextPage: items.length === limit }
 		} catch (error) {
 			throw new AppError({
 				message: "Ocorreu um erro ao buscar os treinos",
