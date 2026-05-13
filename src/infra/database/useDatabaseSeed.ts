@@ -15,8 +15,12 @@ export const useDatabaseSeed = () => {
 	}
 
 	const seedExercises = async () => {
-		const existing = await exerciseRepo.getAllExercises()
-		if (existing.length > 0) return
+		const existing = await exerciseRepo.getAllExercises({
+			limit: 999,
+			page: 1,
+			userId: null,
+		})
+		if (existing.items?.length > 0) return
 
 		await Promise.all(
 			defaultExercises.map((exercise) =>

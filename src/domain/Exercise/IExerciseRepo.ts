@@ -5,7 +5,7 @@ import { PaginatedResult } from "@/types/pagination"
 export type GetAllExercisesParams = {
 	page: number
 	limit: number
-	userId: string
+	userId: string | null
 	searchText?: string
 	onlyCustom?: boolean
 	muscleGroup?: MuscleGroup
