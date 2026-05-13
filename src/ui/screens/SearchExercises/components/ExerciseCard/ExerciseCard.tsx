@@ -53,13 +53,7 @@ export function ExerciseCard({
 		<View
 			style={styles.container}
 			testID={SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM}>
-			<View
-				style={styles.content}
-				testID={
-					isCustom
-						? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM
-						: undefined
-				}>
+			<View style={styles.content}>
 				{bannerUrl && !imageError && !isLoading && (
 					<Image
 						source={{ uri: bannerUrl }}
@@ -71,25 +65,17 @@ export function ExerciseCard({
 					<Text
 						variant="body-small-bold"
 						numberOfLines={1}
-						testID={
-							isCustom
-								? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM_NAME(
-										{ id },
-									)
-								: undefined
-						}>
+						testID={SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM_NAME({
+							id,
+						})}>
 						{name}
 					</Text>
 					<Text
 						variant="body-small-reg"
 						numberOfLines={1}
-						testID={
-							isCustom
-								? SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM_MUSCLES(
-										{ id },
-									)
-								: undefined
-						}>
+						testID={SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM_MUSCLES({
+							id,
+						})}>
 						{musclesGroupsLabels}
 					</Text>
 				</View>

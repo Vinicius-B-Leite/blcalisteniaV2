@@ -11,11 +11,10 @@ export const stylesTheme = (theme: ThemeType) => {
 			alignItems: "stretch",
 			gap: spacings.gap[8],
 			paddingVertical: spacings.padding[4],
-			paddingHorizontal: spacings.padding[4],
-			//TODO: verificar se é necessário um width fixo ou se pode ser dinâmico
-			width: 80,
+			paddingHorizontal: spacings.padding[12],
 			backgroundColor: theme.surface["brand-opacity-20"],
 			borderRadius: radius[8],
+			marginTop: spacings.margin[8],
 		},
 		chipSelected: {
 			backgroundColor: theme.surface.brand,

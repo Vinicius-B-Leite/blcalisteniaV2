@@ -114,9 +114,7 @@ describe("Create Exercise Modal (Integration)", () => {
 
 			render(<SearchExercises />)
 
-			await screen.findAllByTestId(
-				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
-			)
+			await screen.findAllByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM)
 
 			await openEditModal(created.id)
 
@@ -139,9 +137,7 @@ describe("Create Exercise Modal (Integration)", () => {
 
 			render(<SearchExercises />)
 
-			await screen.findAllByTestId(
-				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
-			)
+			await screen.findAllByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM)
 
 			await openEditModal(created.id)
 
@@ -278,9 +274,7 @@ describe("Create Exercise Modal (Integration)", () => {
 
 			render(<SearchExercises />)
 
-			await screen.findAllByTestId(
-				SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM,
-			)
+			await screen.findAllByTestId(SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM)
 			await openEditModal(created.id)
 
 			await asTestableRepository(ExerciseRepo).clear()
@@ -373,7 +367,7 @@ async function createExercise(name: string, muscleGroups: string[]) {
 async function expectExerciseVisible(name: string) {
 	await waitFor(() => {
 		const nameEls = screen.queryAllByTestId(
-			new RegExp(`${SEARCH_EXERCISES_SCREEN_TEST_IDS.CUSTOM_EXERCISE_ITEM}-name-`),
+			new RegExp(`${SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_ITEM}-name-`),
 		)
 		expect(nameEls.some((el) => el.props.children === name)).toBeTruthy()
 	})

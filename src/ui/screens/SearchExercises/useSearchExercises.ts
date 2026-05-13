@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useState } from "react"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useForm } from "react-hook-form"
 import { MuscleGroup } from "@/constants"
@@ -17,6 +17,7 @@ export const useSearchExercises = () => {
 	const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<null | MuscleGroup>(
 		null,
 	)
+	const [onlyCustom, setOnlyCustom] = useState(false)
 	const [selectedExercise, setSelectedExercise] = useState<ExerciseModel | null>(null)
 	const [isCreateModalVisible, setIsCreateModalVisible] = useState(false)
 	const [editingExercise, setEditingExercise] = useState<ExerciseModel | null>(null)
@@ -34,7 +35,13 @@ export const useSearchExercises = () => {
 
 	const { addWorkoutExercise } = useAddWorkoutExerciseContext()
 	const { auth } = useAuth()
-	const { exercises, isLoading } = useGetExercises()
+
+	const { exercises, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+		useGetExercises({
+			searchText: debouncedSearchText,
+			muscleGroup: selectedMuscleGroup ?? undefined,
+			onlyCustom,
+		})
 
 	const { execute: deleteExercise, isLoading: isDeletingExercise } = useDeleteExercise()
 
@@ -51,6 +58,10 @@ export const useSearchExercises = () => {
 			return setSelectedMuscleGroup(null)
 		}
 		setSelectedMuscleGroup(muscleGroup)
+	}
+
+	const toggleOnlyCustom = () => {
+		setOnlyCustom((prev) => !prev)
 	}
 
 	const handleExercisePress = (id: string) => {
@@ -111,42 +122,34 @@ export const useSearchExercises = () => {
 		}
 	}
 
-	const filterList = useCallback(
-		(exercises: ExerciseModel[]) => {
-			return exercises.filter((exercise) => {
-				const matchesMuscleGroup = selectedMuscleGroup
-					? exercise.musclesGroups.includes(selectedMuscleGroup)
-					: true
-
-				const searchText = debouncedSearchText.toLowerCase()
-				const matchesSearchText = searchText?.trim()?.length
-					? exercise.name.toLowerCase().includes(searchText)
-					: true
-
-				return matchesMuscleGroup && matchesSearchText
-			})
-		},
-		[selectedMuscleGroup, debouncedSearchText],
-	)
-
-	const filteredExercises = filterList(exercises)
+	const onEndReached = () => {
+		if (hasNextPage && !isFetchingNextPage) {
+			fetchNextPage()
+		}
+	}
 
 	return {
 		form,
 		states: {
 			searchText,
 			selectedMuscleGroup,
-			exercises: filteredExercises,
+			onlyCustom,
+			exercises,
 			selectedExercise,
 			isLoading,
+			isFetchingNextPage,
+			hasNextPage,
 			isCreateModalVisible,
 			editingExercise,
 			selectedExerciseToDelete,
 			isDeletingExercise,
+			isCustomExercise,
+			hasActiveFilter: debouncedSearchText !== "" || selectedMuscleGroup !== null,
 		},
 		actions: {
 			handleGoBack,
 			handleMuscleGroupSelect,
+			toggleOnlyCustom,
 			handleExercisePress,
 			handleFavoritePress,
 			handleToggleExercise,
@@ -157,7 +160,8 @@ export const useSearchExercises = () => {
 			handleOpenDeleteModal,
 			handleCloseDeleteModal,
 			handleConfirmDelete,
-			isCustomExercise,
+			onEndReached,
+			fetchNextPage,
 		},
 	}
 }

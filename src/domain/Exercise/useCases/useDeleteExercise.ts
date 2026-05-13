@@ -10,7 +10,7 @@ export const useDeleteExercise = () => {
 	const { execute, isLoading } = useAppMutation<void, string>({
 		mutationFn: (id) => exerciseRepo.deleteExercise(id),
 		onSuccess: () => {
-			queryCacheService.invalidateCacheSingle([exerciseQueryKeys.all])
+			queryCacheService.resetCacheSingle([exerciseQueryKeys.all])
 		},
 		onError: (err) => {
 			handleError(err, "Ocorreu um erro ao deletar o exercício")

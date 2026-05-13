@@ -13,4 +13,8 @@ export const ReactQueryService: IQueryCache = {
 			}),
 		)
 	},
+
+	resetCacheSingle: async (key: unknown[]) => {
+		await queryClient.resetQueries({ queryKey: key })
+	},
 }

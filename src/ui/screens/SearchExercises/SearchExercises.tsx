@@ -1,5 +1,5 @@
-import { View, ScrollView, FlatList } from "react-native"
-import { Screen, Header, Button, Skeleton } from "@/components/core"
+import { View, ScrollView, FlatList, ActivityIndicator } from "react-native"
+import { Screen, Header, Button, Skeleton, Text } from "@/components/core"
 import { useStyles } from "@/themes"
 import { stylesTheme } from "./styles"
 import { useSearchExercises } from "./useSearchExercises"
@@ -35,44 +35,69 @@ export const SearchExercises = () => {
 						))}
 				</ScrollView>
 			) : (
-				<ScrollView
-					contentContainerStyle={[styles.content]}
-					showsVerticalScrollIndicator={false}>
-					<SearchBar control={form.control} />
-
-					<CategoryFilter
-						selectedCategory={states.selectedMuscleGroup}
-						onSelectCategory={actions.handleMuscleGroupSelect}
-					/>
-
-					<FlatList
-						data={states.exercises}
-						renderItem={({ item }) => (
-							<ExerciseCard
-								id={item.id}
-								name={item.name}
-								musclesGroups={item.musclesGroups}
-								bannerUrl={item.bannerUrl}
-								isSelected={states.selectedExercise?.id === item.id}
-								onAdd={() => actions.handleToggleExercise(item)}
-								isCustom={actions.isCustomExercise(item)}
-								onEdit={
-									actions.isCustomExercise(item)
-										? () => actions.handleOpenEditModal(item)
-										: undefined
-								}
-								onDelete={
-									actions.isCustomExercise(item)
-										? () => actions.handleOpenDeleteModal(item)
-										: undefined
+				<FlatList
+					data={states.exercises}
+					ListHeaderComponent={
+						<>
+							<SearchBar control={form.control} />
+							<CategoryFilter
+								selectedCategory={states.selectedMuscleGroup}
+								onSelectCategory={actions.handleMuscleGroupSelect}
+								onlyCustom={states.onlyCustom}
+								onToggleOnlyCustom={actions.toggleOnlyCustom}
+							/>
+						</>
+					}
+					renderItem={({ item }) => (
+						<ExerciseCard
+							id={item.id}
+							name={item.name}
+							musclesGroups={item.musclesGroups}
+							bannerUrl={item.bannerUrl}
+							isSelected={states.selectedExercise?.id === item.id}
+							onAdd={() => actions.handleToggleExercise(item)}
+							isCustom={states.isCustomExercise(item)}
+							onEdit={
+								states.isCustomExercise(item)
+									? () => actions.handleOpenEditModal(item)
+									: undefined
+							}
+							onDelete={
+								states.isCustomExercise(item)
+									? () => actions.handleOpenDeleteModal(item)
+									: undefined
+							}
+						/>
+					)}
+					keyExtractor={(item) => item.id}
+					initialNumToRender={25}
+					contentContainerStyle={[styles.content, styles.exercisesSection]}
+					onEndReached={actions.onEndReached}
+					onEndReachedThreshold={0.3}
+					ListEmptyComponent={
+						states.hasActiveFilter ? (
+							<View
+								style={styles.emptyContainer}
+								testID={
+									SEARCH_EXERCISES_SCREEN_TEST_IDS.EXERCISE_NOT_FOUND
+								}>
+								<Text variant="body-small-bold">
+									Exercício não encontrado
+								</Text>
+							</View>
+						) : null
+					}
+					ListFooterComponent={
+						states.isFetchingNextPage ? (
+							<ActivityIndicator
+								testID={
+									SEARCH_EXERCISES_SCREEN_TEST_IDS.LOADING_NEXT_PAGE
 								}
 							/>
-						)}
-						keyExtractor={(item) => item.id}
-						contentContainerStyle={styles.exercisesSection}
-						scrollEnabled={false}
-					/>
-				</ScrollView>
+						) : null
+					}
+					showsVerticalScrollIndicator={false}
+				/>
 			)}
 			<View style={styles.addButtonContainer}>
 				<Button.Root

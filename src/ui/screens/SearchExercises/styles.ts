@@ -24,4 +24,8 @@ export const stylesTheme = (theme: ThemeType) =>
 			height: 64,
 			borderRadius: 8,
 		},
+		emptyContainer: {
+			alignItems: "center",
+			paddingTop: spacings.padding[20],
+		},
 	})

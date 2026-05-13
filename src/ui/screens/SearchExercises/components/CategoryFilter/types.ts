@@ -4,6 +4,8 @@ export namespace CategoryFilter {
 	export type Props = {
 		selectedCategory: MuscleGroup | null
 		onSelectCategory: (category: MuscleGroup) => void
+		onlyCustom: boolean
+		onToggleOnlyCustom: () => void
 	}
 
 	export type ChipProps = {

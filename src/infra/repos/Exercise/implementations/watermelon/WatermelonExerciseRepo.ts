@@ -1,4 +1,4 @@
-import { IExerciseRepo } from "@/domains/Exercise"
+import { GetAllExercisesParams, IExerciseRepo } from "@/domains/Exercise"
 import { database } from "@/infra/database"
 import ExercisesModel from "@/infra/database/watermelon/models/ExercisesModel"
 import { exerciseAdapters } from "../../ExerciseAdapter"
@@ -6,19 +6,51 @@ import { Q } from "@nozbe/watermelondb"
 import { AppError } from "@/errors"
 
 export const WatermelonExerciseRepo: IExerciseRepo = {
-	getAllExercises: async () => {
+	getAllExercises: async (params: GetAllExercisesParams) => {
 		try {
-			const exercises = await database.collections
-				.get<ExercisesModel>("exercises")
-				.query()
-				.fetch()
+			const { page, limit, userId, searchText, onlyCustom, muscleGroup } = params
+			const conditions: Q.Clause[] = []
 
-			if (!exercises || exercises.length === 0) {
-				return []
+			if (onlyCustom) {
+				conditions.push(Q.where("user_id", userId))
+			} else {
+				conditions.push(
+					Q.or(Q.where("user_id", null), Q.where("user_id", userId)),
+				)
 			}
 
-			return exercises.map(exerciseAdapters.toDomain)
+			if (muscleGroup) {
+				conditions.push(
+					Q.where(
+						"muscles_groups",
+						Q.like(`%${Q.sanitizeLikeString(muscleGroup)}%`),
+					),
+				)
+			}
+
+			if (searchText?.trim()) {
+				conditions.push(
+					Q.where("name", Q.like(`%${Q.sanitizeLikeString(searchText)}%`)),
+				)
+			}
+
+			const offset = page * limit
+			const records = await database.collections
+				.get<ExercisesModel>("exercises")
+				.query(
+					...conditions,
+					Q.sortBy("name", Q.asc),
+					Q.skip(offset),
+					Q.take(limit),
+				)
+				.fetch()
+
+			return {
+				items: records.map(exerciseAdapters.toDomain),
+				hasNextPage: records.length === limit,
+			}
 		} catch (error) {
+			if (error instanceof AppError) throw error
 			throw new AppError({
 				message: "Ocorreu um erro ao buscar os exercícios",
 				property: "exercise",

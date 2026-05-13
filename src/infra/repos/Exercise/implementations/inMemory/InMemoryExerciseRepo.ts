@@ -7,20 +7,36 @@ const store: ExerciseModel[] = []
 let idCounter = 1
 
 export const InMemoryExerciseRepo: IExerciseRepo & ITestableRepository = {
-	getAllExercises: async (params?: GetAllExercisesParams) => {
+	getAllExercises: async (params: GetAllExercisesParams) => {
 		try {
-			const { userId, searchText, muscleGroup } = params ?? {}
-			let results = userId
-				? store.filter((e) => e.userId === null || e.userId === userId)
-				: [...store]
-			if (muscleGroup) {
-				results = results.filter((e) => e.musclesGroups.includes(muscleGroup))
+			const { page, limit, userId, searchText, onlyCustom, muscleGroup } = params
+
+			let filtered: ExerciseModel[]
+
+			if (onlyCustom) {
+				filtered = store.filter((e) => e.userId === userId)
+			} else {
+				filtered = store.filter((e) => e.userId === null || e.userId === userId)
 			}
+
+			if (muscleGroup) {
+				filtered = filtered.filter((e) => e.musclesGroups.includes(muscleGroup))
+			}
+
 			if (searchText?.trim()) {
 				const lower = searchText.toLowerCase()
-				results = results.filter((e) => e.name.toLowerCase().includes(lower))
+				filtered = filtered.filter((e) => e.name.toLowerCase().includes(lower))
 			}
-			return [...results].sort((a, b) => a.name.localeCompare(b.name))
+
+			filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name))
+
+			const start = page * limit
+			const items = filtered.slice(start, start + limit)
+
+			return {
+				items,
+				hasNextPage: items.length === limit,
+			}
 		} catch (error) {
 			if (error instanceof AppError) throw error
 			throw new AppError({
@@ -82,6 +98,7 @@ export const InMemoryExerciseRepo: IExerciseRepo & ITestableRepository = {
 				id: exercise.id || String(idCounter++),
 			})
 		}
+		idCounter = store.length + 1
 	},
 
 	deleteExercise: async (id) => {
