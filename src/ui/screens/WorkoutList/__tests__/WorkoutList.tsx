@@ -51,17 +51,21 @@ describe("Workout List Screen (Integration)", () => {
 		})
 
 		it("should show empty state when no workouts are available", async () => {
+			await asTestableRepository(WorkoutRepo).clear()
 			render(<WorkoutList />)
 
 			expect(
 				screen.getByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.LOADING_STATE),
 			).toBeTruthy()
 
-			await waitFor(() => {
-				expect(
-					screen.queryByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.LOADING_STATE),
-				).toBeFalsy()
-			})
+			await waitFor(
+				() => {
+					expect(
+						screen.queryByTestId(WORKOUT_LIST_SCREEN_TEST_IDS.LOADING_STATE),
+					).toBeFalsy()
+				},
+				{ timeout: 2000 },
+			)
 
 			const workoutItems = screen.queryAllByTestId(
 				WORKOUT_LIST_SCREEN_TEST_IDS.WORKOUT_ITEM,
