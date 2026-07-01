@@ -3,5 +3,8 @@
 	"github.copilot.chat.codeGeneration.instructions": [{ "file": "AGENTS.md" }],
 
 	// location of agent files, relative to the workspace root
-	"chat.agentFilesLocations": [".agent/agents"]
+	"chat.agentFilesLocations": [".agent/agents"],
+
+	// location of skill files, relative to the workspace root
+	"chat.agentSkillsLocations": { ".agent/skills/**": true }
 }

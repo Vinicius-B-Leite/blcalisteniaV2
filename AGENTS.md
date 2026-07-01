@@ -190,8 +190,10 @@ Skills disponíveis em `.agent/skills/`. **Leia o `SKILL.md` correspondente ante
 | `create-common-components` | [SKILL.md](.agent/skills/create-common-components/SKILL.md) | Criar componentes comuns de tela (hook, styles, types)                                                     |
 | `create-integration-tests` | [SKILL.md](.agent/skills/create-integration-tests/SKILL.md) | Criar testes de integração para telas                                                                      |
 | `create-repos`             | [SKILL.md](.agent/skills/create-repos/SKILL.md)             | Criar repositório (inMemory + Watermelon)                                                                  |
+| `create-watermelon-migration` | [SKILL.md](.agent/skills/create-watermelon-migration/SKILL.md) | Alterar schema do WatermelonDB (coluna/tabela nova) e migration — usar antes de `create-repos`             |
 | `create-use-cases`         | [SKILL.md](.agent/skills/create-use-cases/SKILL.md)         | Criar use cases com React Query                                                                            |
 | `create-form`              | [SKILL.md](.agent/skills/create-form/SKILL.md)              | Criar formulários (React Hook Form + Zod ou estado local)                                                  |
 | `tdd-red`                  | [SKILL.md](.agent/skills/tdd-red/SKILL.md)                  | Fase Red do TDD — escrever testes que falham                                                               |
 | `tdd-green`                | [SKILL.md](.agent/skills/tdd-green/SKILL.md)                | Fase Green do TDD — implementar o mínimo para os testes passarem                                           |
 | `refine-spec`              | [SKILL.md](.agent/skills/refine-spec/SKILL.md)              | Refinar spec inicial — entrevista estruturada para fechar requisitos, edge cases e decisões de arquitetura |
+| `brainstorm`               | [SKILL.md](.agent/skills/brainstorm/SKILL.md)               | Debater ideias ainda cruas como um colega, antes de virar spec — puxa contexto de `notes.txt`              |

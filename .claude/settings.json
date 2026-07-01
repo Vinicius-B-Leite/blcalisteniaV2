@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:code.visualstudio.com)",
+      "Edit(/.claude/skills/tdd-orchestrator/**)"
+    ]
+  }
+}

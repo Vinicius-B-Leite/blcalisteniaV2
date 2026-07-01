@@ -7,6 +7,8 @@ description: Creates repository layer following Clean Architecture principles wi
 
 This skill guides the creation of repository layers following Clean Architecture principles and the project's established conventions.
 
+**Prerequisite:** if the feature needs a new column or a new persisted table, do that first with the `create-watermelon-migration` skill (schema.ts + migrations.ts + Model), then come back here for the Adapter/Repo/QueryKeys/Provider.
+
 ## Technologies & Stack
 
 - **Clean Architecture** (Domain-driven design)

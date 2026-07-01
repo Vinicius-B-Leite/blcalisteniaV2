@@ -171,7 +171,7 @@ Perguntar se não estiver claro na spec:
 
 - Precisa criar um repositório novo ou aproveitar um existente?
 - Quais query keys do React Query são invalidadas após mutações?
-- A entidade é persistida no WatermelonDB? Qual schema / migração é necessário?
+- A entidade é persistida no WatermelonDB? Qual schema / migração é necessário? (ver skill `create-watermelon-migration`)
 
 **UI:**
 
