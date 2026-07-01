@@ -20,7 +20,9 @@ export const SearchExercises = () => {
 		<Screen>
 			<Header.Root>
 				<Header.GoBack />
-				<Header.VerticalCenterTitle>Buscar exercícios</Header.VerticalCenterTitle>
+				<Header.HorizontalCenterTitle>
+					Buscar exercícios
+				</Header.HorizontalCenterTitle>
 			</Header.Root>
 
 			{states.isLoading ? (

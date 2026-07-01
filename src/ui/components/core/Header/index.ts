@@ -1,11 +1,11 @@
 import { HeaderRoot } from "./HeaderRoot"
 import { HeaderGoBack } from "./HeaderGoBack"
-import { HeaderVerticalCenterTitle } from "./HeaderVerticalCenterTitle"
+import { HeaderHorizontalCenterTitle } from "./HeaderVerticalCenterTitle"
 
 export const Header = {
 	Root: HeaderRoot,
 	GoBack: HeaderGoBack,
-	VerticalCenterTitle: HeaderVerticalCenterTitle,
+	HorizontalCenterTitle: HeaderHorizontalCenterTitle,
 }
 
 export { type Header as HeaderTypes } from "./HeaderTypes"

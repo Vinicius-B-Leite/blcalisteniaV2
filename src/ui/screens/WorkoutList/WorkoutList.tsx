@@ -93,7 +93,7 @@ export const WorkoutList = () => {
 		<Screen>
 			<Header.Root>
 				<Header.GoBack />
-				<Header.VerticalCenterTitle>Meus treinos</Header.VerticalCenterTitle>
+				<Header.HorizontalCenterTitle>Meus treinos</Header.HorizontalCenterTitle>
 			</Header.Root>
 
 			<SearchBar control={form.control} />

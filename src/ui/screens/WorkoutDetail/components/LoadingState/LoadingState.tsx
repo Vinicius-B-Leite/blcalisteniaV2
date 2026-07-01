@@ -12,9 +12,9 @@ export const LoadingState = () => {
 		<Screen testID={WORKOUT_DETAIL_SCREEN_TEST_IDS.LOADING_STATE}>
 			<Header.Root>
 				<Header.GoBack />
-				<Header.VerticalCenterTitle>
+				<Header.HorizontalCenterTitle>
 					Detalhes do Treino
-				</Header.VerticalCenterTitle>
+				</Header.HorizontalCenterTitle>
 			</Header.Root>
 			<View style={styles.container}>
 				<Skeleton width="100%" height={200} style={styles.bannerSkeleton} />

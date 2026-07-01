@@ -19,7 +19,9 @@ export const ChooseImage = () => {
 		<Screen>
 			<Header.Root>
 				<Header.GoBack />
-				<Header.VerticalCenterTitle>Escolha imagem</Header.VerticalCenterTitle>
+				<Header.HorizontalCenterTitle>
+					Escolha imagem
+				</Header.HorizontalCenterTitle>
 			</Header.Root>
 
 			<View style={styles.content}>

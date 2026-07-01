@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		paddingVertical: spacings.padding[16],
 	},
-	verticalCenterTitle: {
+	horizontalCenterTitle: {
 		position: "absolute",
 		left: 0,
 		right: 0,

@@ -40,9 +40,9 @@ export const WorkoutDetail = () => {
 		<Screen>
 			<Header.Root>
 				<Header.GoBack />
-				<Header.VerticalCenterTitle>
+				<Header.HorizontalCenterTitle>
 					Detalhes do Treino
-				</Header.VerticalCenterTitle>
+				</Header.HorizontalCenterTitle>
 			</Header.Root>
 
 			<FlatList

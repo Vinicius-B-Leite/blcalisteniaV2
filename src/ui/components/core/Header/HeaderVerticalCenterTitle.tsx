@@ -2,7 +2,7 @@ import { Text } from "../Text"
 import { Header } from "./HeaderTypes"
 import { styles } from "./styles"
 
-export const HeaderVerticalCenterTitle = ({
+export const HeaderHorizontalCenterTitle = ({
 	children,
 	variant = "title-large-bold",
 	style,
@@ -11,7 +11,7 @@ export const HeaderVerticalCenterTitle = ({
 	return (
 		<Text
 			variant="title-large-bold"
-			style={[styles.verticalCenterTitle, style]}
+			style={[styles.horizontalCenterTitle, style]}
 			{...props}>
 			{children}
 		</Text>

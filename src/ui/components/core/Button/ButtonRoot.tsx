@@ -7,6 +7,7 @@ import { buttonVariants } from "./ButtonVariants"
 export const ButtonRoot = ({
 	children,
 	variant = "primary",
+	style,
 	...props
 }: Button.RootProps) => {
 	const { theme } = useAppTheme()
@@ -23,7 +24,7 @@ export const ButtonRoot = ({
 			<TouchableOpacity
 				disabled={props.disabled || props.isLoading}
 				activeOpacity={0.8}
-				style={currentVariant.root}
+				style={[currentVariant.root, style]}
 				{...props}>
 				{children}
 			</TouchableOpacity>

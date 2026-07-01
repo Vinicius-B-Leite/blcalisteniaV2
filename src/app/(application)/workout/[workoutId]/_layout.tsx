@@ -6,6 +6,7 @@ export default function WorkoutDetailLayout() {
 			<Stack.Screen name="index" />
 			<Stack.Screen name="chooseImage" />
 			<Stack.Screen name="searchExercises" />
+			<Stack.Screen name="session" />
 		</Stack>
 	)
 }

@@ -77,7 +77,12 @@ export const useWorkoutDetail = () => {
 	}
 
 	const handleStartWorkout = () => {
-		console.log("Start workout")
+		if (workout?.id) {
+			router.push({
+				pathname: `/(application)/workout/[workoutId]/session`,
+				params: { workoutId: workout.id },
+			})
+		}
 	}
 
 	const handleAddExercise = () => {
