@@ -274,6 +274,25 @@ Após coletar todas as respostas, gere um documento markdown estruturado com as 
 [Cenários de teste, testIDs necessários]
 ```
 
+### Onde salvar
+
+Salvar sempre em `docs/specs/{index}-{title}.md`, nunca em `spec.md` na raiz ou em arquivo solto.
+
+- `{index}`: dois dígitos, sequencial dentro de `docs/specs/` (ex: `01`, `02`...). Verificar o maior índice já existente na pasta antes de escrever.
+- `{title}`: kebab-case, curto, identificando a feature (ex: `workout-session-dynamic`).
+
+---
+
+## Checklist de Qualidade (antes de entregar a spec)
+
+A spec é, na prática, uma instrução que outros agentes (`tdd-red-agent`, `tdd-green-agent`) vão executar sem nenhum contexto além do próprio documento — trate-a como tal. Antes de considerar a spec pronta, releia-a inteira e verifique cada item abaixo. Se algo falhar, corrija a spec diretamente (não é preciso voltar a perguntar ao usuário, a menos que a correção exija uma decisão nova):
+
+- **Todo prop/tipo usado num exemplo de código tem contrato declarado.** Se um snippet usa `<Componente prop={x} />`, deve existir um `types.ts` (ou definição inline) para esse componente, listado em "Arquivos a criar/modificar". Nunca deixar uma prop "solta" sem type em nenhum lugar da spec.
+- **Zero linguagem vaga.** Bandeiras vermelhas: "ou similar", "algo como", "provavelmente", "talvez", "etc." em qualquer decisão de comportamento, texto de cópia ou valor. Presença de hedge é sinal de que uma fase da entrevista ficou incompleta — feche a decisão com um valor exato em vez de deixar em aberto no documento final.
+- **Toda afirmação de "segue o mesmo padrão de X" foi verificada de fato**, não assumida por semelhança superficial. Releia o arquivo `X` referenciado e confirme estrutura a estrutura (props, presença de Header, hierarquia de componentes) antes de escrever essa frase. Se for parecido mas não idêntico, explicite a diferença em vez de generalizar — uma comparação errada engana quem for implementar.
+- **Nenhuma prop/parâmetro configurável para um valor que só pode assumir uma única opção dentro do escopo atual.** Se algo sempre vale o mesmo valor porque a funcionalidade que o variaria está fora de escopo (ex: um índice sempre fixo em 0 porque navegação não está no escopo), hardcode internamente e documente o porquê — evita over-engineering no agente que for implementar. Se o escopo futuro reintroduzir a variação, a prop pode voltar naquele momento.
+- **Arquivos a criar/modificar estão em formato de checklist** (`- [ ] caminho`), não em prosa solta — permite que o agente de implementação rastreie progresso entre sessões/contextos.
+
 ---
 
 ## Boas Práticas ao Conduzir a Entrevista

@@ -3,7 +3,8 @@
     "allow": [
       "WebSearch",
       "WebFetch(domain:code.visualstudio.com)",
-      "Edit(/.claude/skills/tdd-orchestrator/**)"
+      "Edit(/.claude/skills/tdd-orchestrator/**)",
+      "Bash(git status *)"
     ]
   }
 }

@@ -140,16 +140,16 @@ export const WORKOUT_LIST_SCREEN_TEST_IDS = {
 
 ## Agentes
 
-Agentes disponíveis em `.agent/agents/`. Use o `tdd-orchestrator` para implementar uma feature completa a partir de uma spec.
+Agentes disponíveis em `.claude/agents/`. Use o `tdd-orchestrator` para implementar uma feature completa a partir de uma spec.
 
 | Agente               | Arquivo                                            | Quando usar                                                                      |
 | -------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `tdd-orchestrator`   | [agent](.agent/agents/tdd-orchestrator.agent.md)   | Implementar uma feature do zero via TDD (Red → Green)                            |
-| `tdd-red-agent`      | [agent](.agent/agents/tdd-red-agent.agent.md)      | Subagente interno — escreve apenas os testes (não invocar diretamente)           |
-| `tdd-green-agent`    | [agent](.agent/agents/tdd-green-agent.agent.md)    | Subagente interno — implementa para os testes passarem (não invocar diretamente) |
-| `tdd-refactor-agent` | [agent](.agent/agents/tdd-refactor-agent.agent.md) | Invocar após a fase Green para limpar o código sem quebrar testes                |
+| `tdd-orchestrator`   | [agent](.claude/agents/tdd-orchestrator.agent.md)   | Implementar uma feature do zero via TDD (Red → Green)                            |
+| `tdd-red-agent`      | [agent](.claude/agents/tdd-red-agent.agent.md)      | Subagente interno — escreve apenas os testes (não invocar diretamente)           |
+| `tdd-green-agent`    | [agent](.claude/agents/tdd-green-agent.agent.md)    | Subagente interno — implementa para os testes passarem (não invocar diretamente) |
+| `tdd-refactor-agent` | [agent](.claude/agents/tdd-refactor-agent.agent.md) | Invocar após a fase Green para limpar o código sem quebrar testes                |
 
-**Uso:** selecione `tdd-orchestrator` no seletor de agentes do chat e passe o caminho da spec.
+**Uso:** invoque o `tdd-orchestrator` passando o caminho da spec.
 
 ### Workflow completo
 
@@ -158,42 +158,41 @@ Agentes disponíveis em `.agent/agents/`. Use o `tdd-orchestrator` para implemen
 ```
 1. Escreva a spec da feature (spec.md ou arquivo separado)
       ↓
-2. Selecione @tdd-orchestrator no seletor de agentes
+2. Invoque o tdd-orchestrator passando o caminho da spec: spec.md
       ↓
-3. Passe o caminho da spec: spec.md
-      ↓
-4. Orquestrador lê a spec e delega para tdd-red-agent
+3. Orquestrador lê a spec e delega para tdd-red-agent
    → cria __tests__/, constants.ts, __mocks__/
    → executa yarn test (gate: testes devem FALHAR)
       ↓
-5. Orquestrador apresenta resumo + botão [ ▶ Iniciar fase Green ]
-   → você revisa os testes antes de prosseguir
+4. Orquestrador apresenta resumo e pergunta explicitamente se pode avançar
+   → você revisa os testes e confirma
       ↓
-6. Clique em [ ▶ Iniciar fase Green ]
+5. Após sua confirmação, orquestrador invoca tdd-green-agent
    → tdd-green-agent implementa Domain → Infra → UI
    → executa yarn test (gate: testes devem PASSAR)
       ↓
-7. Relatório final: arquivos criados por camada + contagem de testes
+6. Relatório final: arquivos criados por camada + contagem de testes
       ↓
-8. (Opcional) Invoque `tdd-refactor-agent` para limpar o código
+7. Orquestrador pergunta explicitamente se deseja rodar a fase Refactor
+   → (se sim) invoca `tdd-refactor-agent` para limpar o código
    → refatora sem alterar comportamento
    → executa yarn test (gate: todos devem continuar verdes)
 ```
 
 ## Skills
 
-Skills disponíveis em `.agent/skills/`. **Leia o `SKILL.md` correspondente antes de executar a tarefa.**
+Skills disponíveis em `.claude/skills/`. **Leia o `SKILL.md` correspondente antes de executar a tarefa.**
 
 | Skill                      | Arquivo                                                     | Quando usar                                                                                                |
 | -------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `create-core-components`   | [SKILL.md](.agent/skills/create-core-components/SKILL.md)   | Criar componentes core (Compound Pattern, Context API, variantes)                                          |
-| `create-common-components` | [SKILL.md](.agent/skills/create-common-components/SKILL.md) | Criar componentes comuns de tela (hook, styles, types)                                                     |
-| `create-integration-tests` | [SKILL.md](.agent/skills/create-integration-tests/SKILL.md) | Criar testes de integração para telas                                                                      |
-| `create-repos`             | [SKILL.md](.agent/skills/create-repos/SKILL.md)             | Criar repositório (inMemory + Watermelon)                                                                  |
-| `create-watermelon-migration` | [SKILL.md](.agent/skills/create-watermelon-migration/SKILL.md) | Alterar schema do WatermelonDB (coluna/tabela nova) e migration — usar antes de `create-repos`             |
-| `create-use-cases`         | [SKILL.md](.agent/skills/create-use-cases/SKILL.md)         | Criar use cases com React Query                                                                            |
-| `create-form`              | [SKILL.md](.agent/skills/create-form/SKILL.md)              | Criar formulários (React Hook Form + Zod ou estado local)                                                  |
-| `tdd-red`                  | [SKILL.md](.agent/skills/tdd-red/SKILL.md)                  | Fase Red do TDD — escrever testes que falham                                                               |
-| `tdd-green`                | [SKILL.md](.agent/skills/tdd-green/SKILL.md)                | Fase Green do TDD — implementar o mínimo para os testes passarem                                           |
-| `refine-spec`              | [SKILL.md](.agent/skills/refine-spec/SKILL.md)              | Refinar spec inicial — entrevista estruturada para fechar requisitos, edge cases e decisões de arquitetura |
-| `brainstorm`               | [SKILL.md](.agent/skills/brainstorm/SKILL.md)               | Debater ideias ainda cruas como um colega, antes de virar spec — puxa contexto de `notes.txt`              |
+| `create-core-components`   | [SKILL.md](.claude/skills/create-core-components/SKILL.md)   | Criar componentes core (Compound Pattern, Context API, variantes)                                          |
+| `create-common-components` | [SKILL.md](.claude/skills/create-common-components/SKILL.md) | Criar componentes comuns de tela (hook, styles, types)                                                     |
+| `create-integration-tests` | [SKILL.md](.claude/skills/create-integration-tests/SKILL.md) | Criar testes de integração para telas                                                                      |
+| `create-repos`             | [SKILL.md](.claude/skills/create-repos/SKILL.md)             | Criar repositório (inMemory + Watermelon)                                                                  |
+| `create-watermelon-migration` | [SKILL.md](.claude/skills/create-watermelon-migration/SKILL.md) | Alterar schema do WatermelonDB (coluna/tabela nova) e migration — usar antes de `create-repos`             |
+| `create-use-cases`         | [SKILL.md](.claude/skills/create-use-cases/SKILL.md)         | Criar use cases com React Query                                                                            |
+| `create-form`              | [SKILL.md](.claude/skills/create-form/SKILL.md)              | Criar formulários (React Hook Form + Zod ou estado local)                                                  |
+| `tdd-red`                  | [SKILL.md](.claude/skills/tdd-red/SKILL.md)                  | Fase Red do TDD — escrever testes que falham                                                               |
+| `tdd-green`                | [SKILL.md](.claude/skills/tdd-green/SKILL.md)                | Fase Green do TDD — implementar o mínimo para os testes passarem                                           |
+| `refine-spec`              | [SKILL.md](.claude/skills/refine-spec/SKILL.md)              | Refinar spec inicial — entrevista estruturada para fechar requisitos, edge cases e decisões de arquitetura |
+| `brainstorm`               | [SKILL.md](.claude/skills/brainstorm/SKILL.md)               | Debater ideias ainda cruas como um colega, antes de virar spec — puxa contexto de `notes.txt`              |
