@@ -4,7 +4,9 @@
       "WebSearch",
       "WebFetch(domain:code.visualstudio.com)",
       "Edit(/.claude/skills/tdd-orchestrator/**)",
-      "Bash(git status *)"
+      "Bash(git status *)",
+      "Bash(yarn test *)",
+      "Bash(yarn push-check *)"
     ]
   }
 }

@@ -1,87 +1,31 @@
-import {
-	Button,
-	Header,
-	Icon,
-	IconType,
-	Pressable,
-	Screen,
-	Text,
-} from "@/components/core"
+import { Header, Screen, Text } from "@/components/core"
 import { useAppTheme } from "@/themes/hooks/useAppTheme"
 import { View } from "react-native"
 import { stylesTheme } from "./styles"
 import { FocusedExercise } from "./components/FocusedExercise/FocusedExercise"
+import { Actions, EmptyState, LoadingState } from "./components"
+import { useWorkoutSession } from "./useWorkoutSession"
+import { WORKOUT_SESSION_SCREEN_TEST_IDS } from "./constants"
+import { MUSCLES_GROUP_LABELS } from "@/constants"
 
 export const WorkoutSession = () => {
 	const { theme } = useAppTheme()
 	const styles = stylesTheme(theme)
+	const { state } = useWorkoutSession()
 
-	const Actions = () => {
-		const ActionButton = ({
-			label,
-			isActive,
-			iconName,
-			onPress,
-		}: {
-			label: string
-			isActive: boolean
-			iconName: IconType.Names
-			onPress?: () => void
-		}) => {
-			return (
-				<Pressable.Root onPress={onPress} style={styles.actionsButton}>
-					<View style={styles.actionButtonIcon}>
-						<Icon
-							name={iconName}
-							size={18}
-							variant={isActive ? "default" : "secondary"}
-						/>
-					</View>
-
-					<Text
-						style={[
-							styles.actionButtonText,
-							!isActive && styles.actionButtonTextInactive,
-						]}
-						variant="body-small-bold">
-						{label}
-					</Text>
-				</Pressable.Root>
-			)
-		}
-
-		return (
-			<View>
-				<View style={styles.actions}>
-					<ActionButton label="+ 10 segundos" isActive iconName="plus" />
-					<ActionButton
-						label="Pular descanso"
-						isActive={false}
-						iconName="return"
-					/>
-					<ActionButton
-						label="Concluir série"
-						isActive={false}
-						iconName="play"
-					/>
-				</View>
-
-				<Button.Root variant="primary">
-					<Button.Content>01:30</Button.Content>
-				</Button.Root>
-
-				<Button.Root variant="ghost">
-					<Button.Content>Editar exercício</Button.Content>
-				</Button.Root>
-			</View>
-		)
-	}
+	if (state.isLoading) return <LoadingState />
+	if (!state.workout) return null
+	if (!state.hasExercises)
+		return <EmptyState workoutTitle={state.workout.title} />
 
 	return (
 		<Screen>
 			<Header.Root>
 				<Header.GoBack />
-				<Header.HorizontalCenterTitle>Treino A</Header.HorizontalCenterTitle>
+				<Header.HorizontalCenterTitle
+					testID={WORKOUT_SESSION_SCREEN_TEST_IDS.WORKOUT_TITLE}>
+					{state.workout.title}
+				</Header.HorizontalCenterTitle>
 			</Header.Root>
 
 			<View style={styles.sessionTimer}>
@@ -93,7 +37,14 @@ export const WorkoutSession = () => {
 				</Text>
 			</View>
 
-			<FocusedExercise />
+			<FocusedExercise
+				exerciseName={state.focusedExercise.name}
+				muscleGroupLabel={state.focusedExercise.musclesGroups
+					.map((g) => MUSCLES_GROUP_LABELS[g])
+					.join(", ")}
+				sets={state.focusedExercise.sets}
+				exerciseCount={state.exerciseCount}
+			/>
 			<Actions />
 		</Screen>
 	)

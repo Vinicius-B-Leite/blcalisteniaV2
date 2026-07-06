@@ -101,4 +101,13 @@ export const stylesTheme = (theme: ThemeType) =>
 			flex: 1,
 			backgroundColor: theme.border.default,
 		},
+
+		exerciseContainerScroll: {
+			paddingHorizontal: spacings.padding[24],
+		},
+		exerciseContainerRow: {
+			flexDirection: "row",
+			justifyContent: "space-between",
+			paddingHorizontal: spacings.padding[24],
+		},
 	})
