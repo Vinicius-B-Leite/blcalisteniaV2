@@ -6,6 +6,7 @@ export type FocusedExerciseProps = {
 	muscleGroupLabel: string
 	sets: WorkoutExerciseSetModel[]
 	exerciseCount: number
+	completedSets: number
 }
 
 export type SummaryProps = {
@@ -20,6 +21,7 @@ export type SerieItemProps = {
 	reps: number
 	hasNext?: boolean
 	hasManySets: boolean
+	completed: boolean
 }
 
 export type ExerciseContainerProps = PropsWithChildren<{

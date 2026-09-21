@@ -9,6 +9,7 @@ export const WORKOUT_SESSION_SCREEN_TEST_IDS = {
 	EXERCISE_INDICATOR: `${prefix}-exercise-indicator`, // estático, um por pontinho — usar queryAllByTestId para contar
 	SET_ITEM: `${prefix}-set-item`, // estático, um por série — usar queryAllByTestId para contar
 	SET_ITEM_REPS: `${prefix}-set-item-reps`, // estático, um por série — checar .props.children por índice
+	SET_ITEM_COMPLETED: `${prefix}-set-item-completed`, // estático, um por série concluída — usar queryAllByTestId para contar
 	SET_PROGRESS_CURRENT: `${prefix}-set-progress-current`, // número da série atual (1-based) — checar .props.children
 	GO_BACK_BUTTON: `${prefix}-go-back-button`,
 	COMPLETE_SET_BUTTON: `${prefix}-complete-set-button`,

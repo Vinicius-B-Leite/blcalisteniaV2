@@ -6,6 +6,7 @@ const variantsKey = {
 	secondary: "secondary",
 	error: "error",
 	brand: "brand",
+	onBrand: "onBrand",
 }
 
 export namespace Icon {
@@ -17,9 +18,11 @@ export namespace Icon {
 		variant?: VariantKey
 		onPress?(): void
 		pressableStyle?: ViewStyle
+		testID?: string
 	}
 	export type IconMapProp = {
 		size: number
 		color: string
+		testID?: string
 	}
 }

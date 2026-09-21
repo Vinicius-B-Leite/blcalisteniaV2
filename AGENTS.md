@@ -91,7 +91,7 @@ Nomes válidos para `<Icon name="..." />` — **não invente nomes fora desta li
 notification  clock        dumbbells  play       return
 notes         arrowRightTop heart      eye        home
 calendar      user          leftArrow  x          trash
-search        edit          plus       attach
+search        edit          plus       attach     check
 ```
 
 ## Testes

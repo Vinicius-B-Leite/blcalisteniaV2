@@ -363,6 +363,176 @@ describe("Workout Session Screen (Integration)", () => {
 				)
 			})
 		})
+
+		describe("set completed indicator", () => {
+			// (a) Completar a série mas não avançar o rest timer → círculo continua pending
+			it("should keep the set item pending and the progress indicator unchanged when the set is completed but rest hasn't finished", async () => {
+				await asTestableRepository(WorkoutExerciseRepo).seed([
+					workoutSessionMocks.exercisesWithSets[0], // we-1, 3 sets
+				])
+
+				render(<WorkoutSession />)
+				await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+				await pressCompleteSet()
+
+				expect(
+					screen.queryAllByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM_COMPLETED)
+						.length,
+				).toBe(0)
+				expect(
+					screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_PROGRESS_CURRENT)
+						.props.children,
+				).toBe("1 de 3 séries")
+			})
+
+			// (b) Rest termina naturalmente → 1 círculo completed, indicador atualiza
+			it("should mark the set item as completed and update the progress indicator when the rest finishes naturally", async () => {
+				await asTestableRepository(WorkoutExerciseRepo).seed([
+					workoutSessionMocks.exercisesWithSets[0], // rest: 60
+				])
+
+				render(<WorkoutSession />)
+				await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+				await pressCompleteSet()
+
+				await act(async () => {
+					jest.advanceTimersByTime(60_000)
+				})
+
+				expect(
+					screen.queryAllByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM_COMPLETED)
+						.length,
+				).toBe(1)
+				expect(
+					screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_PROGRESS_CURRENT)
+						.props.children,
+				).toBe("2 de 3 séries")
+			})
+
+			// (c) Pular descanso também marca a série como completed
+			it("should mark the set item as completed and update the progress indicator when skipping rest", async () => {
+				await asTestableRepository(WorkoutExerciseRepo).seed([
+					workoutSessionMocks.exercisesWithSets[0],
+				])
+
+				render(<WorkoutSession />)
+				await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+				await completeSetAndSkipRest()
+
+				expect(
+					screen.queryAllByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM_COMPLETED)
+						.length,
+				).toBe(1)
+				expect(
+					screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_PROGRESS_CURRENT)
+						.props.children,
+				).toBe("2 de 3 séries")
+			})
+
+			// (d) Completar todas as séries de um exercício → círculos completed acumulam;
+			// ao trocar de exercício, círculos do novo exercício voltam pending e o indicador reseta
+			it("should accumulate completed set items while finishing an exercise, then reset to pending on the next exercise", async () => {
+				await asTestableRepository(WorkoutExerciseRepo).seed([
+					workoutSessionMocks.exercisesWithSets[1], // we-2, 2 sets — focused exercise
+					workoutSessionMocks.exercisesWithSets[0], // we-1, 3 sets — next exercise
+				])
+
+				render(<WorkoutSession />)
+				const exerciseName = await screen.findByTestId(
+					WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME,
+				)
+				expect(exerciseName.props.children).toBe("Supino")
+
+				await completeSetAndSkipRest() // set 1/2
+
+				expect(
+					screen.queryAllByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM_COMPLETED)
+						.length,
+				).toBe(1)
+				expect(
+					screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_PROGRESS_CURRENT)
+						.props.children,
+				).toBe("2 de 2 séries")
+
+				await completeSetAndSkipRest() // set 2/2 — exhausts the exercise, advances
+
+				await waitFor(() => {
+					expect(
+						screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME).props
+							.children,
+					).toBe("Flexão de braço")
+				})
+
+				expect(
+					screen.queryAllByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM_COMPLETED)
+						.length,
+				).toBe(0)
+				expect(
+					screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_PROGRESS_CURRENT)
+						.props.children,
+				).toBe("1 de 3 séries")
+			})
+
+			// (e) Última série do último exercício → círculo completed, indicador "1 de 1 séries", alert já existente
+			it("should mark the last set of the last exercise as completed and show the final progress indicator", async () => {
+				const alertSpy = jest.spyOn(Alert, "alert").mockImplementation(() => {})
+
+				await asTestableRepository(WorkoutExerciseRepo).seed([
+					workoutSessionMocks.singleSetExercise,
+				])
+
+				render(<WorkoutSession />)
+				await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+				await completeSetAndSkipRest()
+
+				expect(
+					screen.queryAllByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM_COMPLETED)
+						.length,
+				).toBe(1)
+				expect(
+					screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_PROGRESS_CURRENT)
+						.props.children,
+				).toBe("1 de 1 séries")
+				expect(alertSpy).toHaveBeenCalledWith(
+					expect.stringMatching(/treino finalizado/i),
+				)
+			})
+
+			// (f) Texto de reps nunca muda, independente do estado pending/completed da série
+			it("should never change the reps text regardless of the set's pending or completed state", async () => {
+				await asTestableRepository(WorkoutExerciseRepo).seed([
+					workoutSessionMocks.exercisesWithSets[0], // reps: 12, 8, 15
+				])
+
+				render(<WorkoutSession />)
+				await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+				const repsBefore = screen.getAllByTestId(
+					WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM_REPS,
+				)
+				expect(repsBefore[0].props.children).toContain(12)
+
+				await pressCompleteSet()
+
+				const repsWhilePending = screen.getAllByTestId(
+					WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM_REPS,
+				)
+				expect(repsWhilePending[0].props.children).toContain(12)
+
+				await act(async () => {
+					jest.advanceTimersByTime(60_000)
+				})
+
+				const repsAfterCompleted = screen.getAllByTestId(
+					WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM_REPS,
+				)
+				expect(repsAfterCompleted[0].props.children).toContain(12)
+			})
+		})
 	})
 
 	describe("exit confirmation", () => {

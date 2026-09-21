@@ -27,7 +27,6 @@ export const useWorkoutSession = () => {
 		if (!focusedExercise) return 0
 
 		const completedSet = focusedExercise.sets[completedSets]
-		setCompletedSets((prev) => prev + 1)
 
 		return completedSet?.rest ?? 0
 	}
@@ -35,7 +34,10 @@ export const useWorkoutSession = () => {
 	const advanceAfterRest = () => {
 		if (!focusedExercise) return
 
-		const finishedExercise = completedSets >= focusedExercise.sets.length
+		const newCompletedSets = completedSets + 1
+		setCompletedSets(newCompletedSets)
+
+		const finishedExercise = newCompletedSets >= focusedExercise.sets.length
 		if (!finishedExercise) return
 
 		const isLastExercise = currentExerciseIndex >= exercisesWithSets.length - 1

@@ -58,6 +58,7 @@ export const WorkoutSession = () => {
 					.join(", ")}
 				sets={state.focusedExercise.sets}
 				exerciseCount={state.exerciseCount}
+				completedSets={state.completedSets}
 			/>
 			<Actions
 				completeSet={actions.completeSet}

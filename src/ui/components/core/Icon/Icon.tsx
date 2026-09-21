@@ -20,6 +20,7 @@ import { IconEdit } from "./components/IconEdit"
 import { Pressable } from "../Pressable"
 import { IconPlus } from "./components/IconPlus"
 import { IconAttach } from "./components/IconAttach"
+import { IconCheck } from "./components/IconCheck"
 
 export const IconMap = {
 	notification: IconNotification,
@@ -41,6 +42,7 @@ export const IconMap = {
 	edit: IconEdit,
 	plus: IconPlus,
 	attach: IconAttach,
+	check: IconCheck,
 }
 
 export const Icon = ({
@@ -49,6 +51,7 @@ export const Icon = ({
 	variant = "default",
 	onPress,
 	pressableStyle,
+	testID,
 }: IconType.Props) => {
 	const IconComponent = IconMap[name]
 	const { theme } = useAppTheme()
@@ -66,6 +69,9 @@ export const Icon = ({
 		brand: {
 			color: theme.surface.brand,
 		},
+		onBrand: {
+			color: theme.content["text-on-brand"],
+		},
 	}
 
 	const currentVariant = variants[variant]
@@ -73,10 +79,10 @@ export const Icon = ({
 	if (onPress) {
 		return (
 			<Pressable.Root onPress={onPress} style={pressableStyle} hitSlop={12}>
-				<IconComponent color={currentVariant.color} size={size} />
+				<IconComponent color={currentVariant.color} size={size} testID={testID} />
 			</Pressable.Root>
 		)
 	}
 
-	return <IconComponent color={currentVariant.color} size={size} />
+	return <IconComponent color={currentVariant.color} size={size} testID={testID} />
 }
