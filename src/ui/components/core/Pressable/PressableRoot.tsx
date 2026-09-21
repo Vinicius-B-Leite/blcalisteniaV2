@@ -57,6 +57,7 @@ export const PressableRoot = ({
 					{
 						transform: [{ scale }],
 						opacity,
+						zIndex: 2,
 					},
 				]}
 				onPressIn={(e) => {

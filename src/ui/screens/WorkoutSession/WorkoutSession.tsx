@@ -1,9 +1,11 @@
-import { Header, Screen, Text } from "@/components/core"
+import { useState } from "react"
+import { Header, Icon, Pressable, Screen, Text } from "@/components/core"
 import { useAppTheme } from "@/themes/hooks/useAppTheme"
+import { useAppPreventGoBack } from "@/hooks"
 import { View } from "react-native"
 import { stylesTheme } from "./styles"
 import { FocusedExercise } from "./components/FocusedExercise/FocusedExercise"
-import { Actions, EmptyState, LoadingState } from "./components"
+import { Actions, EmptyState, ExitConfirmationModal, LoadingState } from "./components"
 import { useWorkoutSession } from "./useWorkoutSession"
 import { WORKOUT_SESSION_SCREEN_TEST_IDS } from "./constants"
 import { MUSCLES_GROUP_LABELS } from "@/constants"
@@ -11,17 +13,29 @@ import { MUSCLES_GROUP_LABELS } from "@/constants"
 export const WorkoutSession = () => {
 	const { theme } = useAppTheme()
 	const styles = stylesTheme(theme)
-	const { state } = useWorkoutSession()
+	const { state, actions } = useWorkoutSession()
+
+	const [isExitModalVisible, setIsExitModalVisible] = useState(false)
+
+	const { confirmGoBack } = useAppPreventGoBack({
+		onPrevented: () => setIsExitModalVisible(true),
+	})
 
 	if (state.isLoading) return <LoadingState />
 	if (!state.workout) return null
-	if (!state.hasExercises)
-		return <EmptyState workoutTitle={state.workout.title} />
+	if (!state.hasExercises) return <EmptyState workoutTitle={state.workout.title} />
 
 	return (
 		<Screen>
 			<Header.Root>
-				<Header.GoBack />
+				<Header.GoBack>
+					<Pressable.Root
+						testID={WORKOUT_SESSION_SCREEN_TEST_IDS.GO_BACK_BUTTON}
+						hitSlop={12}
+						onPress={() => setIsExitModalVisible(true)}>
+						<Icon name="leftArrow" size={24} />
+					</Pressable.Root>
+				</Header.GoBack>
 				<Header.HorizontalCenterTitle
 					testID={WORKOUT_SESSION_SCREEN_TEST_IDS.WORKOUT_TITLE}>
 					{state.workout.title}
@@ -45,7 +59,17 @@ export const WorkoutSession = () => {
 				sets={state.focusedExercise.sets}
 				exerciseCount={state.exerciseCount}
 			/>
-			<Actions />
+			<Actions
+				completeSet={actions.completeSet}
+				advanceAfterRest={actions.advanceAfterRest}
+				plannedRestSeconds={state.plannedRestSeconds}
+			/>
+
+			<ExitConfirmationModal
+				visible={isExitModalVisible}
+				onClose={() => setIsExitModalVisible(false)}
+				onConfirm={confirmGoBack}
+			/>
 		</Screen>
 	)
 }

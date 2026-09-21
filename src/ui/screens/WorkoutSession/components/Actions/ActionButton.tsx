@@ -9,12 +9,18 @@ export const ActionButton = ({
 	isActive,
 	iconName,
 	onPress,
+	disabled,
+	testID,
 }: ActionButtonProps) => {
 	const { theme } = useAppTheme()
 	const styles = stylesTheme(theme)
 
 	return (
-		<Pressable.Root onPress={onPress} style={styles.actionsButton}>
+		<Pressable.Root
+			onPress={onPress}
+			disabled={disabled}
+			testID={testID}
+			style={styles.actionsButton}>
 			<View style={styles.actionButtonIcon}>
 				<Icon
 					name={iconName}

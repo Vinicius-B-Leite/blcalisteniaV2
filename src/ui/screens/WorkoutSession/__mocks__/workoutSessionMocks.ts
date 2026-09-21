@@ -83,8 +83,22 @@ const multiMuscleExercise: SeededExerciseWithSets = {
 	],
 }
 
+// Single exercise with a single set — used to reach "last set of the last
+// exercise" quickly (finishing its only set finishes the whole workout).
+const singleSetExercise: SeededExerciseWithSets = {
+	id: "we-single",
+	name: "Prancha",
+	musclesGroups: ["core"],
+	bannerUrl: null,
+	userId: null,
+	workoutId: "workout-1",
+	exerciseId: "exercise-single",
+	sets: [{ id: "set-single-1", workoutExerciseId: "we-single", reps: 30, rest: 20 }],
+}
+
 export const workoutSessionMocks = {
 	workout,
 	exercisesWithSets,
 	multiMuscleExercise,
+	singleSetExercise,
 }

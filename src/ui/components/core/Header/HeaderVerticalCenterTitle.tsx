@@ -11,6 +11,7 @@ export const HeaderHorizontalCenterTitle = ({
 	return (
 		<Text
 			variant="title-large-bold"
+			pointerEvents="none"
 			style={[styles.horizontalCenterTitle, style]}
 			{...props}>
 			{children}

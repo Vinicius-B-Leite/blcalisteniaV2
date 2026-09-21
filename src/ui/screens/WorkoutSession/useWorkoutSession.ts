@@ -1,3 +1,5 @@
+import { useState } from "react"
+import { Alert } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useGetWorkoutById } from "@/domains/Workout"
 import { useGetExercisesWithSetsByWorkout } from "@/domains/WorkoutExercise"
@@ -14,8 +16,37 @@ export const useWorkoutSession = () => {
 	const { exercisesWithSets, isLoading: isExercisesLoading } =
 		useGetExercisesWithSetsByWorkout(workoutId)
 
-	const focusedExercise = exercisesWithSets[0]
+	const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
+	const [completedSets, setCompletedSets] = useState(0)
+
+	const focusedExercise = exercisesWithSets[currentExerciseIndex]
 	const hasExercises = exercisesWithSets.length > 0
+	const plannedRestSeconds = focusedExercise?.sets[completedSets]?.rest ?? 0
+
+	const completeSet = () => {
+		if (!focusedExercise) return 0
+
+		const completedSet = focusedExercise.sets[completedSets]
+		setCompletedSets((prev) => prev + 1)
+
+		return completedSet?.rest ?? 0
+	}
+
+	const advanceAfterRest = () => {
+		if (!focusedExercise) return
+
+		const finishedExercise = completedSets >= focusedExercise.sets.length
+		if (!finishedExercise) return
+
+		const isLastExercise = currentExerciseIndex >= exercisesWithSets.length - 1
+		if (isLastExercise) {
+			Alert.alert("Treino finalizado!")
+			return
+		}
+
+		setCurrentExerciseIndex((prev) => prev + 1)
+		setCompletedSets(0)
+	}
 
 	return {
 		state: {
@@ -24,6 +55,13 @@ export const useWorkoutSession = () => {
 			exerciseCount: exercisesWithSets.length,
 			hasExercises,
 			isLoading: isWorkoutLoading || isExercisesLoading,
+			completedSets,
+			currentExerciseIndex,
+			plannedRestSeconds,
+		},
+		actions: {
+			completeSet,
+			advanceAfterRest,
 		},
 	}
 }

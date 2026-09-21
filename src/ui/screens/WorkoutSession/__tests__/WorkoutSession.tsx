@@ -1,4 +1,4 @@
-import { asTestableRepository, render, screen, waitFor } from "@/tests"
+import { act, asTestableRepository, fireEvent, render, screen, waitFor } from "@/tests"
 import { WorkoutSession } from "../WorkoutSession"
 import { WORKOUT_SESSION_SCREEN_TEST_IDS } from "../constants"
 import { WorkoutRepo } from "@/repos/Workout"
@@ -6,7 +6,25 @@ import { WorkoutExerciseRepo } from "@/repos/WorkoutExercise"
 import { workoutSessionMocks } from "../__mocks__/workoutSessionMocks"
 import { queryClient } from "@/infra/services/queryCache/implementations/reactQuery/ReactQueryProvider"
 import { Router, useLocalSearchParams, useRouter } from "expo-router"
+import { usePreventRemove } from "@react-navigation/native"
 import { TOAST_ROOT_TEST_ID, TOAST_MESSAGE_TEST_ID } from "@/components/core/Toast"
+import { Alert, TouchableWithoutFeedback } from "react-native"
+
+// Overrides the global expo-router mock (jest.setup.ts) so this suite can also
+// stub `useLocalSearchParams`.
+jest.mock("expo-router", () => ({
+	...jest.requireActual("expo-router"),
+	useRouter: jest.fn(),
+	useLocalSearchParams: jest.fn(),
+}))
+
+// usePreventRemove needs a real NavigationContainer, which customRender doesn't
+// provide — stub it so the callback can be triggered manually in tests to
+// simulate a native back event (hardware back, swipe gesture, header back).
+jest.mock("@react-navigation/native", () => ({
+	...jest.requireActual("@react-navigation/native"),
+	usePreventRemove: jest.fn(),
+}))
 
 const mockPush = jest.fn()
 const mockBack = jest.fn()
@@ -71,8 +89,7 @@ describe("Workout Session Screen (Integration)", () => {
 			)
 			expect(exerciseName.props.children).toBe("Flexão de braço")
 			expect(
-				screen.queryAllByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM)
-					.length,
+				screen.queryAllByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM).length,
 			).toBe(3)
 		})
 
@@ -135,9 +152,8 @@ describe("Workout Session Screen (Integration)", () => {
 		await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
 
 		expect(
-			screen.queryAllByTestId(
-				WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_INDICATOR,
-			).length,
+			screen.queryAllByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_INDICATOR)
+				.length,
 		).toBe(3)
 	})
 
@@ -172,4 +188,364 @@ describe("Workout Session Screen (Integration)", () => {
 			expect(mockBack).toHaveBeenCalled()
 		})
 	})
+
+	describe("complete set action", () => {
+		beforeEach(() => {
+			jest.useFakeTimers()
+		})
+
+		afterEach(() => {
+			jest.useRealTimers()
+		})
+
+		// (0) Countdown exibe o tempo de descanso planejado antes de concluir a série
+		it("should show the upcoming set's rest time as a preview before completing the set", async () => {
+			await asTestableRepository(WorkoutExerciseRepo).seed([
+				workoutSessionMocks.exercisesWithSets[0], // rest: 60
+			])
+
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			expect(
+				screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.REST_TIMER_VALUE).props
+					.children,
+			).toBe("01:00")
+		})
+
+		// (a) Concluir série avança, desabilita o próprio botão e habilita +10s/Pular descanso
+		it("should disable complete set action and enable rest actions after completing a set", async () => {
+			await asTestableRepository(WorkoutExerciseRepo).seed([
+				workoutSessionMocks.exercisesWithSets[0],
+			])
+
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			expectRestActionsDisabled()
+			expectCompleteSetEnabled()
+
+			await pressCompleteSet()
+
+			expectCompleteSetDisabled()
+			expectRestActionsEnabled()
+		})
+
+		// (b) +10s soma no countdown exibido
+		it("should add 10 seconds to the rest countdown when pressing +10s", async () => {
+			await asTestableRepository(WorkoutExerciseRepo).seed([
+				workoutSessionMocks.exercisesWithSets[0],
+			])
+
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			await pressCompleteSet()
+
+			expect(
+				screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.REST_TIMER_VALUE).props
+					.children,
+			).toBe("01:00")
+
+			act(() => {
+				fireEvent.press(
+					screen.getByTestId(
+						WORKOUT_SESSION_SCREEN_TEST_IDS.ADD_REST_SECONDS_BUTTON,
+					),
+				)
+			})
+
+			expect(
+				screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.REST_TIMER_VALUE).props
+					.children,
+			).toBe("01:10")
+
+			act(() => {
+				fireEvent.press(
+					screen.getByTestId(
+						WORKOUT_SESSION_SCREEN_TEST_IDS.ADD_REST_SECONDS_BUTTON,
+					),
+				)
+			})
+
+			expect(
+				screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.REST_TIMER_VALUE).props
+					.children,
+			).toBe("01:20")
+		})
+
+		// (c) Pular descanso zera o countdown e auto-avança
+		it("should zero the countdown and auto-advance when skipping rest", async () => {
+			await asTestableRepository(WorkoutExerciseRepo).seed([
+				workoutSessionMocks.exercisesWithSets[0],
+			])
+
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			await pressCompleteSet()
+			await pressSkipRest()
+
+			expectCompleteSetEnabled()
+			expectRestActionsDisabled()
+		})
+
+		// (d) Countdown chegando a 0 sozinho auto-avança sem interação
+		it("should auto-advance when the countdown reaches zero on its own", async () => {
+			await asTestableRepository(WorkoutExerciseRepo).seed([
+				workoutSessionMocks.exercisesWithSets[0],
+			])
+
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			await pressCompleteSet()
+
+			await act(async () => {
+				jest.advanceTimersByTime(60_000)
+			})
+
+			expectCompleteSetEnabled()
+			expectRestActionsDisabled()
+		})
+
+		// (e) Concluir a última série de um exercício avança pro próximo exercício
+		it("should move to the next exercise after completing the last set", async () => {
+			await asTestableRepository(WorkoutExerciseRepo).seed([
+				workoutSessionMocks.exercisesWithSets[0], // 3 sets
+				workoutSessionMocks.exercisesWithSets[1], // 2 sets
+			])
+
+			render(<WorkoutSession />)
+			const exerciseName = await screen.findByTestId(
+				WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME,
+			)
+			expect(exerciseName.props.children).toBe("Flexão de braço")
+
+			await completeSetAndSkipRest() // set 1/3
+			await completeSetAndSkipRest() // set 2/3
+			await completeSetAndSkipRest() // set 3/3 — exhausts the exercise
+
+			await waitFor(() => {
+				expect(
+					screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+						.props.children,
+				).toBe("Supino")
+			})
+
+			expect(
+				screen.queryAllByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SET_ITEM).length,
+			).toBe(2)
+			expectCompleteSetEnabled()
+			expectRestActionsDisabled()
+			expect(
+				screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.REST_TIMER_VALUE).props
+					.children,
+			).toBe("01:30") // preview do descanso do primeiro set do novo exercício (rest: 90)
+		})
+
+		// (f) Concluir a última série do último exercício dispara o alert de treino finalizado
+		it("should show a finished-workout alert after completing the last set of the last exercise", async () => {
+			const alertSpy = jest.spyOn(Alert, "alert").mockImplementation(() => {})
+
+			await asTestableRepository(WorkoutExerciseRepo).seed([
+				workoutSessionMocks.singleSetExercise,
+			])
+
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			await completeSetAndSkipRest()
+
+			await waitFor(() => {
+				expect(alertSpy).toHaveBeenCalledWith(
+					expect.stringMatching(/treino finalizado/i),
+				)
+			})
+		})
+	})
+
+	describe("exit confirmation", () => {
+		beforeEach(async () => {
+			await asTestableRepository(WorkoutExerciseRepo).seed([
+				workoutSessionMocks.exercisesWithSets[0],
+			])
+		})
+
+		it("should open the exit confirmation modal when pressing header go back", async () => {
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			fireEvent.press(
+				screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.GO_BACK_BUTTON),
+			)
+
+			expect(
+				await screen.findByTestId(
+					WORKOUT_SESSION_SCREEN_TEST_IDS.EXIT_CONFIRMATION_MODAL,
+				),
+			).toBeTruthy()
+			expect(mockBack).not.toHaveBeenCalled()
+		})
+
+		it("should open the exit confirmation modal on native back navigation and prevent it", async () => {
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			const lastCall = jest.mocked(usePreventRemove).mock.calls.at(-1)
+			expect(lastCall?.[0]).toBe(true) // preventRemove ligado enquanto não confirmou saída
+
+			const onPreventedRemove = lastCall?.[1]
+			act(() => {
+				onPreventedRemove?.({ data: { action: { type: "GO_BACK" } } })
+			})
+
+			expect(
+				await screen.findByTestId(
+					WORKOUT_SESSION_SCREEN_TEST_IDS.EXIT_CONFIRMATION_MODAL,
+				),
+			).toBeTruthy()
+		})
+
+		it("should close the modal and stay on screen when tapping outside", async () => {
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			fireEvent.press(
+				screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.GO_BACK_BUTTON),
+			)
+			await screen.findByTestId(
+				WORKOUT_SESSION_SCREEN_TEST_IDS.EXIT_CONFIRMATION_MODAL,
+			)
+
+			const overlay = screen.UNSAFE_getAllByType(TouchableWithoutFeedback)[0]
+			await act(async () => {
+				fireEvent.press(overlay)
+			})
+
+			await waitFor(() => {
+				expect(
+					screen.queryByTestId(
+						WORKOUT_SESSION_SCREEN_TEST_IDS.EXIT_CONFIRMATION_MODAL,
+					),
+				).toBeFalsy()
+			})
+			expect(
+				screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME),
+			).toBeTruthy()
+			expect(mockBack).not.toHaveBeenCalled()
+		})
+
+		it("should close the modal and stay on screen when pressing cancel", async () => {
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			fireEvent.press(
+				screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.GO_BACK_BUTTON),
+			)
+			await screen.findByTestId(
+				WORKOUT_SESSION_SCREEN_TEST_IDS.EXIT_CONFIRMATION_MODAL,
+			)
+
+			await act(async () => {
+				fireEvent.press(
+					screen.getByTestId(
+						WORKOUT_SESSION_SCREEN_TEST_IDS.EXIT_CONFIRMATION_CANCEL_BUTTON,
+					),
+				)
+			})
+
+			await waitFor(() => {
+				expect(
+					screen.queryByTestId(
+						WORKOUT_SESSION_SCREEN_TEST_IDS.EXIT_CONFIRMATION_MODAL,
+					),
+				).toBeFalsy()
+			})
+			expect(mockBack).not.toHaveBeenCalled()
+		})
+
+		it("should navigate back when confirming exit", async () => {
+			render(<WorkoutSession />)
+			await screen.findByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.EXERCISE_NAME)
+
+			fireEvent.press(
+				screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.GO_BACK_BUTTON),
+			)
+			await screen.findByTestId(
+				WORKOUT_SESSION_SCREEN_TEST_IDS.EXIT_CONFIRMATION_MODAL,
+			)
+
+			await act(async () => {
+				fireEvent.press(
+					screen.getByTestId(
+						WORKOUT_SESSION_SCREEN_TEST_IDS.EXIT_CONFIRMATION_CONFIRM_BUTTON,
+					),
+				)
+			})
+
+			await waitFor(() => {
+				expect(mockBack).toHaveBeenCalled()
+			})
+		})
+	})
 })
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+async function pressCompleteSet() {
+	act(() => {
+		fireEvent.press(
+			screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.COMPLETE_SET_BUTTON),
+		)
+	})
+}
+
+async function pressSkipRest() {
+	act(() => {
+		fireEvent.press(
+			screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SKIP_REST_BUTTON),
+		)
+	})
+}
+
+async function completeSetAndSkipRest() {
+	await pressCompleteSet()
+	await pressSkipRest()
+}
+
+function expectCompleteSetEnabled() {
+	expect(
+		screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.COMPLETE_SET_BUTTON).props
+			.accessibilityState?.disabled,
+	).toBeFalsy()
+}
+
+function expectCompleteSetDisabled() {
+	expect(
+		screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.COMPLETE_SET_BUTTON).props
+			.accessibilityState?.disabled,
+	).toBeTruthy()
+}
+
+function expectRestActionsEnabled() {
+	expect(
+		screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.ADD_REST_SECONDS_BUTTON).props
+			.accessibilityState?.disabled,
+	).toBeFalsy()
+	expect(
+		screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SKIP_REST_BUTTON).props
+			.accessibilityState?.disabled,
+	).toBeFalsy()
+}
+
+function expectRestActionsDisabled() {
+	expect(
+		screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.ADD_REST_SECONDS_BUTTON).props
+			.accessibilityState?.disabled,
+	).toBeTruthy()
+	expect(
+		screen.getByTestId(WORKOUT_SESSION_SCREEN_TEST_IDS.SKIP_REST_BUTTON).props
+			.accessibilityState?.disabled,
+	).toBeTruthy()
+}
